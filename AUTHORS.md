@@ -12,4 +12,4 @@ By adding your name to this document, you agree to release all your contribution
 - [Ramin Zarifi](https://github.com/FlaminGuy)
 - [Jason Mittertreiner](https://github.com/jmittert ([website](https://jmittertreiner.ca))
 - [Ifaz Kabir](https://github.com/ifazk)
-- [Jacb Tønder](https://github.com/jacobtonder)
+- [Jacob Tønder](https://github.com/jacobtonder)
