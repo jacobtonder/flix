@@ -44,7 +44,7 @@ object Optimizer extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       * Performs intra-procedural optimization on the given expression `exp0` and substitution map `env0`.
       */
     def visitExp(exp0: Expression, env0: Map[Symbol.VarSym, Symbol.VarSym]): Expression = exp0 match {
-      // 
+      //
       // Literal Expressions.
       //
       case Expression.Unit => exp0
@@ -290,7 +290,7 @@ object Optimizer extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       case Expression.GetChannel(exp, tpe, loc) =>
         val e = visitExp(exp, env0)
         Expression.GetChannel(e, tpe, loc)
-      
+
       //
       // PutChannel Expressions.
       //

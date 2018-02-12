@@ -1310,4 +1310,3 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
       case enum => Type.Enum(enum.sym, Kind.Star)
     }
 }
-

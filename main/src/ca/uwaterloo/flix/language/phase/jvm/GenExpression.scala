@@ -27,6 +27,7 @@ import ca.uwaterloo.flix.util.{InternalCompilerException, Optimization}
 import org.objectweb.asm
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
+import ca.uwaterloo.flix.language.ast.Type
 
 /**
   * Generate expression
@@ -756,6 +757,30 @@ object GenExpression {
       // Return unit
       visitor.visitMethodInsn(INVOKESTATIC, JvmName.Unit.toInternalName, "getInstance",
         AsmOps.getMethodDescriptor(Nil, JvmType.Unit), false)
+
+    case Expression.SelectChannel(rules, tpe, loc) =>
+      // Adding source line number for debugging
+      addSourceLine(visitor, loc)
+
+
+
+//      for (ExecutableAst.SelectRule(sym, chan, body) <- rules) {
+//        val ruleType = JvmOps.getSelectRuleClassType(chan.tpe)
+//
+//        //val selectClass = GenSelectRuleClass.gen(ruleType)
+//
+//
+//
+//        // Instantiating a new object of SelectChannel
+//        //visitor.visitTypeInsn(NEW, ruleType.toDescriptor)
+//
+//      }
+
+      visitor.visitLdcInsn(2)
+
+
+
+
 
     case Expression.Ref(exp, tpe, loc) =>
       // Adding source line number for debugging
