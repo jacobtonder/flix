@@ -544,7 +544,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
 
       // NB: We allow any operator, other than a reserved operator, to be matched by this rule.
       def Reserved2: Rule1[String] = rule {
-        capture("**" | "<=" | ">=" | "==" | "!=" | "&&" | "||" | "=>" | "->")
+        capture("**" | "<=" | ">=" | "==" | "!=" | "&&" | "||" | "=>" | "->" | "<-")
       }
 
       // NB: We allow any operator, other than a reserved operator, to be matched by this rule.
@@ -594,12 +594,16 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
       Ascribe ~ optional(WS ~ atomic("as") ~ WS ~ TypeAndEffect ~ SP ~> ParsedAst.Expression.Cast)
     }
 
+    def PutChannel: Rule1[ParsedAst.Expression.PutChannel] = rule {
+      SP ~ Expression ~ optWS ~ atomic("<-") ~ optWS ~ Expression ~ SP ~> ParsedAst.Expression.PutChannel
+    }
+
     def Ascribe: Rule1[ParsedAst.Expression] = rule {
       FAppend ~ optional(optWS ~ ":" ~ optWS ~ TypeAndEffect ~ SP ~> ParsedAst.Expression.Ascribe)
     }
 
     def Primary: Rule1[ParsedAst.Expression] = rule {
-      LetRec | LetMatch | IfThenElse | Match | LambdaMatch | Switch | Unsafe | TryCatch | Native | Lambda | Tuple |
+      LetRec | LetMatch | IfThenElse | PutChannel | Match | LambdaMatch | Switch | Unsafe | TryCatch | Native | Lambda | Tuple |
         ArrayLit | ArrayNew | FNil | FSet | FMap | Literal |
         HandleWith | Existential | Universal | UnaryLambda | QName | Wild | Tag | SName | Hole | UserError
     }
