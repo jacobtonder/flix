@@ -575,6 +575,16 @@ object ParsedAst {
     case class Match(sp1: SourcePosition, exp: ParsedAst.Expression, rules: Seq[ParsedAst.MatchRule], sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
+      * Select Expression (select first channel expression).
+      *
+      * @param sp1
+      * @param exp
+      * @param rules
+      * @param sp2
+      */
+    case class Select(sp1: SourcePosition, exp: ParsedAst.Expression, rules: Seq[ParsedAst.SelectRule], sp2: SourcePosition) extends ParsedAst.Expression
+
+    /**
       * Switch Expression.
       *
       * @param sp1   the position of the first character in the expression.
@@ -1267,6 +1277,8 @@ object ParsedAst {
     * @param exp   the body expression of the rule.
     */
   case class MatchRule(pat: ParsedAst.Pattern, guard: Option[ParsedAst.Expression], exp: ParsedAst.Expression) extends ParsedAst
+
+  case class SelectRule(pat: ParsedAst.Pattern) extends ParsedAst
 
   /**
     * Modifier.
