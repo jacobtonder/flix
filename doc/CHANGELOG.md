@@ -6,7 +6,7 @@ HEAD:
     - Added expression holes.
     - Vastly improved repl. (--interactive).
     - Work on parallelism.
-    
+    - Added full support for curried definitions.
 
 Version 0.2:
     - Added stratified negation (thanks Jason Mittertreiner).
