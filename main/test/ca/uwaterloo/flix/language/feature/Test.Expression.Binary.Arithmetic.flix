@@ -822,3 +822,4 @@ def testBinaryExponentiate31(): Bool = assertEq!(0.01f64 ** 0.5f64, 0.1f64)
 def testBinaryExponentiate32(): Bool = assertEq!(-2.0f64 ** 100.0f64, 1267650600228229400000000000000.0f64)
 
 
+
