@@ -614,17 +614,6 @@ class TestParser extends FunSuite with TestUtils {
     run(input)
   }
 
-  //test("Expression.Select.01") {
-  //  val input =
-  //    """def f(): Int =
-  //      | select {
-  //      |   case ch1 = <- ch => 1
-  //      |   case ch2 = <- ch => 2
-  //      | }
-  //   """.stripMargin
-  //  run(input)
-  //}
-
   test("Expression.Apply.01") {
     val input =
       """def f(): Int = 42
