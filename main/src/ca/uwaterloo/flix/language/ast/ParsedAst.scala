@@ -1287,7 +1287,7 @@ object ParsedAst {
 
   /**
     * Modifier.
-    *hy
+    *
     * @param sp1  the position of the first character in the modifier.
     * @param name the name of the modifier.
     * @param sp2  the position of the last character in the modifier.
