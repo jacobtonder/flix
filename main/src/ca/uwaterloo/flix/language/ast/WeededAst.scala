@@ -168,6 +168,8 @@ object WeededAst {
 
     case class UserError(loc: SourceLocation) extends WeededAst.Expression
 
+    /*case class Spawn(exp: WeededAst.Expression, loc: SourceLocation) extends WeededAst.Expression*/
+
   }
 
   sealed trait Pattern extends WeededAst {
