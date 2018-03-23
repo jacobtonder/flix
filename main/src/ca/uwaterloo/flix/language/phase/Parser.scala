@@ -631,7 +631,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     }
 
     def Select: Rule1[ParsedAst.Expression.Select] = {
-      def Rule: Rule1[ParsedAst.Expression] = rule {
+      def Rule: Rule1[ParsedAst.SelectRule] = rule {
         atomic("case") ~ WS ~ Names.Variable ~ optWS ~ "=" ~ optWS ~ Expression ~ optWS ~ atomic("=>") ~ optWS ~ Expression ~> ParsedAst.SelectRule
       }
 

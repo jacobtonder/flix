@@ -1279,11 +1279,11 @@ object ParsedAst {
 
   /**
     * A select channel rule consists of an identifier, a channel expression and an body expression.
-    * @param name  the identifier name.
+    * @param ident the identifier name.
     * @param exp1  the channel expression of the rule.
     * @param exp2  the body expression of the rule.
     */
-  case class SelectRule(name: String, exp1: ParsedAst.Expression, exp2: ParsedAst.Expression) extends ParsedAst
+  case class SelectRule(ident: Name.Ident, exp1: ParsedAst.Expression, exp2: ParsedAst.Expression) extends ParsedAst
 
   /**
     * Modifier.
