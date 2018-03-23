@@ -786,10 +786,9 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
       SP ~ atomic("∀" | "\\forall") ~ optWS ~ FormalParamList ~ optWS ~ "." ~ optWS ~ Expression ~ SP ~> ParsedAst.Expression.Universal
     }
 
-    /*def Spawn: Rule1[ParsedAst.Expression.Spawn] = rule {
+    def Spawn: Rule1[ParsedAst.Expression.Spawn] = rule {
       SP ~ atomic("spawn") ~ WS ~ Expression ~ SP ~> ParsedAst.Expression.Spawn
-    }*/
-
+    }
   }
 
 
