@@ -5,7 +5,6 @@ HEAD:
     - Added pub keyword.
     - Added expression holes.
     - Vastly improved repl. (--interactive).
-    - Work on parallelism.
     - Added full support for curried definitions.
     - Work on parallelism.
 
