@@ -1279,6 +1279,7 @@ object ParsedAst {
 
   /**
     * A select channel rule consists of an identifier, a channel expression and an body expression.
+    *
     * @param ident the identifier name.
     * @param exp1  the channel expression of the rule.
     * @param exp2  the body expression of the rule.
