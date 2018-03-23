@@ -610,10 +610,10 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
 
         case NamedAst.Expression.UserError(tvar, loc) => ResolvedAst.Expression.UserError(tvar, loc).toSuccess
 
-        case NamedAst.Expression.Spawn(exp, tvar, loc) =>
+        /*case NamedAst.Expression.Spawn(exp, tvar, loc) =>
           for {
-            e <- visit(exp)
-          } yield ResolvedAst.Expression.Spawn(e, tvar, loc)
+            e <- visit(exp, tenv0)
+          } yield ResolvedAst.Expression.Spawn(e, tvar, loc)*/
       }
 
       visit(exp0)

@@ -829,10 +829,10 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
         case ParsedAst.Expression.UserError(sp1, sp2) =>
           WeededAst.Expression.UserError(mkSL(sp1, sp2)).toSuccess
 
-        case ParsedAst.Expression.Spawn(sp1, exp, sp2) =>
+        /*case ParsedAst.Expression.Spawn(sp1, exp, sp2) =>
           visit(exp, unsafe) map {
             case (e) => WeededAst.Expression.Spawn(e, mkSL(sp1, sp2))
-          }
+          }*/
       }
 
       visit(exp0, unsafe = false)
@@ -1474,7 +1474,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
     case ParsedAst.Expression.NativeMethod(sp1, _, _, _) => sp1
     case ParsedAst.Expression.NativeConstructor(sp1, _, _, _) => sp1
     case ParsedAst.Expression.UserError(sp1, _) => sp1
-    case ParsedAst.Expression.Spawn(sp1, _, _) => sp1
+    /*case ParsedAst.Expression.Spawn(sp1, _, _) => sp1*/
   }
 
   /**
