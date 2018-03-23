@@ -548,7 +548,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
 
       // NB: We allow any operator, other than a reserved operator, to be matched by this rule.
       def Reserved2: Rule1[String] = rule {
-        capture("**" | "<=" | ">=" | "==" | "!=" | "&&" | "||" | "=>" | "->" | "<-")
+        capture("**" | "<=" | ">=" | "==" | "!=" | "&&" | "||" | "=>" | "->")
       }
 
       // NB: We allow any operator, other than a reserved operator, to be matched by this rule.
@@ -597,7 +597,6 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     def Cast: Rule1[ParsedAst.Expression] = rule {
       Ascribe ~ optional(WS ~ atomic("as") ~ WS ~ TypeAndEffect ~ SP ~> ParsedAst.Expression.Cast)
     }
-
 
     def Ascribe: Rule1[ParsedAst.Expression] = rule {
       FAppend ~ optional(optWS ~ ":" ~ optWS ~ TypeAndEffect ~ SP ~> ParsedAst.Expression.Ascribe)

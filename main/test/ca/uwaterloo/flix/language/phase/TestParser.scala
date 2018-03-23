@@ -438,7 +438,8 @@ class TestParser extends FunSuite with TestUtils {
         | """.stripMargin
     run(input)
   }
-test("Expression.LetMatch.03") {
+
+  test("Expression.LetMatch.03") {
     val input =
       """
         |def f(): Int =
