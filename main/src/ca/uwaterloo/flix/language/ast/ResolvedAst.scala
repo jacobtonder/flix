@@ -182,7 +182,7 @@ object ResolvedAst {
 
     case class UserError(tvar: Type.Var, loc: SourceLocation) extends ResolvedAst.Expression
 
-    /*case class Spawn(exp: ResolvedAst.Expression, tvar: Type.Var, loc: SourceLocation) extends ResolvedAst.Expression*/
+    case class Spawn(exp: ResolvedAst.Expression, tvar: Type.Var, loc: SourceLocation) extends ResolvedAst.Expression
 
   }
 
