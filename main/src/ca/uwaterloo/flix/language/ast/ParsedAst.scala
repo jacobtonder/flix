@@ -542,15 +542,6 @@ object ParsedAst {
     case class IfThenElse(sp1: SourcePosition, exp1: ParsedAst.Expression, exp2: ParsedAst.Expression, exp3: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
-      * Spawn Expression
-      *
-      * @param sp1 The position of the first character in the expression
-      * @param exp
-      * @param sp2 the position of the last character in the expression
-      */
-    case class Spawn(sp1: SourcePosition, exp: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
-
-    /**
       * LetMatch Expression (let-binding with pattern match).
       *
       * @param sp1  the position of the first character in the expression.
@@ -835,7 +826,7 @@ object ParsedAst {
       * @param exp the expression to be run concurrently
       * @param sp2 the position of the last character in the expression.
       */
-    case class Spawn(sp1: SourcePosition, exp: Expression, sp2: SourcePosition) extends ParsedAst.Expression
+    case class Spawn(sp1: SourcePosition, exp: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
 
   }
 
