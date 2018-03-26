@@ -128,7 +128,7 @@ object WeededAst {
 
     case class Match(exp: WeededAst.Expression, rules: List[WeededAst.MatchRule], loc: SourceLocation) extends WeededAst.Expression
 
-    case class Select(rules: List[WeededAst.SelectRule], loc: SourceLocation) extends WeededAst.Expression
+    case class SelectChannel(rules: List[WeededAst.SelectRule], loc: SourceLocation) extends WeededAst.Expression
 
     case class Switch(rules: List[(WeededAst.Expression, WeededAst.Expression)], loc: SourceLocation) extends WeededAst.Expression
 
