@@ -836,6 +836,13 @@ object ParsedAst {
       */
     case class Spawn(sp1: SourcePosition, exp: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
 
+    /**
+      *
+      * @param sp1 the position of the first character in the expression.
+      * @param exp the expression to get from.
+      * @param sp2 the position of the last character in the expression.
+      */
+    case class GetChannel(sp1: SourcePosition, exp: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
   }
 
   /**
