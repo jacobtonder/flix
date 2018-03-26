@@ -984,11 +984,11 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
         /*
          * Spawn expression.
          */
-        /*case ResolvedAst.Expression.Spawn(exp, tvar, loc) =>
+        case ResolvedAst.Expression.Spawn(exp, tvar, loc) =>
           for (
             tpe <- visitExp(exp);
             rtpe <- unifyM(tvar, tpe2, tpe3, loc)
-          ) yield rtpe*/
+          ) yield rtpe
 
       }
 

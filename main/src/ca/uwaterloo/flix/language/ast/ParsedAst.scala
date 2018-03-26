@@ -835,7 +835,7 @@ object ParsedAst {
       * @param exp the expression to be run concurrently
       * @param sp2 the position of the last character in the expression.
       */
-    /*case class Spawn(sp1: SourcePosition, exp: Expression, sp2: SourcePosition) extends ParsedAst.Expression*/
+    case class Spawn(sp1: SourcePosition, exp: Expression, sp2: SourcePosition) extends ParsedAst.Expression
 
   }
 
