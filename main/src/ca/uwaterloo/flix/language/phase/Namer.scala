@@ -633,15 +633,13 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
 
       case WeededAst.Expression.SelectChannel(rules, loc) => 
         val rulesVal = rules map {
-          case WeededAst.SelectRule(ident, channel, body) => 
-            val (i, env1) = Patterns.namer(ident)
-            val extendedEnv = env0 ++ env1
-            @@(namer(channel,extendedEnv, tenv0), namer(body,extendedEnv, tenv0)) map {
-              case (c, b) => NamedAst.SelectRule(i, c, b)
+          case WeededAst.SelectRule(ident, channel, body) =>
+            @@(namer(channel,env0, tenv0), namer(body,env0, tenv0)) map {
+              case (c, b) => NamedAst.SelectRule(ident, c, b)
             }
         }
         @@(rulesVal) map {
-          case rs => NamedAst.Expression.SelectChannel(rs, Type.freeTypeVars(), loc)
+          case rs => NamedAst.Expression.SelectChannel(rs, Type.freshTypeVar(), loc)
         }
 
       case WeededAst.Expression.Switch(rules, loc) => @@(rules map {
