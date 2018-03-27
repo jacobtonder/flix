@@ -467,7 +467,7 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
           }
 
           for {
-            rs <- segM(rulesVal)
+            rs <- seqM(rulesVal)
           } yield ResolvedAst.Expression.SelectChannel(rs, tvar, loc)
 
         case NamedAst.Expression.Switch(rules, tvar, loc) =>
