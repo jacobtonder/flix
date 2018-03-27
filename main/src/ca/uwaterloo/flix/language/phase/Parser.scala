@@ -604,7 +604,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     }
 
     def Primary: Rule1[ParsedAst.Expression] = rule {
-      Spawn | LetRec | LetMatch | IfThenElse | Match | LambdaMatch | Switch | Unsafe | TryCatch | Native | Lambda | Tuple |
+      Spawn | LetRec | LetMatch | IfThenElse | Match | LambdaMatch | SelectChannel | Switch | Unsafe | Native | Lambda | Tuple |
         ArrayLit | ArrayNew | FNil | FSet | FMap | Literal |
         HandleWith | Existential | Universal | UnaryLambda | QName | Wild | Tag | SName | Hole | UserError
     }
