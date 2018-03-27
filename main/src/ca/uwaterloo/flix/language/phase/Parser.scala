@@ -22,6 +22,7 @@ import ca.uwaterloo.flix.language.ast.{ParsedAst, _}
 import ca.uwaterloo.flix.util.{ParOps, Timer, Validation}
 import ca.uwaterloo.flix.util.Validation._
 import org.parboiled2
+import org.parboiled2.RuleTrace.ZeroOrMore
 import org.parboiled2._
 
 import scala.collection.immutable.Seq
@@ -549,7 +550,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
 
       // NB: We allow any operator, other than a reserved operator, to be matched by this rule.
       def Reserved2: Rule1[String] = rule {
-        capture("**" | "<=" | ">=" | "==" | "!=" | "&&" | "||" | "=>" | "->" | "<:")
+        capture("**" | "<=" | ">=" | "==" | "!=" | "&&" | "||" | "=>" | "->" | "<-")
       }
 
       // NB: We allow any operator, other than a reserved operator, to be matched by this rule.
@@ -792,7 +793,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     }
 
     def GetChannel: Rule1[ParsedAst.Expression.GetChannel] = rule {
-      SP ~ atomic("<:") ~ optWS ~ Expression ~ SP ~> ParsedAst.Expression.GetChannel
+      SP ~ atomic("<-") ~ optWS ~ Expression ~ optWS ~ SP ~> ParsedAst.Expression.GetChannel
     }
   }
 
