@@ -840,8 +840,8 @@ object ParsedAst {
       * New Channel Expression
       *
       * @param sp1 the position of the first character in the expression.
-      * @param exp the buffer expression of the channel (Default is 0)
       * @param tpe the type of the channel
+      * @param exp the optional buffer expression of the channel (Default is 0)
       * @param sp2 the position of the last character in the expressions
       */
     case class NewChannel(sp1: SourcePosition, tpe: ParsedAst.Type, exp: Option[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
