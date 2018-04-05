@@ -605,9 +605,17 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     }
 
     def Primary: Rule1[ParsedAst.Expression] = rule {
-      GetChannel | LetRec | LetMatch | IfThenElse | Match | LambdaMatch | SelectChannel | Switch | Unsafe | Native | Lambda | Tuple |
-        ArrayLit | ArrayNew | FNil | FSet | FMap | Literal |
-       HandleWith | Existential | Universal | UnaryLambda | QName | Wild | Tag | SName | Hole | UserError | Spawn
+        GetChannel | LetRec | LetMatch | IfThenElse | Match | LambdaMatch | SelectChannel | Switch | Unsafe | Native | Lambda | Tuple |
+        ArrayLit | ArrayNew | FNil | FSet | FMap | Literal | Spawn | NewChannel |
+        HandleWith | Existential | Universal | UnaryLambda | QName | Wild | Tag | SName | Hole | UserError
+    }
+
+    def Spawn: Rule1[ParsedAst.Expression.Spawn] = rule {
+      SP ~ atomic("spawn") ~ WS ~ Expression ~ SP ~> ParsedAst.Expression.Spawn
+    }
+
+    def NewChannel: Rule1[ParsedAst.Expression.NewChannel] = rule {
+      SP ~ atomic("channel") ~ WS ~ Type ~ optional(optWS ~ ":" ~ optWS ~ Expression) ~ SP ~> ParsedAst.Expression.NewChannel
     }
 
     def Literal: Rule1[ParsedAst.Expression.Lit] = rule {
@@ -786,10 +794,6 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
 
     def Universal: Rule1[ParsedAst.Expression.Universal] = rule {
       SP ~ atomic("∀" | "\\forall") ~ optWS ~ FormalParamList ~ optWS ~ "." ~ optWS ~ Expression ~ SP ~> ParsedAst.Expression.Universal
-    }
-
-    def Spawn: Rule1[ParsedAst.Expression.Spawn] = rule {
-      SP ~ atomic("spawn") ~ WS ~ Expression ~ SP ~> ParsedAst.Expression.Spawn
     }
 
     def GetChannel: Rule1[ParsedAst.Expression.GetChannel] = rule {
