@@ -21,8 +21,6 @@ import ca.uwaterloo.flix.language.CompilationError
 import ca.uwaterloo.flix.language.ast.{ParsedAst, _}
 import ca.uwaterloo.flix.util.{ParOps, Timer, Validation}
 import ca.uwaterloo.flix.util.Validation._
-import org.parboiled2
-import org.parboiled2.RuleTrace.ZeroOrMore
 import org.parboiled2._
 
 import scala.collection.immutable.Seq
