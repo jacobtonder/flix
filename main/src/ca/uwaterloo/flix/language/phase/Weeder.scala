@@ -835,6 +835,9 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
           }
 
         case ParsedAst.Expression.GetChannel(sp1, exp, sp2) =>
+          visit(exp,unsafe) map {
+            case (e) => WeededAst.Expression.GetChannel(e, mkSL(sp1, sp2))
+          }
 
           
         /*case ParsedAst.Expression.GetChannel(sp1, exp, sp2) =>
