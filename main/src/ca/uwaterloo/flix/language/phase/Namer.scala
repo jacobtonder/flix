@@ -773,17 +773,6 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
               case e => NamedAst.Expression.NewChannel(Some(e), Type.freshTypeVar(), loc)
             }
         }
-
-      case WeededAst.Expression.Tag(enum, tag, expOpt, loc) => expOpt match {
-        case None =>
-          // Case 1: The tag does not have an expression. Nothing more to be done.
-          NamedAst.Expression.Tag(enum, tag, None, Type.freshTypeVar(), loc).toSuccess
-        case Some(exp) =>
-          // Case 2: The tag has an expression. Perform naming on it.
-          namer(exp, env0, tenv0) map {
-            case e => NamedAst.Expression.Tag(enum, tag, Some(e), Type.freshTypeVar(), loc)
-          }
-      }
     }
 
     /**
