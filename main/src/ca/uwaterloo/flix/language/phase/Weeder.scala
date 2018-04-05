@@ -833,6 +833,9 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
           visit(exp, unsafe) map {
             case (e) => WeededAst.Expression.Spawn(e, mkSL(sp1, sp2))
           }
+
+        case ParsedAst.Expression.GetChannel(sp1, exp, sp2) =>
+
           
         /*case ParsedAst.Expression.GetChannel(sp1, exp, sp2) =>
           WeededAst.*/
@@ -1448,6 +1451,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
     case ParsedAst.Expression.Unary(sp1, _, _, _) => sp1
     case ParsedAst.Expression.Binary(e1, _, _, _) => leftMostSourcePosition(e1)
     case ParsedAst.Expression.IfThenElse(sp1, _, _, _, _) => sp1
+    case ParsedAst.Expression.GetChannel(sp1,_,_) => sp1
     case ParsedAst.Expression.LetMatch(sp1, _, _, _, _, _) => sp1
     case ParsedAst.Expression.LetRec(sp1, _, _, _, _) => sp1
     case ParsedAst.Expression.Match(sp1, _, _, _) => sp1
