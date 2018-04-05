@@ -765,6 +765,7 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
       case WeededAst.Expression.GetChannel(exp,loc) =>
         namer(exp,env0,tenv0) map {
           case (e) => NamedAst.Expression.GetChannel(e, Type.freshTypeVar(), loc)
+        }
 
       case WeededAst.Expression.NewChannel(expOpt, tpe, loc) =>
         expOpt match {
