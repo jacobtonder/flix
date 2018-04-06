@@ -625,7 +625,6 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
             e1 <- visit(exp1)
             e2 <- visit(exp2)
           } yield ResolvedAst.Expression.PutChannel(e1, e2, tvar, loc)
-
       }
 
       visit(exp0)
