@@ -830,11 +830,12 @@ object ParsedAst {
     /**
       * Spawn Expression (runs expression on new process)
       *
-      * @param sp1 the position of the first character in the expression.
-      * @param exp the expression to be run concurrently
-      * @param sp2 the position of the last character in the expression.
+      * @param sp1  the position of the first character in the expression.
+      * @param fn   the function to be run concurrently
+      * @param args the arguments to pass to the function
+      * @param sp2  the position of the last character in the expression.
       */
-    case class Spawn(sp1: SourcePosition, exp: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
+    case class Spawn(sp1: SourcePosition, fn: ParsedAst.Expression, args: Seq[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
       * GetChannel
