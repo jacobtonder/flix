@@ -825,7 +825,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
               // Case 1: NewChannel takes no expression that states the buffer size
               WeededAst.Expression.NewChannel(None, Types.weed(tpe), mkSL(sp1, sp2)).toSuccess
             case Some(exp) =>
-              // Case 1: NewChannel takes an expression that states the buffer size
+              // Case 2: NewChannel takes an expression that states the buffer size
               visit(exp, unsafe) map {
                 case e => WeededAst.Expression.NewChannel(Some(e), Types.weed(tpe), mkSL(sp1, sp2))
               }
@@ -833,7 +833,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
 
         case ParsedAst.Expression.GetChannel(sp1, exp, sp2) =>
           visit(exp,unsafe) map {
-            case (e) => WeededAst.Expression.GetChannel(e, mkSL(sp1, sp2))
+            case e => WeededAst.Expression.GetChannel(e, mkSL(sp1, sp2))
           }
         
         case ParsedAst.Expression.PutChannel(exp1, exp2, sp2) =>
@@ -844,13 +844,19 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
           }
 
         case ParsedAst.Expression.Spawn(sp1, fn, params, sp2) =>
+          val paramsVal = @@(params.map(p => Expressions.weed(p)))
           val fi = Name.Ident(sp1, "f", sp1)
-          visit(fn, unsafe) map {
-            case (e) => WeededAst.Expression.Let(fi, e, Nil, mkSL(fi.sp1, fi.sp2))
-          }
-          visit(exp, unsafe) map {
-            case (e) => WeededAst.Expression.Spawn(e, mkSL(sp1, sp2))
-          }
+
+
+          def createExpression(params: List[ParsedAst.Expression]): Validation[WeededAst.Expression, WeederError] =
+            val t = params match {
+              //case Nil    => WeededAst.Expression.
+              case h :: t =>
+                val param = Name.Ident(sp1, "p1", sp1)
+                @@(visit(h, unsafe), createExpression(t)) map {
+                  case (e1, e2) => WeededAst.Expression.Let(param, e1, e2, mkSL(sp1, sp2))
+                }
+            }
 
         case ParsedAst.Expression.SelectChannel(sp1, rules, sp2) =>
           val rulesVal = rules map {
