@@ -609,7 +609,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     }
 
     def Spawn: Rule1[ParsedAst.Expression.Spawn] = rule {
-      SP ~ atomic("spawn") ~ WS ~ Expression ~ optWS ~ ArgumentList ~ SP ~> ParsedAst.Expression.Spawn
+      SP ~ atomic("spawn") ~ WS ~ Names.Definition ~ optWS ~ ArgumentList ~ SP ~> ParsedAst.Expression.Spawn
     }
 
     def NewChannel: Rule1[ParsedAst.Expression.NewChannel] = rule {
@@ -691,6 +691,8 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     def Apply: Rule1[ParsedAst.Expression] = rule {
       ArrayLoad ~ zeroOrMore(ArgumentList ~ SP ~> ParsedAst.Expression.Apply)
     }
+
+
 
     def ArrayLoad: Rule1[ParsedAst.Expression] = rule {
       Primary ~ zeroOrMore(optWS ~ "[" ~ optWS ~ Expression ~ optWS ~ "]" ~ SP ~> ParsedAst.Expression.ArrayLoad)

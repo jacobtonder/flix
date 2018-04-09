@@ -835,7 +835,7 @@ object ParsedAst {
       * @param args the arguments to pass to the function
       * @param sp2  the position of the last character in the expression.
       */
-    case class Spawn(sp1: SourcePosition, fn: ParsedAst.Expression, args: Seq[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
+    case class Spawn(sp1: SourcePosition, fn: Name.Ident, args: Seq[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
       * GetChannel
