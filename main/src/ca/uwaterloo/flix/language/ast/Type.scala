@@ -395,7 +395,7 @@ object Type {
   }
 
   /**
-    * Constructs the array type [| a |] where `a` is the given type.
+    * Constructs the Channel type [| a |] where `a` is the given type.
     */
   def mkChannel(a: Type): Type = Apply(Channel, a)
 
