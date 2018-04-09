@@ -844,19 +844,36 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
           }
 
         case ParsedAst.Expression.Spawn(sp1, fn, params, sp2) =>
-          val paramsVal = @@(params.map(p => Expressions.weed(p)))
-          val fi = Name.Ident(sp1, "f", sp1)
+          val loc = mkSL(sp1, sp2)
+          val fi = Name.Ident(sp1, "f$", sp2)
+          val func = WeededAst.Expression.VarOrDef(Name.QName(sp1, Name.RootNS, fi, sp2), loc)
 
+          def createExpression(params: List[ParsedAst.Expression], arguments: List[Name.Ident], paramNumber: Int): Validation[WeededAst.Expression, WeederError] =
+            params match {
+              case Nil    =>
+                val args = arguments.reverse map {
+                  case v => WeededAst.Expression.VarOrDef(Name.QName(sp1, Name.RootNS, v, sp2), loc)
+                }
+                val exp = WeededAst.Expression.Apply(func, args, loc) // f(args)
 
-          def createExpression(params: List[ParsedAst.Expression]): Validation[WeededAst.Expression, WeederError] =
-            val t = params match {
-              //case Nil    => WeededAst.Expression.
+                // Wrapping function in a lambda function
+                val formalParam = WeededAst.FormalParam(Name.Ident(sp1, "_$", sp2), Ast.Modifiers.Empty, None, loc)
+                val lam = WeededAst.Expression.Lambda(List(formalParam), exp, loc) // _$ -> f(args)
+
+                // Spawn the lambda function
+                WeededAst.Expression.Spawn(lam, loc).toSuccess // spawn(_$ -> f(args))
+
               case h :: t =>
-                val param = Name.Ident(sp1, "p1", sp1)
-                @@(visit(h, unsafe), createExpression(t)) map {
-                  case (e1, e2) => WeededAst.Expression.Let(param, e1, e2, mkSL(sp1, sp2))
+                val param = Name.Ident(sp1, s"x\$${paramNumber}", sp2)
+
+                @@(visit(h, unsafe), createExpression(t, param :: arguments, paramNumber + 1)) map {
+                  case (e1, e2) => WeededAst.Expression.Let(param, e1, e2, loc) // let x$n = en
                 }
             }
+
+          @@(visit(fn, unsafe), createExpression(params.toList, List.empty, 1)) map {
+            case (e1, e2) => WeededAst.Expression.Let(fi, e1, e2, loc) // let f$ = func
+          }
 
         case ParsedAst.Expression.SelectChannel(sp1, rules, sp2) =>
           val rulesVal = rules map {
