@@ -845,7 +845,7 @@ object ParsedAst {
       * @param sp2  the position of the last character in the expression.
       */
     case class Spawn(sp1: SourcePosition, fn: Name.Ident, args: Seq[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
-    
+
     /**
       * Select Expression (select first channel expression).
       *
