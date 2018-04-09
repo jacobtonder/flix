@@ -52,7 +52,6 @@ sealed trait Type {
     case Type.Tuple(l) => Set.empty
     case Type.Enum(enumName, kind) => Set.empty
     case Type.Apply(tpe1, tpe2) => tpe1.typeVars ++ tpe2.typeVars
-    case Type.Channel
   }
 
   /**
