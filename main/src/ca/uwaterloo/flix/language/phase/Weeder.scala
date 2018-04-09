@@ -849,6 +849,13 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
 
           def createExpression(params: List[ParsedAst.Expression], arguments: List[Name.Ident], paramNumber: Int): Validation[WeededAst.Expression, WeederError] =
             params match {
+              case h :: t =>
+                val param = Name.Ident(sp1, s"x$${paramNumber}", sp2)
+
+                @@(visit(h, unsafe), createExpression(t, param :: arguments, paramNumber + 1)) map {
+                  case (e1, e2) => WeededAst.Expression.Let(param, e1, e2, loc) // let x$n = en
+                }
+
               case Nil    =>
                 val args = arguments.reverse map {
                   case v => WeededAst.Expression.VarOrDef(Name.QName(sp1, Name.RootNS, v, sp2), loc)
@@ -861,13 +868,6 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
 
                 // Spawn the lambda function
                 WeededAst.Expression.Spawn(lam, loc).toSuccess // spawn(_$ -> f(args))
-
-              case h :: t =>
-                val param = Name.Ident(sp1, s"x$${paramNumber}", sp2)
-
-                @@(visit(h, unsafe), createExpression(t, param :: arguments, paramNumber + 1)) map {
-                  case (e1, e2) => WeededAst.Expression.Let(param, e1, e2, loc) // let x$n = en
-                }
             }
 
           createExpression(params.toList, List.empty, 1)
