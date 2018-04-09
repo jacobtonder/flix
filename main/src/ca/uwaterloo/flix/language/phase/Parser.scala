@@ -692,8 +692,6 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
       ArrayLoad ~ zeroOrMore(ArgumentList ~ SP ~> ParsedAst.Expression.Apply)
     }
 
-
-
     def ArrayLoad: Rule1[ParsedAst.Expression] = rule {
       Primary ~ zeroOrMore(optWS ~ "[" ~ optWS ~ Expression ~ optWS ~ "]" ~ SP ~> ParsedAst.Expression.ArrayLoad)
     }
