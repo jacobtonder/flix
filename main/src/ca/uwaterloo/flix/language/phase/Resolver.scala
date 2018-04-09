@@ -598,9 +598,9 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
         case NamedAst.Expression.UserError(tvar, loc) => ResolvedAst.Expression.UserError(tvar, loc).toSuccess
 
         case NamedAst.Expression.NewChannel(exp, tvar, loc) =>
-              for {
-                e <- visit(exp)
-              } yield ResolvedAst.Expression.NewChannel(e, tvar, loc)
+          for {
+            e <- visit(exp)
+          } yield ResolvedAst.Expression.NewChannel(e, tvar, loc)
 
         case NamedAst.Expression.GetChannel(exp, tvar, loc) =>
           for {
