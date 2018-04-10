@@ -218,6 +218,7 @@ object TypedAst {
 
     case class UserError(tpe: Type, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
 
+    case class NewChannel(tpe: Type, exp:TypedAst.Expression, loc: SourceLocation) extends TypedAst.Expression
   }
 
   sealed trait Pattern extends TypedAst {

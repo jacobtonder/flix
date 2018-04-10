@@ -853,7 +853,20 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
               val bufferSize = WeededAst.Expression.Int32(lit = 0, mkSL(sp2, sp2))
               WeededAst.Expression.NewChannel(bufferSize, Types.weed(tpe), mkSL(sp1, sp2)).toSuccess
             case Some(exp) =>
-              // Case 1: NewChannel takes an expression that states the buffer size
+              /*
+              exp match {
+                case l: WeededAst.Expression.Int32 =>
+                  if(l < 0)
+                    IllegalBufferSize(mkSL(sp1, sp2)).toFailure
+                  else
+                    visit(exp, unsafe) map {
+                      case e => WeededAst.Expression.NewChannel(e, Types.weed(tpe), mkSL(sp1, sp2))
+                    }
+                case default =>
+                  visit(exp, unsafe) map {
+                    case e => WeededAst.Expression.NewChannel(e, Types.weed(tpe), mkSL(sp1, sp2))
+                  } */
+
               visit(exp, unsafe) map {
                 case e => WeededAst.Expression.NewChannel(e, Types.weed(tpe), mkSL(sp1, sp2))
               }
