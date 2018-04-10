@@ -525,6 +525,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     }
 
     def Relational: Rule1[ParsedAst.Expression] = rule {
+      // Hard whitespace is required in order to use the <- for channels
       Shift ~ optional(WS ~ capture(atomic("<=") | atomic(">=") | atomic("<") | atomic(">")) ~ WS ~ Shift ~ SP ~> ParsedAst.Expression.Binary)
     }
 
@@ -603,13 +604,13 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     }
 
     def Primary: Rule1[ParsedAst.Expression] = rule {
-        GetChannel | LetRec | LetMatch | IfThenElse | Match | LambdaMatch | SelectChannel | Switch | Unsafe | Native | Lambda | Tuple |
-        ArrayLit | ArrayNew | FNil | FSet | FMap | Literal | Spawn | NewChannel |
+        GetChannel | LetRec | LetMatch | IfThenElse | Match | LambdaMatch  | Switch | Unsafe | Native | Lambda | Tuple |
+        ArrayLit | ArrayNew | FNil | FSet | FMap | Literal | NewChannel | Spawn | SelectChannel |
         HandleWith | Existential | Universal | UnaryLambda | QName | Wild | Tag | SName | Hole | UserError
     }
 
     def Spawn: Rule1[ParsedAst.Expression.Spawn] = rule {
-      SP ~ atomic("spawn") ~ WS ~ Expression ~ SP ~> ParsedAst.Expression.Spawn
+      SP ~ atomic("spawn") ~ WS ~ Names.Definition ~ optWS ~ ArgumentList ~ SP ~> ParsedAst.Expression.Spawn
     }
 
     def NewChannel: Rule1[ParsedAst.Expression.NewChannel] = rule {
