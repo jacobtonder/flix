@@ -95,36 +95,36 @@ class TestTyper extends FunSuite with TestUtils {
   }
 
   test("Expression.NewChannel.TypeError.Channel[Int].IllegalBuffersizeType") {
-    val input = "def t(): Channel[Int] = channel Int
-                  def f(): Channel[Int] = channel Int:t()"
+    val input = """def t(): Channel[Int] = channel Int
+                  |def f(): Channel[Int] = channel Int:t()""".stripMargin
     val result = new Flix().addStr(input).compile()
     expectError[UnificationError](result)
   }
 
   test("Expression.NewChannel.TypeError.Channel[Str].IllegalBuffersizeType") {
-    val input = "def t(): Channel[Int] = channel Int
-                  def f(): Channel[Int] = channel Int:t()"
+    val input = """def t(): Channel[Int] = channel Int
+                  |def f(): Channel[Int] = channel Int:t()""".stripMargin
     val result = new Flix().addStr(input).compile()
     expectError[UnificationError](result)
   }
 
   test("Expression.NewChannel.TypeError.Channel[Char].IllegalBuffersizeType") {
-    val input = "def t(): Channel[Int] = channel Int
-                  def f(): Channel[Int] = channel Int:t()"
+    val input = """def t(): Channel[Int] = channel Int
+                  |def f(): Channel[Int] = channel Int:t()""".stripMargin
     val result = new Flix().addStr(input).compile()
     expectError[UnificationError](result)
   }
 
   test("Expression.NewChannel.TypeError.Channel[Bool].IllegalBuffersizeType") {
-    val input = "def t(): Channel[Int] = channel Int
-                  def f(): Channel[Int] = channel Int:t()"
+    val input = """def t(): Channel[Int] = channel Int
+                  |def f(): Channel[Int] = channel Int:t()""".stripMargin
     val result = new Flix().addStr(input).compile()
     expectError[UnificationError](result)
   }
 
   test("Expression.NewChannel.TypeError.Channel[Unit].IllegalBuffersizeType") {
-    val input = "def t(): Channel[Int] = channel Int
-                  def f(): Channel[Int] = channel Int:t()"
+    val input = """def t(): Channel[Int] = channel Int
+                  |def f(): Channel[Int] = channel Int:t()""".stripMargin
     val result = new Flix().addStr(input).compile()
     expectError[UnificationError](result)
   }
