@@ -190,6 +190,8 @@ object TypedAst {
 
     case class ArrayStore(base: TypedAst.Expression, index: TypedAst.Expression, value: TypedAst.Expression, tpe: Type, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
 
+    case class NewChannel(exp:TypedAst.Expression, tpe: Type,  eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
+
     case class Ref(exp: TypedAst.Expression, tpe: Type, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
 
     case class Deref(exp: TypedAst.Expression, tpe: Type, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
@@ -217,8 +219,6 @@ object TypedAst {
     case class NativeMethod(method: Method, args: List[TypedAst.Expression], tpe: Type, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
 
     case class UserError(tpe: Type, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
-
-    case class NewChannel(tpe: Type, exp:TypedAst.Expression, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
   }
 
   sealed trait Pattern extends TypedAst {

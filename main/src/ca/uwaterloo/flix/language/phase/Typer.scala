@@ -974,7 +974,8 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           //  channel t e : Channel[e]: t
           //
           for {
-            tpe1 <- visitExp(exp)
+            texp <- visitExp(exp)
+            tpe1 <- unifyM(texp, Type.Int32, loc)
             resultType <- unifyM(Type.mkChannel(tvar), Type.mkChannel(tvar), loc)
           } yield resultType
 
@@ -1161,6 +1162,13 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           val i = visitExp(index, subst0)
           val v = visitExp(value, subst0)
           TypedAst.Expression.ArrayStore(b, i, v, subst0(tvar), Eff.Bot, loc)
+
+        /*
+         * New Channel expression.
+         */
+        case ResolvedAst.Expression.NewChannel(exp, tvar, loc) =>
+          val e = visitExp(exp, subst0)
+          TypedAst.Expression.NewChannel(e, subst0(tvar), Eff.Bot, loc)
 
         /*
          * Reference expression.
