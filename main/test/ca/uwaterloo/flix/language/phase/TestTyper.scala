@@ -67,4 +67,24 @@ class TestTyper extends FunSuite with TestUtils {
     expectError[UnificationError](result)
   }
 
+  /////////////////////////////////////////////////////////////////////////////
+  // Channels                                                                //
+  /////////////////////////////////////////////////////////////////////////////
+  test("Expression.NewChannel.TypeError.String.IllegalBuffersizeType") {
+    val input = "def f(): Channel[Int] = channel Int:\"Str\""
+    val result = new Flix.addStr(input).compile()
+    expectError[UnificationError](result)
+  }
+
+  test("Expression.NewChannel.TypeError.Bool.IllegalBuffersizeType") {
+    val input = "def f(): Channel[Int] = channel Int:true"
+    val result = new Flix.addStr(input).compile()
+    expectError[UnificationError](result)
+  }
+
+  // test("Expression.NewChannel.TypeError.Bool.IllegalBuffersizeType") {
+  //   val input = "def f(): Channel[Int] = channel Int:true"
+  //   val result = new Flix.addStr(input).compile()
+  //   expectError[UnificationError](result)
+  // }
 }
