@@ -826,6 +826,28 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           } yield resultType
 
         /*
+         * NewChannel expression.
+         */
+        case ResolvedAst.Expression.NewChannel(exp, tvar, loc) =>
+          //
+          //  e: Int32
+          //  -----------------------------------
+          //  channel t e : Channel[e]: t
+          //
+          for {
+            texp <- visitExp(exp)
+            t <- texp match {
+              case Type.Int8 => unifyM(texp, Type.Int8, loc)
+              case Type.Int16 => unifyM(texp, Type.Int16, loc)
+              case Type.Int32 => unifyM(texp, Type.Int32, loc)
+              case Type.Int64 => unifyM(texp, Type.Int64, loc)
+              case Type.BigInt => unifyM(texp, Type.BigInt, loc)
+            }
+              
+            resultType <- unifyM(Type.mkChannel(tvar), Type.mkChannel(tvar), loc)
+          } yield resultType
+
+        /*
          * Reference expression.
          */
         case ResolvedAst.Expression.Ref(exp, tvar, loc) =>
@@ -963,21 +985,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
          * User Error expression.
          */
         case ResolvedAst.Expression.UserError(tvar, loc) => liftM(tvar)
-
-        /*
-       * NewChannel expression.
-       */
-        case ResolvedAst.Expression.NewChannel(exp, tvar, loc) =>
-          //
-          //  e: Int32
-          //  -----------------------------------
-          //  channel t e : Channel[e]: t
-          //
-          for {
-            texp <- visitExp(exp)
-            tpe1 <- unifyM(texp, Type.Int32, loc)
-            resultType <- unifyM(Type.mkChannel(tvar), Type.mkChannel(tvar), loc)
-          } yield resultType
 
       }
 
