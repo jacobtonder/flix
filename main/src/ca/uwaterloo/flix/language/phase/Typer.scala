@@ -684,6 +684,12 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
             rtpe <- unifyM(tvar, tpe2, tpe3, loc)
           ) yield rtpe
 
+        case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
+          for (
+            tpe  <- visitExp(exp);
+            rtpe <- unifyM(tvar, tpe, loc)
+          ) yield rtpe
+
         /*
          * Match expression.
          */
@@ -1062,6 +1068,13 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           val e2 = visitExp(exp2, subst0)
           val e3 = visitExp(exp3, subst0)
           TypedAst.Expression.IfThenElse(e1, e2, e3, subst0(tvar), Eff.Bot, loc)
+
+        /*
+         * Get channel expression
+         */
+        case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
+          val e = visitExp(exp, subst0)
+          TypedAst.Expression.GetChannel(e, subst0(tvar), Eff.Bot, loc)
 
         /*
          * Let expression.

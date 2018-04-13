@@ -258,6 +258,10 @@ object Monomorph extends Phase[TypedAst.Root, TypedAst.Root] {
           val e3 = visitExp(exp3, env0)
           Expression.IfThenElse(e1, e2, e3, subst0(tpe), eff, loc)
 
+        case Expression.GetChannel(exp, tpe, eff, loc) =>
+          val e = visitExp(exp, env0)
+          Expression.GetChannel(e, subst0(tpe), eff, loc)
+
         case Expression.Match(exp, rules, tpe, eff, loc) =>
           val rs = rules map {
             case TypedAst.MatchRule(pat, guard, body) =>

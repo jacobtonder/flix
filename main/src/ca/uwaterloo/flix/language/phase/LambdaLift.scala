@@ -163,6 +163,8 @@ object LambdaLift extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
         Expression.Binary(sop, op, visit(exp1), visit(exp2), tpe, loc)
       case Expression.IfThenElse(exp1, exp2, exp3, tpe, loc) =>
         Expression.IfThenElse(visit(exp1), visit(exp2), visit(exp3), tpe, loc)
+      case Expression.GetChannel(exp, tpe, loc) =>
+        Expression.GetChannel(visit(exp), tpe, loc)
       case Expression.Branch(exp, branches, tpe, loc) =>
         val e = visit(exp)
         val bs = branches map {

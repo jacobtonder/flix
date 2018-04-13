@@ -204,6 +204,8 @@ object CreateExecutableAst extends Phase[SimplifiedAst.Root, ExecutableAst.Root]
         ExecutableAst.Expression.Binary(sop, op, toExecutable(exp1), toExecutable(exp2), tpe, loc)
       case SimplifiedAst.Expression.IfThenElse(exp1, exp2, exp3, tpe, loc) =>
         ExecutableAst.Expression.IfThenElse(toExecutable(exp1), toExecutable(exp2), toExecutable(exp3), tpe, loc)
+      case SimplifiedAst.Expression.GetChannel(exp, tpe, loc) =>
+        ExecutableAst.Expression.GetChannel(toExecutable(exp), tpe, loc)
       case SimplifiedAst.Expression.Branch(exp, branches, tpe, loc) =>
         val e = toExecutable(exp)
         val bs = branches map {
