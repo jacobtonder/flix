@@ -139,7 +139,6 @@ object TreeShaker extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       case Expression.Unary(sop, op, exp, tpe, loc) => visitExp(exp)
       case Expression.Binary(sop, op, exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2)
       case Expression.IfThenElse(exp1, exp2, exp3, tpe, loc) => visitExp(exp1) ++ visitExp(exp2) ++ visitExp(exp3)
-      case Expression.GetChannel(exp, tpe, loc) => visitExp(exp)
       case Expression.Branch(exp, branches, tpe, loc) => visitExp(exp) ++ visitExps(branches.values.toList)
       case Expression.JumpTo(sym, tpe, loc) => Set.empty
       case Expression.Let(sym, exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2)
@@ -153,6 +152,7 @@ object TreeShaker extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       case Expression.ArrayLit(elms, tpe, loc) => visitExps(elms)
       case Expression.ArrayLoad(base, index, tpe, loc) => visitExp(base) ++ visitExp(index)
       case Expression.ArrayStore(base, index, value, tpe, loc) => visitExp(base) ++ visitExp(index) ++ visitExp(value)
+      case Expression.GetChannel(exp, tpe, loc) => visitExp(exp)
       case Expression.Ref(exp, tpe, loc) => visitExp(exp)
       case Expression.Deref(exp, tpe, loc) => visitExp(exp)
       case Expression.Assign(exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2)

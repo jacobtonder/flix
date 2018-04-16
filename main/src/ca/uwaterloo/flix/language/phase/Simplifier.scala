@@ -356,8 +356,6 @@ object Simplifier extends Phase[TypedAst.Root, SimplifiedAst.Root] {
 
       case TypedAst.Expression.IfThenElse(e1, e2, e3, tpe, eff, loc) =>
         SimplifiedAst.Expression.IfThenElse(visitExp(e1), visitExp(e2), visitExp(e3), tpe, loc)
-      case TypedAst.Expression.GetChannel(e, tpe, eff, loc) =>
-        SimplifiedAst.Expression.GetChannel(visitExp(e), tpe, loc)
       case TypedAst.Expression.Switch(rules, tpe, eff, loc) =>
         val zero = SimplifiedAst.Expression.SwitchError(tpe, loc)
         rules.foldRight(zero: SimplifiedAst.Expression) {
@@ -406,6 +404,9 @@ object Simplifier extends Phase[TypedAst.Root, SimplifiedAst.Root] {
         val i = visitExp(index)
         val v = visitExp(value)
         SimplifiedAst.Expression.ArrayStore(b, i, v, tpe, loc)
+
+      case TypedAst.Expression.GetChannel(e, tpe, eff, loc) =>
+        SimplifiedAst.Expression.GetChannel(visitExp(e), tpe, loc)
 
       case TypedAst.Expression.Ref(exp, tpe, eff, loc) =>
         val e = visitExp(exp)

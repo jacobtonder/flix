@@ -684,12 +684,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
             rtpe <- unifyM(tvar, tpe2, tpe3, loc)
           ) yield rtpe
 
-        case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
-          for (
-            tpe  <- visitExp(exp);
-            rtpe <- unifyM(tvar, tpe, loc)
-          ) yield rtpe
-
         /*
          * Match expression.
          */
@@ -829,6 +823,15 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
             arrayType <- unifyM(baseType, Type.mkArray(valueType), loc)
             resultType <- unifyM(tvar, Type.Unit, loc)
           } yield resultType
+
+        /*
+         * GetChannel expression.
+         */
+        case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
+          for (
+            tpe  <- visitExp(exp);
+            rtpe <- unifyM(tvar, tpe, loc)
+          ) yield rtpe
 
         /*
          * Reference expression.
@@ -1070,13 +1073,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           TypedAst.Expression.IfThenElse(e1, e2, e3, subst0(tvar), Eff.Bot, loc)
 
         /*
-         * Get channel expression
-         */
-        case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
-          val e = visitExp(exp, subst0)
-          TypedAst.Expression.GetChannel(e, subst0(tvar), Eff.Bot, loc)
-
-        /*
          * Let expression.
          */
         case ResolvedAst.Expression.Let(sym, exp1, exp2, tvar, loc) =>
@@ -1159,6 +1155,13 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           val i = visitExp(index, subst0)
           val v = visitExp(value, subst0)
           TypedAst.Expression.ArrayStore(b, i, v, subst0(tvar), Eff.Bot, loc)
+
+        /*
+         * GetChannel expression
+         */
+        case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
+          val e = visitExp(exp, subst0)
+          TypedAst.Expression.GetChannel(e, subst0(tvar), Eff.Bot, loc)
 
         /*
          * Reference expression.

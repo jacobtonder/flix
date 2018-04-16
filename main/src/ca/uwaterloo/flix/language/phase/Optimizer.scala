@@ -170,13 +170,6 @@ object Optimizer extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
         }
 
       //
-      // Get-channel Expressions.
-      //
-      case Expression.GetChannel(exp, tpe, loc) =>
-        val e = visitExp(exp, env0)
-        Expression.GetChannel(e, tpe, loc)
-
-      //
       // Block Expressions.
       //
       case Expression.Branch(exp, branches, tpe, loc) =>
@@ -283,6 +276,13 @@ object Optimizer extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
         val i = visitExp(index, env0)
         val v = visitExp(index, env0)
         Expression.ArrayStore(b, i, v, tpe, loc)
+
+      //
+      // Get-channel Expressions.
+      //
+      case Expression.GetChannel(exp, tpe, loc) =>
+        val e = visitExp(exp, env0)
+        Expression.GetChannel(e, tpe, loc)
 
       //
       // Reference Expressions.

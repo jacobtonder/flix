@@ -105,9 +105,6 @@ object VarNumbering extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
         val i2 = visitExp(exp2, i1)
         visitExp(exp3, i2)
 
-      case Expression.GetChannel(exp, tpe, loc) =>
-        visitExp(exp, i0)
-
       case Expression.Branch(exp, branches, tpe, loc) =>
         val i1 = visitExp(exp, i0)
         visitExps(branches.values.toList, i1)
@@ -155,6 +152,8 @@ object VarNumbering extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
         val i1 = visitExp(base, i0)
         val i2 = visitExp(index, i1)
         visitExp(value, i2)
+      case Expression.GetChannel(exp, tpe, loc) =>
+        visitExp(exp, i0)
       case Expression.Ref(exp, tpe, loc) => visitExp(exp, i0)
       case Expression.Deref(exp, tpe, loc) => visitExp(exp, i0)
       case Expression.Assign(exp1, exp2, tpe, loc) =>
