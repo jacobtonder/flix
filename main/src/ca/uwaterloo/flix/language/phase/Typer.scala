@@ -828,6 +828,9 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
          * GetChannel expression.
          */
         case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
+          // exp : Channel[t]
+          // ----------------
+          // <- exp : t
           for (
             tpe  <- visitExp(exp);
             rtpe <- unifyM(tvar, tpe, loc)
@@ -837,6 +840,9 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
          * Put-channel expression.
          */
         case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
+          // exp1 : Channel[t]    exp2: t
+          // ----------------------------
+          // exp1 <- exp2 : Channel[t]
           for (
             tpe1 <- visitExp(exp1);
             tpe2 <- visitExp(exp2);
