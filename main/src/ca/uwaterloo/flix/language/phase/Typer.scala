@@ -834,6 +834,16 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           ) yield rtpe
 
         /*
+         * Put-channel expression.
+         */
+        case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
+          for (
+            tpe1 <- visitExp(exp1);
+            tpe2 <- visitExp(exp2);
+            rtpe <- unifyM(tvar, tpe1, tpe2, loc)
+          ) yield rtpe
+
+        /*
          * Reference expression.
          */
         case ResolvedAst.Expression.Ref(exp, tvar, loc) =>
@@ -1162,6 +1172,14 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
         case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
           val e = visitExp(exp, subst0)
           TypedAst.Expression.GetChannel(e, subst0(tvar), Eff.Bot, loc)
+
+        /*
+         * Put-channel expression.
+         */
+        case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
+          val e1 = visitExp(exp1, subst0)
+          val e2 = visitExp(exp2, subst0)
+          TypedAst.Expression.PutChannel(e1, e2, subst0(tvar), Eff.Bot, loc)
 
         /*
          * Reference expression.
