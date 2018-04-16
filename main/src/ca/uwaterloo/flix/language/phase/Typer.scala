@@ -834,6 +834,27 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
             rtpe <- unifyM(tvar, tpe1, tpe2, loc)
           ) yield rtpe
 
+        /**
+          * SelectChannel expression.
+          */
+        case ResolvedAst.Expression.SelectChannel(rules, tvar, loc) =>
+          //
+          //  fjkdsl
+          //  -------------------------
+          //
+          assert(rules.nonEmpty)
+          // Extract the symbols, channels, and body expressions of each rule-
+          val symbols = rules.map(_.sym)
+          val channels = rules.map(_.exp1)
+          val bodies = rules.map(_.exp2)
+
+          for {
+            channelTypes <- seqM(channels map visitExp)
+            //channelType <- unifyM()
+            actualBodyTypes <- seqM(bodies map visitExp)
+            resultType <- unifyM(tvar :: actualBodyTypes, loc)
+          } yield resultType
+
         /*
          * Reference expression.
          */
@@ -1158,12 +1179,24 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           TypedAst.Expression.ArrayStore(b, i, v, subst0(tvar), Eff.Bot, loc)
 
         /*
-         * Put-channel expression.
+         * PutChannel expression.
          */
         case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
           val e1 = visitExp(exp1, subst0)
           val e2 = visitExp(exp2, subst0)
           TypedAst.Expression.PutChannel(e1, e2, subst0(tvar), Eff.Bot, loc)
+
+        /**
+          * SelectChannel expression.
+          */
+        case ResolvedAst.Expression.SelectChannel(rules, tvar, loc) =>
+          val rs = rules map {
+            case ResolvedAst.SelectRule(sym, channel, body) =>
+              val c = visitExp(channel, subst0)
+              val b = visitExp(body, subst0)
+              TypedAst.SelectRule(sym, c, b)
+          }
+          TypedAst.Expression.SelectChannel(rs, subst0(tvar), Eff.Bot, loc)
 
         /*
          * Reference expression.
