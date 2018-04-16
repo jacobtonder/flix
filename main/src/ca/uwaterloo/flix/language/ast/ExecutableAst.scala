@@ -223,8 +223,6 @@ object ExecutableAst {
 
     case class IfThenElse(exp1: ExecutableAst.Expression, exp2: ExecutableAst.Expression, exp3: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
 
-    case class PutChannel(exp1: ExecutableAst.Expression, exp2: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends  ExecutableAst.Expression
-
     case class Branch(exp: ExecutableAst.Expression, branches: Map[Symbol.LabelSym, ExecutableAst.Expression], tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
 
     case class JumpTo(sym: Symbol.LabelSym, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
@@ -253,6 +251,8 @@ object ExecutableAst {
     case class ArrayLoad(base: ExecutableAst.Expression, index: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
 
     case class ArrayStore(base: ExecutableAst.Expression, index: ExecutableAst.Expression, value: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
+
+    case class PutChannel(exp1: ExecutableAst.Expression, exp2: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends  ExecutableAst.Expression
 
     case class Ref(exp: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
 

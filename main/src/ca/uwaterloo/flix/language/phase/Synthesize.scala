@@ -151,11 +151,6 @@ object Synthesize extends Phase[Root, Root] {
         val e3 = visitExp(exp3)
         Expression.IfThenElse(e1, e2, e3, tpe, eff, loc)
 
-      case Expression.PutChannel(exp1, exp2, tpe, eff, loc) =>
-        val e1 = visitExp(exp1)
-        val e2 = visitExp(exp2)
-        Expression.PutChannel(e1, e2, tpe, eff, loc)
-
       case Expression.Match(exp, rules, tpe, eff, loc) =>
         val e = visitExp(exp)
         val rs = rules map {
@@ -195,6 +190,11 @@ object Synthesize extends Phase[Root, Root] {
         val i = visitExp(index)
         val v = visitExp(value)
         Expression.ArrayStore(b, i, v, tpe, eff, loc)
+
+      case Expression.PutChannel(exp1, exp2, tpe, eff, loc) =>
+        val e1 = visitExp(exp1)
+        val e2 = visitExp(exp2)
+        Expression.PutChannel(e1, e2, tpe, eff, loc)
 
       case Expression.Ref(exp, tpe, eff, loc) =>
         val e = visitExp(exp)

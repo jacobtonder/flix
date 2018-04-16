@@ -684,16 +684,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
             rtpe <- unifyM(tvar, tpe2, tpe3, loc)
           ) yield rtpe
 
-         /*
-          * Put-channel expression.
-          */
-        case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
-          for (
-            tpe1 <- visitExp(exp1);
-            tpe2 <- visitExp(exp2);
-            rtpe <- unifyM(tvar, tpe1, tpe2, loc)
-          ) yield rtpe
-
         /*
          * Match expression.
          */
@@ -833,6 +823,16 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
             arrayType <- unifyM(baseType, Type.mkArray(valueType), loc)
             resultType <- unifyM(tvar, Type.Unit, loc)
           } yield resultType
+
+        /*
+         * Put-channel expression.
+         */
+        case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
+          for (
+            tpe1 <- visitExp(exp1);
+            tpe2 <- visitExp(exp2);
+            rtpe <- unifyM(tvar, tpe1, tpe2, loc)
+          ) yield rtpe
 
         /*
          * Reference expression.
@@ -1074,13 +1074,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           TypedAst.Expression.IfThenElse(e1, e2, e3, subst0(tvar), Eff.Bot, loc)
 
         /*
-         * Put-channel expression.
-         */
-        case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
-          val e1 = visitExp(exp1, subst0)
-          val e2 = visitExp(exp2, subst0)
-          TypedAst.Expression.PutChannel(e1, e2, subst0(tvar), Eff.Bot, loc)
-        /*
          * Let expression.
          */
         case ResolvedAst.Expression.Let(sym, exp1, exp2, tvar, loc) =>
@@ -1163,6 +1156,14 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           val i = visitExp(index, subst0)
           val v = visitExp(value, subst0)
           TypedAst.Expression.ArrayStore(b, i, v, subst0(tvar), Eff.Bot, loc)
+
+        /*
+         * Put-channel expression.
+         */
+        case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
+          val e1 = visitExp(exp1, subst0)
+          val e2 = visitExp(exp2, subst0)
+          TypedAst.Expression.PutChannel(e1, e2, subst0(tvar), Eff.Bot, loc)
 
         /*
          * Reference expression.

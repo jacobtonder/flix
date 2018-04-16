@@ -113,9 +113,6 @@ object ClosureConv {
     case Expression.IfThenElse(e1, e2, e3, tpe, loc) =>
       Expression.IfThenElse(convert(e1), convert(e2), convert(e3), tpe, loc)
 
-    case Expression.PutChannel(e1, e2, tpe, loc) =>
-      Expression.PutChannel(convert(e1), convert(e2), tpe, loc)
-
     case Expression.Branch(exp, branches, tpe, loc) =>
       val e = convert(exp)
       val bs = branches map {
@@ -165,6 +162,9 @@ object ClosureConv {
       val i = convert(index)
       val v = convert(value)
       Expression.ArrayStore(b, i, v, tpe, loc)
+
+    case Expression.PutChannel(e1, e2, tpe, loc) =>
+      Expression.PutChannel(convert(e1), convert(e2), tpe, loc)
 
     case Expression.Ref(exp, tpe, loc) =>
       val e = convert(exp)
@@ -242,8 +242,6 @@ object ClosureConv {
       freeVariables(exp1) ++ freeVariables(exp2)
     case Expression.IfThenElse(exp1, exp2, exp3, tpe, loc) =>
       freeVariables(exp1) ++ freeVariables(exp2) ++ freeVariables(exp3)
-    case Expression.PutChannel(exp1, exp2, tpe, loc) =>
-      freeVariables(exp1) ++ freeVariables(exp2)
     case Expression.Branch(exp, branches, tpe, loc) =>
       mutable.LinkedHashSet.empty ++ freeVariables(exp) ++ (branches flatMap {
         case (sym, br) => freeVariables(br)
@@ -264,6 +262,8 @@ object ClosureConv {
     case Expression.ArrayLit(elms, tpe, loc) => mutable.LinkedHashSet.empty ++ elms.flatMap(freeVariables)
     case Expression.ArrayLoad(base, index, tpe, loc) => freeVariables(base) ++ freeVariables(index)
     case Expression.ArrayStore(base, index, value, tpe, loc) => freeVariables(base) ++ freeVariables(index) ++ freeVariables(value)
+    case Expression.PutChannel(exp1, exp2, tpe, loc) =>
+      freeVariables(exp1) ++ freeVariables(exp2)
     case Expression.Ref(exp, tpe, loc) => freeVariables(exp)
     case Expression.Deref(exp, tpe, loc) => freeVariables(exp)
     case Expression.Assign(exp1, exp2, tpe, loc) => freeVariables(exp1) ++ freeVariables(exp2)
@@ -349,10 +349,6 @@ object ClosureConv {
         val e2 = visit(exp2)
         val e3 = visit(exp3)
         Expression.IfThenElse(e1, e2, e3, tpe, loc)
-      case Expression.PutChannel(exp1, exp2, tpe, loc) =>
-        val e1 = visit(exp1)
-        val e2 = visit(exp2)
-        Expression.PutChannel(e1, e2, tpe, loc)
       case Expression.Branch(exp, branches, tpe, loc) =>
         val e = visit(exp)
         val bs = branches map {
@@ -405,6 +401,10 @@ object ClosureConv {
         val i = visit(index)
         val v = visit(value)
         Expression.ArrayStore(b, i, v, tpe, loc)
+      case Expression.PutChannel(exp1, exp2, tpe, loc) =>
+        val e1 = visit(exp1)
+        val e2 = visit(exp2)
+        Expression.PutChannel(e1, e2, tpe, loc)
       case Expression.Ref(exp, tpe, loc) =>
         val e = visit(exp)
         Expression.Ref(e, tpe, loc)
