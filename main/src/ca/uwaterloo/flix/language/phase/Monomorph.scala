@@ -302,6 +302,11 @@ object Monomorph extends Phase[TypedAst.Root, TypedAst.Root] {
           val v = visitExp(value, env0)
           Expression.ArrayStore(b, i, v, tpe, eff, loc)
 
+        case Expression.PutChannel(exp1, exp2, tpe, eff, loc) =>
+          val e1 = visitExp(exp1, env0)
+          val e2 = visitExp(exp2, env0)
+          Expression.PutChannel(exp1, exp2, subst0(tpe), eff, loc)
+
         case Expression.Ref(exp, tpe, eff, loc) =>
           val e = visitExp(exp, env0)
           Expression.Ref(e, tpe, eff, loc)
