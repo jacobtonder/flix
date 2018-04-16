@@ -170,6 +170,14 @@ object Optimizer extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
         }
 
       //
+      // Put-channel Expressions.
+      //
+      case Expression.PutChannel(exp1, exp2, tpe, loc) =>
+        val e1 = visitExp(exp1, env0)
+        val e2 = visitExp(exp2, env0)
+        Expression.PutChannel(exp1, exp2, tpe, loc)
+
+      //
       // Block Expressions.
       //
       case Expression.Branch(exp, branches, tpe, loc) =>
