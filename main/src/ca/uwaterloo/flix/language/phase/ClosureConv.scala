@@ -163,6 +163,9 @@ object ClosureConv {
       val v = convert(value)
       Expression.ArrayStore(b, i, v, tpe, loc)
 
+    case Expression.GetChannel(e, tpe, loc) =>
+      Expression.GetChannel(convert(e), tpe, loc)
+
     case Expression.PutChannel(e1, e2, tpe, loc) =>
       Expression.PutChannel(convert(e1), convert(e2), tpe, loc)
 
@@ -262,6 +265,8 @@ object ClosureConv {
     case Expression.ArrayLit(elms, tpe, loc) => mutable.LinkedHashSet.empty ++ elms.flatMap(freeVariables)
     case Expression.ArrayLoad(base, index, tpe, loc) => freeVariables(base) ++ freeVariables(index)
     case Expression.ArrayStore(base, index, value, tpe, loc) => freeVariables(base) ++ freeVariables(index) ++ freeVariables(value)
+    case Expression.GetChannel(exp, tpe, loc) =>
+      freeVariables(exp)
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
       freeVariables(exp1) ++ freeVariables(exp2)
     case Expression.Ref(exp, tpe, loc) => freeVariables(exp)
@@ -401,6 +406,9 @@ object ClosureConv {
         val i = visit(index)
         val v = visit(value)
         Expression.ArrayStore(b, i, v, tpe, loc)
+      case Expression.GetChannel(exp, tpe, loc) =>
+        val e = visit(exp)
+        Expression.GetChannel(e, tpe, loc)
       case Expression.PutChannel(exp1, exp2, tpe, loc) =>
         val e1 = visit(exp1)
         val e2 = visit(exp2)
