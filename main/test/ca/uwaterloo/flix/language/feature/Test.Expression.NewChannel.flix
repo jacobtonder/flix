@@ -10,6 +10,10 @@ enum Color {
     case Blue
 }
 
+def f(): Channel[Int] = channel Int
+
+def g(): Channel[Int] = channel Int f()
+
 @test
 def testNewChannel01(): Unit =
   let x = channel Int;
