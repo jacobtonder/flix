@@ -74,7 +74,7 @@ class TestTyper extends FunSuite with TestUtils {
     val input =
     """
         |def t(): Int = 42
-        |def f(): Unit = spawn f()
+        |def f(): Unit = spawn t()
       """.stripMargin
     val result = new Flix().addStr(input).compile()
     expectError[UnificationError](result)
