@@ -853,17 +853,18 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           * SelectChannel expression.
           */
         case ResolvedAst.Expression.SelectChannel(rules, tvar, loc) =>
-          //
-          //  fjkdsl
-          //  -------------------------
-          //
+          //  exp1 : t1   exp2 : Channel[t1]   exp3 : t2
+          //  ------------------------------------------
+          //  select { case exp1 <- exp2 => exp3 } : t2
           assert(rules.nonEmpty)
           // Extract the symbols, channels, and body expressions of each rule-
-          val symbols = rules.map(_.sym)
+          val patterns = rules.map(_.pat)
           val channels = rules.map(_.exp1)
           val bodies = rules.map(_.exp2)
 
           for {
+            patternsTypes <- Patterns.inferAll(patterns, program)
+            patternType <- unifyM(patternsTypes, loc)
             channelTypes <- seqM(channels map visitExp)
             //channelType <- unifyM()
             actualBodyTypes <- seqM(bodies map visitExp)
@@ -1213,10 +1214,11 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           */
         case ResolvedAst.Expression.SelectChannel(rules, tvar, loc) =>
           val rs = rules map {
-            case ResolvedAst.SelectRule(sym, channel, body) =>
+            case ResolvedAst.SelectRule(pat, channel, body) =>
+              val p = Patterns.reassemble(pat, program, subst0)
               val c = visitExp(channel, subst0)
               val b = visitExp(body, subst0)
-              TypedAst.SelectRule(sym, c, b)
+              TypedAst.SelectRule(p, c, b)
           }
           TypedAst.Expression.SelectChannel(rs, subst0(tvar), Eff.Bot, loc)
 

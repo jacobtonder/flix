@@ -53,13 +53,3 @@ def newChannel16(): Channel[Int] = channel Int:10
 
 @test
 def newChannel20(): Unit = let x = channel Int; ()
-
-
-
-
-
-
-
-
-
-

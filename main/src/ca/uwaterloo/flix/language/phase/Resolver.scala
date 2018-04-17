@@ -620,11 +620,12 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
 
         case NamedAst.Expression.SelectChannel(rules, tvar, loc) =>
           val rulesVal = rules map {
-            case NamedAst.SelectRule(sym, channel, body) =>
+            case NamedAst.SelectRule(pat, channel, body) =>
               for {
-                c <- visit(channel)
+                p <- Patterns.resolve(pat, ns0, prog0)
+                c <- visit(channel)// resolve(channel, ns0, prog0)
                 b <- visit(body)
-              } yield ResolvedAst.SelectRule(sym, c, b)
+              } yield ResolvedAst.SelectRule(p, c, b)
           }
 
           for {

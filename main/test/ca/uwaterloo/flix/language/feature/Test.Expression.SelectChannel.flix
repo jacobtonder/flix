@@ -187,9 +187,20 @@ def testSelectChannel25(): Bool = testSelectChannelIntIntIntFunction((x, y) -> x
 @test
 def testSelectChannel26(): Bool = testSelectChannelIntIntIntFunction(x -> y -> x + y)(2, 3) `assertEq!` 5
 
+/******************************* Test Patterns *******************************/
+def testSelectChannelPatternTuple(var: (Int, Int)): Int =
+    let ch: Channel[(Int, Int)] = channel (Int, Int):1;
+    let _ = ch <- var;
+    select {
+        case (i1, i2) <- ch => i1 + i2
+    }
 
-
-
+def testSelectChannelPatternList(var: List[Int]): Int =
+    let ch: Channel[(Int, Int)] = channel (Int, Int):1;
+    let _ = ch <- var;
+    select {
+        case t :: var <- ch => t
+    }
 
 @test
 def select_int_channel_first(): Bool =
