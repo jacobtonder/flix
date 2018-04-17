@@ -252,6 +252,10 @@ object ExecutableAst {
 
     case class ArrayStore(base: ExecutableAst.Expression, index: ExecutableAst.Expression, value: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
 
+    case class GetChannel(exp: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
+
+    case class PutChannel(exp1: ExecutableAst.Expression, exp2: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends  ExecutableAst.Expression
+
     case class Ref(exp: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
 
     case class Deref(exp: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression

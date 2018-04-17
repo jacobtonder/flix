@@ -191,6 +191,15 @@ object Synthesize extends Phase[Root, Root] {
         val v = visitExp(value)
         Expression.ArrayStore(b, i, v, tpe, eff, loc)
 
+      case Expression.GetChannel(exp, tpe, eff, loc) =>
+        val e = visitExp(exp)
+        Expression.GetChannel(e, tpe, eff, loc)
+
+      case Expression.PutChannel(exp1, exp2, tpe, eff, loc) =>
+        val e1 = visitExp(exp1)
+        val e2 = visitExp(exp2)
+        Expression.PutChannel(e1, e2, tpe, eff, loc)
+
       case Expression.Ref(exp, tpe, eff, loc) =>
         val e = visitExp(exp)
         Expression.Ref(e, tpe, eff, loc)

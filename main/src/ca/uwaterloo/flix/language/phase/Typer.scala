@@ -826,6 +826,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           } yield resultType
 
         /*
+<<<<<<< HEAD
          * NewChannel expression.
          */
         case ResolvedAst.Expression.NewChannel(exp, tvar, loc) =>
@@ -846,6 +847,31 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
               
             resultType <- unifyM(Type.mkChannel(tvar), Type.mkChannel(tvar), loc)
           } yield resultType
+=======
+         * GetChannel expression.
+         */
+        case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
+          // exp : Channel[t]
+          // ----------------
+          // <- exp : t
+          for (
+            tpe  <- visitExp(exp);
+            rtpe <- unifyM(tvar, tpe, loc)
+          ) yield rtpe
+
+        /*
+         * Put-channel expression.
+         */
+        case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
+          // exp1 : Channel[t]    exp2: t
+          // ----------------------------
+          // exp1 <- exp2 : Channel[t]
+          for (
+            tpe1 <- visitExp(exp1);
+            tpe2 <- visitExp(exp2);
+            rtpe <- unifyM(tvar, tpe1, tpe2, loc)
+          ) yield rtpe
+>>>>>>> develop
 
         /*
          * Reference expression.
@@ -1176,6 +1202,21 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
         case ResolvedAst.Expression.NewChannel(exp, tvar, loc) =>
           val e = visitExp(exp, subst0)
           TypedAst.Expression.NewChannel(e, subst0(tvar), Eff.Bot, loc)
+
+        /*
+         * GetChannel expression
+         */
+        case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
+          val e = visitExp(exp, subst0)
+          TypedAst.Expression.GetChannel(e, subst0(tvar), Eff.Bot, loc)
+
+        /*
+         * Put-channel expression.
+         */
+        case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
+          val e1 = visitExp(exp1, subst0)
+          val e2 = visitExp(exp2, subst0)
+          TypedAst.Expression.PutChannel(e1, e2, subst0(tvar), Eff.Bot, loc)
 
         /*
          * Reference expression.
