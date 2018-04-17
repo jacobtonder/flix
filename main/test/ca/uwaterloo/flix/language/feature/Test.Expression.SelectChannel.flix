@@ -97,21 +97,21 @@ def testSelectChannel15(): Bool = testSelectChannelChar('b') `assertEq!` 'b'
 
 /******************************* Test tuples *******************************/
 def testSelectChannelIntStrTuple(var: (Int, Str)): (Int, Str) =
-  let ch: Channel[(Int, Str)] = channel (Int, Str) 1;
+  let ch: Channel[(Int, Str)] = channel (Int, Str);
   let _ = ch <- var;
   select {
       case x <- ch => x
   }
 
 def testSelectChannelIntIntTuple(var: (Int, Int)): (Int, Int) =
-  let ch: Channel[(Int, Int)] = channel (Int, Int) 1;
+  let ch: Channel[(Int, Int)] = channel (Int, Int);
   let _ = ch <- var;
   select {
       case x <- ch => x
   }
 
 def testSelectChannelIntIntIntIntTuple(var: (Int, Int, Int, Int)): (Int, Int, Int, Int) =
-  let ch: Channel[(Int, Int, Int, Int)] = channel (Int, Int, Int, Int) 1;
+  let ch: Channel[(Int, Int, Int, Int)] = channel (Int, Int, Int, Int);
   let _ = ch <- var;
   select {
       case x <- ch => x
