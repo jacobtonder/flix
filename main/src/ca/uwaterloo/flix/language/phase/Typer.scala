@@ -856,10 +856,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           // exp : () -> Unit
           // ----------------
           // spawn exp : Unit
-          // val paramTypes = exp match {
-          //   case ResolvedAst.Expression.Lambda(params, _, _, _) =>
-          //     params.map(p => p.tpe)
-          // }
           for (
             tpe <- visitExp(exp);
             e <- unifyM(tpe, Type.mkArrow(Type.Unit, Type.Unit), loc);
