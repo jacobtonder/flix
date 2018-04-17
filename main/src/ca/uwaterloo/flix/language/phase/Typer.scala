@@ -842,6 +842,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
               case Type.Int32 => unifyM(texp, Type.Int32, loc)
               case Type.Int64 => unifyM(texp, Type.Int64, loc)
               case Type.BigInt => unifyM(texp, Type.BigInt, loc)
+              case _ => unifyM(texp, Type.Int32, loc)
             }
               
             resultType <- liftM(Type.mkChannel(tvar))
