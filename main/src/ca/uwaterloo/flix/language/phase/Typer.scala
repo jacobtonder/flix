@@ -825,6 +825,29 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           } yield resultType
 
         /*
+         * NewChannel expression.
+         */
+        case ResolvedAst.Expression.NewChannel(exp, tvar, loc) =>
+          //
+          //  e: Int32
+          //  -----------------------------------
+          //  channel t e : Channel[t]
+          //
+          for {
+            texp <- visitExp(exp)
+            _ <- texp match {
+              case Type.Int8 => unifyM(texp, Type.Int8, loc)
+              case Type.Int16 => unifyM(texp, Type.Int16, loc)
+              case Type.Int32 => unifyM(texp, Type.Int32, loc)
+              case Type.Int64 => unifyM(texp, Type.Int64, loc)
+              case Type.BigInt => unifyM(texp, Type.BigInt, loc)
+              case _ => unifyM(texp, Type.Int32, loc)
+            }
+              
+            resultType <- liftM(Type.mkChannel(tvar))
+          } yield resultType
+
+        /*
          * GetChannel expression.
          */
         case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
@@ -1171,6 +1194,13 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           val i = visitExp(index, subst0)
           val v = visitExp(value, subst0)
           TypedAst.Expression.ArrayStore(b, i, v, subst0(tvar), Eff.Bot, loc)
+
+        /*
+         * New Channel expression.
+         */
+        case ResolvedAst.Expression.NewChannel(exp, tvar, loc) =>
+          val e = visitExp(exp, subst0)
+          TypedAst.Expression.NewChannel(e, subst0(tvar), Eff.Bot, loc)
 
         /*
          * GetChannel expression

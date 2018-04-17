@@ -70,13 +70,13 @@ object Unification {
       case Type.BigInt => Type.BigInt
       case Type.Str => Type.Str
       case Type.Array => Type.Array
+      case Type.Channel => Type.Channel
       case Type.Native => Type.Native
       case Type.Ref => Type.Ref
       case Type.Arrow(l) => Type.Arrow(l)
       case Type.Tuple(l) => Type.Tuple(l)
       case Type.Enum(name, kind) => Type.Enum(name, kind)
       case Type.Apply(t1, t2) => Type.Apply(apply(t1), apply(t2))
-      case Type.Channel => Type.Channel
     }
 
     /**
@@ -181,6 +181,7 @@ object Unification {
       case (Type.BigInt, Type.BigInt) => Result.Ok(Substitution.empty)
       case (Type.Str, Type.Str) => Result.Ok(Substitution.empty)
       case (Type.Array, Type.Array) => Result.Ok(Substitution.empty)
+      case (Type.Channel, Type.Channel) => Result.Ok(Substitution.empty)
       case (Type.Native, Type.Native) => Result.Ok(Substitution.empty)
       case (Type.Ref, Type.Ref) => Result.Ok(Substitution.empty)
       case (Type.Arrow(l1), Type.Arrow(l2)) if l1 == l2 => Result.Ok(Substitution.empty)
