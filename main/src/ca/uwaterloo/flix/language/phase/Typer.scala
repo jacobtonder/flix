@@ -845,9 +845,10 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
               case Type.BigInt => unifyM(texp, Type.BigInt, loc)
             }
               
-            resultType <- unifyM(Type.mkChannel(tvar), Type.mkChannel(tvar), loc)
+            resultType <- unifyM(Type.mkChannel(tvar), Type.mkChannel(tvar), loc
           } yield resultType
-=======
+
+        /*
          * GetChannel expression.
          */
         case ResolvedAst.Expression.GetChannel(exp, tvar, loc) =>
