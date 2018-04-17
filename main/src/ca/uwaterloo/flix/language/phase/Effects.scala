@@ -481,6 +481,8 @@ object Effects extends Phase[Root, Root] {
         case Expression.UserError(tpe, _, loc) =>
           // Unsoundly assume that a user error exception has no effect.
           Expression.UserError(tpe, ast.Eff.Pure, loc).toSuccess
+
+        case Expression.Spawn(exp, tpe, eff, loc) => Expression.Unary(exp, tpe, eff, loc).toSuccess
       }
 
       visitExp(exp0, initialEnv)
