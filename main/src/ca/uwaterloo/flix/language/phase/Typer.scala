@@ -19,7 +19,6 @@ package ca.uwaterloo.flix.language.phase
 import java.lang.reflect.Field
 
 import ca.uwaterloo.flix.api.Flix
-import ca.uwaterloo.flix.language.ast.TypedAst.Expression.Int32
 import ca.uwaterloo.flix.language.ast._
 import ca.uwaterloo.flix.language.errors.TypeError
 import ca.uwaterloo.flix.language.phase.Unification._
@@ -832,11 +831,11 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           //
           //  e: Int32
           //  -----------------------------------
-          //  channel t e : Channel[e]: t
+          //  channel t e : Channel[t]
           //
           for {
             texp <- visitExp(exp)
-            t <- texp match {
+            _ <- texp match {
               case Type.Int8 => unifyM(texp, Type.Int8, loc)
               case Type.Int16 => unifyM(texp, Type.Int16, loc)
               case Type.Int32 => unifyM(texp, Type.Int32, loc)
