@@ -853,16 +853,16 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           * Spawn expression.
           */
         case ResolvedAst.Expression.Spawn(exp, tvar, loc) =>
-          // exp : (t1, ..., tn) -> Unit
+          // exp : () -> Unit
           // ----------------
           // spawn exp : Unit
-          val paramTypes = exp match {
-            case ResolvedAst.Expression.Lambda(params, _, _, _) =>
-              params.map(p => p.tpe)
-          }
+          // val paramTypes = exp match {
+          //   case ResolvedAst.Expression.Lambda(params, _, _, _) =>
+          //     params.map(p => p.tpe)
+          // }
           for (
             tpe <- visitExp(exp);
-            e <- unifyM(tpe, Type.mkArrow(paramTypes, Type.Unit), loc);
+            e <- unifyM(tpe, Type.mkArrow(Type.Unit, Type.Unit), loc);
             resultType <- unifyM(tvar, Type.Unit, loc)
           ) yield resultType
 
