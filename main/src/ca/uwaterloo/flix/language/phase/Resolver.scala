@@ -597,10 +597,11 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
 
         case NamedAst.Expression.UserError(tvar, loc) => ResolvedAst.Expression.UserError(tvar, loc).toSuccess
 
-        case NamedAst.Expression.NewChannel(exp, tvar, loc) =>
+        case NamedAst.Expression.NewChannel(exp, tpe, loc) =>
           for {
             e <- visit(exp)
-          } yield ResolvedAst.Expression.NewChannel(e, tvar, loc)
+            t <- lookupType(tpe, ns0, prog0)
+          } yield ResolvedAst.Expression.NewChannel(e, t, loc)
 
         case NamedAst.Expression.GetChannel(exp, tvar, loc) =>
           for {
@@ -1126,9 +1127,9 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
       case "BigInt" => Type.BigInt.toSuccess
       case "Str" => Type.Str.toSuccess
       case "Array" => Type.Array.toSuccess
+      case "Channel" => Type.Channel.toSuccess
       case "Native" => Type.Native.toSuccess
       case "Ref" => Type.Ref.toSuccess
-      case "Channel" => Type.Channel.toSuccess
 
       // Enum Types.
       case typeName =>
