@@ -66,17 +66,4 @@ class TestTyper extends FunSuite with TestUtils {
     val result = new Flix().addStr(input).compile()
     expectError[UnificationError](result)
   }
-
-  /////////////////////////////////////////////////////////////////////////////
-  // Spawn                                                                   //
-  /////////////////////////////////////////////////////////////////////////////
-  test("Expression.Spawn.TypeError.WrongReturnType") {
-    val input =
-    """
-        |def t(): Int = 42
-        |def f(): Unit = spawn t()
-      """.stripMargin
-    val result = new Flix().addStr(input).compile()
-    expectError[UnificationError](result)
-  }
 }
