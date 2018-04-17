@@ -826,7 +826,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           } yield resultType
 
         /*
-<<<<<<< HEAD
          * NewChannel expression.
          */
         case ResolvedAst.Expression.NewChannel(exp, tvar, loc) =>
@@ -845,7 +844,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
               case Type.BigInt => unifyM(texp, Type.BigInt, loc)
             }
               
-            resultType <- unifyM(Type.mkChannel(tvar), Type.mkChannel(tvar), loc
+            resultType <- unifyM(Type.mkChannel(tvar), Type.mkChannel(tvar), loc)
           } yield resultType
 
         /*
@@ -872,7 +871,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
             tpe2 <- visitExp(exp2);
             rtpe <- unifyM(tvar, tpe1, tpe2, loc)
           ) yield rtpe
->>>>>>> develop
 
         /*
          * Reference expression.
