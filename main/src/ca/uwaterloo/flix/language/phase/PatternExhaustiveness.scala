@@ -271,6 +271,7 @@ object PatternExhaustiveness extends Phase[TypedAst.Root, TypedAst.Root] {
           checkPats(_, root)
         }).map(const(tast))
         case Expression.UserError(_, _, _) => tast.toSuccess
+        case Expression.Spawn(exp, _, _, _) => checkPats(exp, root).map(const(tast))
       }
     }
 
