@@ -829,8 +829,8 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
          */
         case ResolvedAst.Expression.NewChannel(exp, tvar, loc) =>
           //
-          //  e: Int32
-          //  -----------------------------------
+          //  e: Int8 | Int16 | Int32 | Int64 | BigInt
+          //  ----------------------------------------
           //  channel t e : Channel[t]
           //
           for {
@@ -843,7 +843,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
               case Type.BigInt => unifyM(texp, Type.BigInt, loc)
               case _ => unifyM(texp, Type.Int32, loc)
             }
-              
+
             resultType <- liftM(Type.mkChannel(tvar))
           } yield resultType
 
