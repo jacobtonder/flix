@@ -827,8 +827,13 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
               WeededAst.Expression.NewChannel(bufferSize, Types.weed(tpe), mkSL(sp1, sp2)).toSuccess
             case Some(exp) =>
               // Case 2: NewChannel takes an expression that states the buffer size
-              visit(exp, unsafe) map {
-                case e => WeededAst.Expression.NewChannel(e, Types.weed(tpe), mkSL(sp1, sp2))
+              exp match {
+                case l: WeededAst.Expression.Int32 if (l.lit < 0) =>
+                    IllegalBufferSize(mkSL(sp1, sp2)).toFailure
+                case _ =>
+                  visit(exp, unsafe) map {
+                    case e => WeededAst.Expression.NewChannel(e, Types.weed(tpe), mkSL(sp1, sp2))
+                  }
               }
           }
 
