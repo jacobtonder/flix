@@ -215,6 +215,7 @@ def testSelectChannelDefault(): Int =
         case _ <- ch => 2
     }
 
+@test
 def testSelectChannel29(): Bool = testSelectChannelDefault() `assertEq!` 2
 
 @test
