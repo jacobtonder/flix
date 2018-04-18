@@ -485,7 +485,7 @@ object Effects extends Phase[Root, Root] {
         /**
           * Spawn Expression
           */
-        case Expression.Spawn(exp, tpe, eff, loc) => Expression.Unary(exp, tpe, eff, loc).toSuccess
+        case Expression.Spawn(exp, tpe, eff, loc) => Expression.Spawn(exp, tpe, eff, loc).toSuccess
       }
 
       visitExp(exp0, initialEnv)
