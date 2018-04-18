@@ -73,7 +73,7 @@ def testNewChannel19(): Channel[Int -> Int] = channel Int -> Int
 def testNewChannel20(): Channel[(Int, Str) -> Int] = channel (Int, Str) -> Int
 
 @test
-def testNewChannel21(): Channel[Int -> Str -> Int] = channel Int -> Str -> Int
+def testNewChannel21(): Channel[Int -> (Str -> Int)] = channel Int -> Str -> Int
 
 @test
 def testNewChannel22(): Channel[Channel[Int]] = channel Channel[Int]
