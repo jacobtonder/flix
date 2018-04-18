@@ -163,6 +163,9 @@ object ClosureConv {
       val v = convert(value)
       Expression.ArrayStore(b, i, v, tpe, loc)
 
+    case Expression.NewChannel(e, tpe, loc) =>
+      Expression.NewChannel(convert(e), tpe, loc)
+
     case Expression.GetChannel(e, tpe, loc) =>
       Expression.GetChannel(convert(e), tpe, loc)
 
