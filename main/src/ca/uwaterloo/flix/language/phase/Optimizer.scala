@@ -300,6 +300,13 @@ object Optimizer extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
         Expression.PutChannel(exp1, exp2, tpe, loc)
 
       //
+      // Spawn Expressions.
+      //
+      case Expression.Spawn(exp, tpe, loc) =>
+        val e = visitExp(exp, env0)
+        Expression.NewChannel(e, tpe, loc)
+
+      //
       // Reference Expressions.
       //
       case Expression.Ref(exp, tpe, loc) =>
