@@ -280,10 +280,10 @@ object Optimizer extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       //
       // New-Channel Expressions.
       //
-
       case Expression.NewChannel(exp, tpe, loc) =>
         val e = visitExp(exp, env0)
         Expression.NewChannel(e, tpe, loc)
+
       //
       // Get-channel Expressions.
       //
