@@ -860,7 +860,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           ) yield rtpe
 
         /*
-         * Put-channel expression.
+         * PutChannel expression.
          */
         case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
           // exp1 : Channel[t]    exp2: t
@@ -1223,7 +1223,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           TypedAst.Expression.GetChannel(e, subst0(tvar), Eff.Bot, loc)
 
         /*
-         * Put-channel expression.
+         * PutChannel expression.
          */
         case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
           val e1 = visitExp(exp1, subst0)
