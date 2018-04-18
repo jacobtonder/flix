@@ -1129,6 +1129,7 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
       case "Channel" => Type.Channel.toSuccess
       case "Native" => Type.Native.toSuccess
       case "Ref" => Type.Ref.toSuccess
+      case "Channel" => Type.Channel.toSuccess
 
       // Enum Types.
       case typeName =>
