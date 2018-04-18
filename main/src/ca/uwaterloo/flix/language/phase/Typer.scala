@@ -889,9 +889,13 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           * SelectChannel expression.
           */
         case ResolvedAst.Expression.SelectChannel(rules, tvar, loc) =>
-          //  exp1 : t1   exp2 : Channel[t1]   exp3 : t2
-          //  ------------------------------------------
-          //  select { case exp1 <- exp2 => exp3 } : t2
+          // exp1 : t1   exp2 : Channel[t1]   exp3 : t2
+          // ------------------------------------------ [t-SelectRule]
+          // case exp1 <- exp2 => epx3 : t2
+          //
+          //  sr : t
+          //  ------------------ [t-SelectChannel]
+          //  select { sr+ } : t
           assert(rules.nonEmpty)
           // Extract the symbols, channels, and body expressions of each rule-
           val patterns = rules.map(_.pat)
