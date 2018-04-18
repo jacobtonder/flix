@@ -624,7 +624,7 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
             case NamedAst.SelectRule(pat, channel, body) =>
               for {
                 p <- Patterns.resolve(pat, ns0, prog0)
-                c <- visit(channel)// resolve(channel, ns0, prog0)
+                c <- visit(channel)
                 b <- visit(body)
               } yield ResolvedAst.SelectRule(p, c, b)
           }
