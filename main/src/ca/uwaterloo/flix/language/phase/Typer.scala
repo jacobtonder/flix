@@ -860,7 +860,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           ) yield rtpe
 
         /*
-         * Put-channel expression.
+         * PutChannel expression.
          */
         case ResolvedAst.Expression.PutChannel(exp1, exp2, tvar, loc) =>
           // exp1 : Channel[t]    exp2: t

@@ -673,6 +673,39 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
           case (b, i, v) => NamedAst.Expression.ArrayStore(b, i, v, Type.freshTypeVar(), loc)
         }
 
+      case WeededAst.Expression.NewChannel(exp, tpe, loc) =>
+        namer(exp, env0, tenv0) map {
+          case e => NamedAst.Expression.NewChannel(e, Types.namer(tpe, tenv0), loc)
+        }
+
+      case WeededAst.Expression.GetChannel(exp,loc) =>
+        namer(exp,env0,tenv0) map {
+          case (e) => NamedAst.Expression.GetChannel(e, Type.freshTypeVar(), loc)
+        }
+
+      case WeededAst.Expression.PutChannel(exp1, exp2, loc) =>
+        @@(namer(exp1, env0, tenv0), namer(exp2, env0, tenv0)) map {
+          case (e1, e2) => NamedAst.Expression.PutChannel(e1, e2, Type.freshTypeVar(), loc)
+        }
+
+      case WeededAst.Expression.Spawn(exp, loc) =>
+        namer(exp, env0, tenv0) map {
+          case (e) => NamedAst.Expression.Spawn(e, Type.freshTypeVar(), loc)
+        }
+
+      case WeededAst.Expression.SelectChannel(rules, loc) => 
+        val rulesVal = rules map {
+          case WeededAst.SelectRule(pat, chan, body) =>
+            val (p, env1) = Patterns.namer(pat)
+            val extendedEnv = env0 ++ env1
+            @@(namer(chan, env1, tenv0), namer(body, extendedEnv, tenv0)) map {
+              case (c, b) => NamedAst.SelectRule(p, c, b)
+            }
+        }
+        @@(rulesVal) map {
+          case rs => NamedAst.Expression.SelectChannel(rs, Type.freshTypeVar(), loc)
+        }
+
       case WeededAst.Expression.Ref(exp, loc) =>
         namer(exp, env0, tenv0) map {
           case e => NamedAst.Expression.Ref(e, Type.freshTypeVar(), loc)
@@ -745,39 +778,6 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
         }
 
       case WeededAst.Expression.UserError(loc) => NamedAst.Expression.UserError(Type.freshTypeVar(), loc).toSuccess
-
-      case WeededAst.Expression.NewChannel(exp, tpe, loc) =>
-        namer(exp, env0, tenv0) map {
-          case e => NamedAst.Expression.NewChannel(e, Types.namer(tpe, tenv0), loc)
-        }
-
-      case WeededAst.Expression.GetChannel(exp,loc) =>
-        namer(exp,env0,tenv0) map {
-          case (e) => NamedAst.Expression.GetChannel(e, Type.freshTypeVar(), loc)
-        }
-
-      case WeededAst.Expression.PutChannel(exp1, exp2, loc) =>
-        @@(namer(exp1, env0, tenv0), namer(exp2, env0, tenv0)) map {
-          case (e1, e2) => NamedAst.Expression.PutChannel(e1, e2, Type.freshTypeVar(), loc)
-        }
-
-      case WeededAst.Expression.Spawn(exp, loc) =>
-        namer(exp, env0, tenv0) map {
-          case (e) => NamedAst.Expression.Spawn(e, Type.freshTypeVar(), loc)
-        }
-
-      case WeededAst.Expression.SelectChannel(rules, loc) => 
-        val rulesVal = rules map {
-          case WeededAst.SelectRule(pat, chan, body) =>
-            val (p, env1) = Patterns.namer(pat)
-            val extendedEnv = env0 ++ env1
-            @@(namer(chan, env1, tenv0), namer(body, extendedEnv, tenv0)) map {
-              case (c, b) => NamedAst.SelectRule(p, c, b)
-            }
-        }
-        @@(rulesVal) map {
-          case rs => NamedAst.Expression.SelectChannel(rs, Type.freshTypeVar(), loc)
-        }
 
     }
 
