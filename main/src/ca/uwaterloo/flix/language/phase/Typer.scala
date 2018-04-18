@@ -872,6 +872,19 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
             rtpe <- unifyM(tvar, tpe1, tpe2, loc)
           ) yield rtpe
 
+        /**
+          * Spawn expression.
+          */
+        case ResolvedAst.Expression.Spawn(exp, tvar, loc) =>
+          // exp : () -> Unit
+          // ----------------
+          // spawn exp : Unit
+          for (
+            tpe <- visitExp(exp);
+            e <- unifyM(tpe, Type.mkArrow(Type.Unit, Type.Unit), loc);
+            resultType <- unifyM(tvar, Type.Unit, loc)
+          ) yield resultType
+
         /*
          * Reference expression.
          */
@@ -1216,6 +1229,13 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           val e1 = visitExp(exp1, subst0)
           val e2 = visitExp(exp2, subst0)
           TypedAst.Expression.PutChannel(e1, e2, subst0(tvar), Eff.Bot, loc)
+
+        /**
+          * Spawn expression.
+          */
+        case ResolvedAst.Expression.Spawn(exp, tvar, loc) =>
+          val e = visitExp(exp, subst0)
+          TypedAst.Expression.Spawn(e, subst0(tvar), Eff.Bot, loc)
 
         /*
          * Reference expression.
