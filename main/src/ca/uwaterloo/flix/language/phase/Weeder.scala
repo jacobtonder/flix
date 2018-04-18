@@ -827,8 +827,13 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
               WeededAst.Expression.NewChannel(bufferSize, Types.weed(tpe), mkSL(sp1, sp2)).toSuccess
             case Some(exp) =>
               // Case 2: NewChannel takes an expression that states the buffer size
-              visit(exp, unsafe) map {
-                case e => WeededAst.Expression.NewChannel(e, Types.weed(tpe), mkSL(sp1, sp2))
+              exp match {
+                case l: WeededAst.Expression.Int32 if (l.lit < 0) =>
+                    IllegalBufferSize(mkSL(sp1, sp2)).toFailure
+                case _ =>
+                  visit(exp, unsafe) map {
+                    case e => WeededAst.Expression.NewChannel(e, Types.weed(tpe), mkSL(sp1, sp2))
+                  }
               }
           }
 
@@ -863,9 +868,11 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
                 }
                 val exp = WeededAst.Expression.Apply(func, args, loc) // f(args)
 
+                val innerBody = WeededAst.Expression.Let(Name.Ident(sp1, "_$1", sp2), exp, WeededAst.Expression.Unit(loc), loc)
+
                 // Wrapping function in a lambda function
-                val formalParam = WeededAst.FormalParam(Name.Ident(sp1, "_$", sp2), Ast.Modifiers.Empty, None, loc)
-                val lam = WeededAst.Expression.Lambda(List(formalParam), exp, loc) // _$ -> f(args)
+                val formalParam = WeededAst.FormalParam(Name.Ident(sp1, "_$2", sp2), Ast.Modifiers.Empty, None, loc)
+                val lam = WeededAst.Expression.Lambda(List(formalParam), innerBody, loc) // _$ -> f(args)
 
                 // Spawn the lambda function
                 WeededAst.Expression.Spawn(lam, loc).toSuccess // spawn(_$ -> f(args))

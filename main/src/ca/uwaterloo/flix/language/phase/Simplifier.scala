@@ -405,6 +405,9 @@ object Simplifier extends Phase[TypedAst.Root, SimplifiedAst.Root] {
         val v = visitExp(value)
         SimplifiedAst.Expression.ArrayStore(b, i, v, tpe, loc)
 
+      case TypedAst.Expression.NewChannel(e, tpe, eff, loc) =>
+        SimplifiedAst.Expression.NewChannel(visitExp(e), tpe, loc)
+
       case TypedAst.Expression.GetChannel(e, tpe, eff, loc) =>
         SimplifiedAst.Expression.GetChannel(visitExp(e), tpe, loc)
 
