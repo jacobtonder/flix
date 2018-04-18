@@ -1303,7 +1303,7 @@ object ParsedAst {
     * @param exp1  the channel expression of the rule.
     * @param exp2  the body expression of the rule.
     */
-  case class SelectRule(pat: ParsedAst.Pattern, exp1: ParsedAst.Expression, exp2: ParsedAst.Expression) extends ParsedAst
+  case class SelectRule(pat: ParsedAst.Pattern, chan: ParsedAst.Expression, body: ParsedAst.Expression) extends ParsedAst
 
   /**
     * Modifier.

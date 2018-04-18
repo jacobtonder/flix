@@ -895,8 +895,8 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           assert(rules.nonEmpty)
           // Extract the symbols, channels, and body expressions of each rule-
           val patterns = rules.map(_.pat)
-          val channels = rules.map(_.exp1)
-          val bodies = rules.map(_.exp2)
+          val channels = rules.map(_.chan)
+          val bodies = rules.map(_.exp)
 
           for {
             patternsTypes <- Patterns.inferAll(patterns, program)
@@ -1264,9 +1264,9 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           */
         case ResolvedAst.Expression.SelectChannel(rules, tvar, loc) =>
           val rs = rules map {
-            case ResolvedAst.SelectRule(pat, channel, body) =>
+            case ResolvedAst.SelectRule(pat, chan, body) =>
               val p = Patterns.reassemble(pat, program, subst0)
-              val c = visitExp(channel, subst0)
+              val c = visitExp(chan, subst0)
               val b = visitExp(body, subst0)
               TypedAst.SelectRule(p, c, b)
           }
