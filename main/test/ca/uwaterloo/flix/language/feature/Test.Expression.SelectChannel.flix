@@ -189,75 +189,75 @@ def testSelectChannel26(): Bool = testSelectChannelIntIntIntFunction(x -> y -> x
 
 /******************************* Test Patterns *******************************/
 def testSelectChannelPatternTuple(var: (Int, Int)): Int =
-    let ch: Channel[(Int, Int)] = channel (Int, Int);
-    let _ = ch <- var;
-    select {
-        case (i1, i2) <- ch => i1 + i2
-    }
+  let ch: Channel[(Int, Int)] = channel (Int, Int);
+  let _ = ch <- var;
+  select {
+    case (i1, i2) <- ch => i1 + i2
+  }
 
 @test
 def testSelectChannel27(): Bool = testSelectChannelPatternTuple((10, 42)) `assertEq!` 52
 
 def testSelectChannelPatternList(var: List[Int]): Int =
-    let ch: Channel[List[Int]] = channel List[Int];
-    let _ = ch <- var;
-    select {
-        case t :: var <- ch => t
-    }
+  let ch: Channel[List[Int]] = channel List[Int];
+  let _ = ch <- var;
+  select {
+    case t :: var <- ch => t
+  }
 
 @test
 def testSelectChannel28(): Bool = testSelectChannelPatternList(1 :: 2 :: Nil) `assertEq!` 1
 
 /******************************* Default *******************************/
 def testSelectChannelDefault(): Int =
-    let ch: Channel[Unit] = channel Unit;
-    select {
-        case _ <- ch => 2
-    }
+  let ch: Channel[Unit] = channel Unit;
+  select {
+    case _ <- ch => 2
+  }
 
 @test
 def testSelectChannel29(): Bool = testSelectChannelDefault() `assertEq!` 2
 
 @test
 def select_int_channel_first(): Bool =
-    let ch1 = channel Int;
-    let ch2 = channel Int;
-    let r = select {
-        case x <- ch1 => x + 1
-        case x <- ch2 => x + 2
-    };
-    let _ = ch1 <- 1;
-    r `assertEq!` 2
+  let ch1 = channel Int;
+  let ch2 = channel Int;
+  let r = select {
+    case x <- ch1 => x + 1
+    case x <- ch2 => x + 2
+  };
+  let _ = ch1 <- 1;
+  r `assertEq!` 2
 
 @test
 def select_int_channel_last(): Bool =
-    let ch1 = channel Int;
-    let ch2 = channel Int;
-    let r = select {
-        case x <- ch1 => x + 1
-        case x <- ch2 => x + 2
-    };
-    let _ = ch2 <- 1;
-    r `assertEq!` 3
+  let ch1 = channel Int;
+  let ch2 = channel Int;
+  let r = select {
+    case x <- ch1 => x + 1
+    case x <- ch2 => x + 2
+  };
+  let _ = ch2 <- 1;
+  r `assertEq!` 3
 
 @test
 def select_string_channel_first(): Bool =
-    let ch1 = channel Str;
-    let ch2 = channel Str;
-    let r = select {
-        case x <- ch1 => x + "1"
-        case x <- ch2 => x + "2"
-    };
-    let _ = ch1 <- "str";
-    r `assertEq!` "str1"
+  let ch1 = channel Str;
+  let ch2 = channel Str;
+  let r = select {
+    case x <- ch1 => x + "1"
+    case x <- ch2 => x + "2"
+  };
+  let _ = ch1 <- "str";
+  r `assertEq!` "str1"
 
 @test
 def select_string_channel_last(): Bool =
-    let ch1 = channel Str;
-    let ch2 = channel Str;
-    let r = select {
-        case x <- ch1 => x + "1"
-        case x <- ch2 => x + "2"
-    };
-    let _ = ch2 <- "str";
-    r `assertEq!` "str2"
+  let ch1 = channel Str;
+  let ch2 = channel Str;
+  let r = select {
+    case x <- ch1 => x + "1"
+    case x <- ch2 => x + "2"
+  };
+  let _ = ch2 <- "str";
+  r `assertEq!` "str2"

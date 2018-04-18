@@ -903,10 +903,13 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           val bodies = rules.map(_.exp)
 
           for {
-            patternsTypes <- Patterns.inferAll(patterns, program)
-            patternType <- unifyM(patternsTypes, loc)
             channelTypes <- seqM(channels map visitExp)
-            //channelType <- unifyM()
+            channelType <- unifyM(channelTypes, loc)
+            patternsTypes <- Patterns.inferAll(patterns, program)
+            patternType <- channelType match {
+              case Type.Apply(_, innerType) => liftM(innerType)
+            }
+            _____________ <- unifyM(patternType :: patternsTypes, loc)
             actualBodyTypes <- seqM(bodies map visitExp)
             resultType <- unifyM(tvar :: actualBodyTypes, loc)
           } yield resultType
