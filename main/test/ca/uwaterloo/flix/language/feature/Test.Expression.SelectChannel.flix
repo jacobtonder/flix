@@ -195,12 +195,27 @@ def testSelectChannelPatternTuple(var: (Int, Int)): Int =
         case (i1, i2) <- ch => i1 + i2
     }
 
+@test
+def testSelectChannel27(): Bool = testSelectChannelPatternTuple((10, 42)) `assertEq!` 52
+
 def testSelectChannelPatternList(var: List[Int]): Int =
     let ch: Channel[List[Int]] = channel List[Int];
     let _ = ch <- var;
     select {
         case t :: var <- ch => t
     }
+
+@test
+def testSelectChannel28(): Bool = testSelectChannelPatternList(1 :: 2 :: Nil) `assertEq!` 1
+
+/******************************* Default *******************************/
+def testSelectChannelDefault(): Int =
+    let ch: Channel[Unit] = channel Unit;
+    select {
+        case _ <- ch => 2
+    }
+
+def testSelectChannel29(): Bool = testSelectChannelDefault() `assertEq!` 2
 
 @test
 def select_int_channel_first(): Bool =
