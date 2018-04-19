@@ -53,6 +53,7 @@ sealed trait Type {
     case Type.Tuple(l) => Set.empty
     case Type.Enum(enumName, kind) => Set.empty
     case Type.Apply(tpe1, tpe2) => tpe1.typeVars ++ tpe2.typeVars
+    case Type.Channel => Set.empty
   }
 
   /**
@@ -156,6 +157,7 @@ sealed trait Type {
     case Type.Enum(enum, kind) => enum.toString
     case Type.Tuple(l) => s"Tuple($l)"
     case Type.Apply(tpe1, tpe2) => s"$tpe1[$tpe2]"
+    case Type.Channel => "Channel"
   }
 }
 
@@ -432,6 +434,7 @@ object Type {
       case Type.Tuple(l) => Type.Tuple(l)
       case Type.Apply(tpe1, tpe2) => Type.Apply(visit(tpe1), visit(tpe2))
       case Type.Enum(enum, kind) => Type.Enum(enum, kind)
+      case Type.Channel => Type.Channel
     }
 
     visit(tpe)
@@ -477,6 +480,7 @@ object Type {
           case Type.Channel => "Channel"
           case Type.Native => "Native"
           case Type.Ref => "Ref"
+          case Type.Channel => "Channel"
 
           //
           // Arrow.
