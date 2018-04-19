@@ -128,4 +128,24 @@ class TestTyper extends FunSuite with TestUtils {
     val result = new Flix().addStr(input).compile()
     expectError[UnificationError](result)
   }
+
+  test("Expression.SelectChannel.TypeError.String.IllegalReturnType") {
+    val input =
+      """def f(): Int = select {
+        |  case _ <- "str"
+        |}
+      """.stripMargin
+    val result = new Flix().addStr(input).compile()
+    expectError[UnificationError](result)
+  }
+
+  test("Expression.SelectChannel.TypeError.Char.IllegalReturnType") {
+    val input =
+      """def f(): Int = select {
+        |  case _ <- 'Char'
+        |}
+      """.stripMargin
+    val result = new Flix().addStr(input).compile()
+    expectError[UnificationError](result)
+  }
 }
