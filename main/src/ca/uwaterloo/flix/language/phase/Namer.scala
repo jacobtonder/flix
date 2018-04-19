@@ -693,7 +693,7 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
           case (e) => NamedAst.Expression.Spawn(e, Type.freshTypeVar(), loc)
         }
 
-      case WeededAst.Expression.SelectChannel(rules, loc) => 
+      case WeededAst.Expression.SelectChannel(rules, loc) =>
         val rulesVal = rules map {
           case WeededAst.SelectRule(pat, chan, body) =>
             val (p, env1) = Patterns.namer(pat)

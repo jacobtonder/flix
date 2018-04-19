@@ -872,7 +872,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
             rtpe <- unifyM(tvar, tpe1, tpe2, loc)
           ) yield rtpe
 
-        /** 
+        /**
           * Spawn expression.
           */
         case ResolvedAst.Expression.Spawn(exp, tvar, loc) =>
