@@ -631,6 +631,19 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
           case (e, rs) => NamedAst.Expression.Match(e, rs, Type.freshTypeVar(), loc)
         }
 
+      case WeededAst.Expression.SelectChannel(rules, loc) => 
+        val rulesVal = rules map {
+          case WeededAst.SelectRule(ident, channel, body) =>
+            val sym = Symbol.freshVarSym(ident)
+            val env1 = env0 + (ident.name -> sym)
+            @@(namer(channel, env1, tenv0), namer(body, env1, tenv0)) map {
+              case (c, b) => NamedAst.SelectRule(sym, c, b)
+            }
+        }
+        @@(rulesVal) map {
+          case rs => NamedAst.Expression.SelectChannel(rs, Type.freshTypeVar(), loc)
+        }
+
       case WeededAst.Expression.Switch(rules, loc) => @@(rules map {
         case (cond, body) => @@(namer(cond, env0, tenv0), namer(body, env0, tenv0))
       }) map {
@@ -695,11 +708,11 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
 
       case WeededAst.Expression.SelectChannel(rules, loc) =>
         val rulesVal = rules map {
-          case WeededAst.SelectRule(pat, chan, body) =>
-            val (p, env1) = Patterns.namer(pat)
-            val extendedEnv = env0 ++ env1
-            @@(namer(chan, env0, tenv0), namer(body, extendedEnv, tenv0)) map {
-              case (c, b) => NamedAst.SelectRule(p, c, b)
+          case WeededAst.SelectRule(ident, channel, body) =>
+            val sym = Symbol.freshVarSym(ident)
+            val env1 = env0 + (ident.name -> sym)
+            @@(namer(channel, env1, tenv0), namer(body, env1, tenv0)) map {
+              case (c, b) => NamedAst.SelectRule(sym, c, b)
             }
         }
         @@(rulesVal) map {
