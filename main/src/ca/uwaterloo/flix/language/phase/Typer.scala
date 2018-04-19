@@ -1260,7 +1260,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           TypedAst.Expression.ArrayStore(b, i, v, subst0(tvar), Eff.Bot, loc)
 
         /*
-         * New Channel expression.
+         * NewChannel expression.
          */
         case ResolvedAst.Expression.NewChannel(exp, tpe, loc) =>
           val e = visitExp(exp, subst0)
@@ -1281,9 +1281,9 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           val e2 = visitExp(exp2, subst0)
           TypedAst.Expression.PutChannel(e1, e2, subst0(tvar), Eff.Bot, loc)
 
-        /**
-          * Spawn expression.
-          */
+        /*
+         * Spawn expression.
+         */
         case ResolvedAst.Expression.Spawn(exp, tvar, loc) =>
           val e = visitExp(exp, subst0)
           TypedAst.Expression.Spawn(e, subst0(tvar), Eff.Bot, loc)

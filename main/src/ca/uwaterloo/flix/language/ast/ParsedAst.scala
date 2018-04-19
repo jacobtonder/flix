@@ -641,7 +641,7 @@ object ParsedAst {
     case class ArrayStore(base: ParsedAst.Expression, index: ParsedAst.Expression, value: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
-      * New Channel Expression
+      * NewChannel Expression.
       *
       * @param sp1 the position of the first character in the expression.
       * @param tpe the type of the channel
@@ -651,7 +651,7 @@ object ParsedAst {
     case class NewChannel(sp1: SourcePosition, tpe: ParsedAst.Type, exp: Option[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
-      * GetChannel
+      * GetChannel Expression.
       *
       * @param exp1 the expression to get from.
       * @param sp2 the position of the last character in the expression.
@@ -668,7 +668,7 @@ object ParsedAst {
     case class PutChannel(exp1: ParsedAst.Expression, exp2: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
-      * Spawn Expression (runs expression on new process)
+      * Spawn Expression (runs expression on new process).
       *
       * @param sp1  the position of the first character in the expression.
       * @param fn   the function to be run concurrently
