@@ -155,6 +155,7 @@ object TreeShaker extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       case Expression.NewChannel(exp, tpe, loc) => visitExp(exp)
       case Expression.GetChannel(exp, tpe, loc) => visitExp(exp)
       case Expression.PutChannel(exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2)
+      case Expression.Spawn(exp, tpe, loc) => visitExp(exp)
       case Expression.Ref(exp, tpe, loc) => visitExp(exp)
       case Expression.Deref(exp, tpe, loc) => visitExp(exp)
       case Expression.Assign(exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2)

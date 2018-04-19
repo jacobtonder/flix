@@ -414,6 +414,9 @@ object Simplifier extends Phase[TypedAst.Root, SimplifiedAst.Root] {
       case TypedAst.Expression.PutChannel(e1, e2, tpe, eff, loc) =>
         SimplifiedAst.Expression.PutChannel(visitExp(e1), visitExp(e2), tpe, loc)
 
+      case TypedAst.Expression.Spawn(e, tpe, eff, loc) =>
+        SimplifiedAst.Expression.Spawn(visitExp(e), tpe, loc)
+
       case TypedAst.Expression.Ref(exp, tpe, eff, loc) =>
         val e = visitExp(exp)
         SimplifiedAst.Expression.Ref(e, tpe, loc)

@@ -64,10 +64,6 @@ def f14(x: Channel[Int]): Unit = ()
 
 def testSpawn14(): Unit = spawn f14(channel Int)
 
-def f15(x: Channel[Int], y: Channel[Str]): Unit = ()
-
-def testSpawn15(): Unit = spawn f15(channel Int, channel Str)
-
 def f16(): Int = 42
 
 def testSpawn16(): Unit = spawn f16()
