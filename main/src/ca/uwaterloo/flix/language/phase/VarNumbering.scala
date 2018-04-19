@@ -23,6 +23,8 @@ import ca.uwaterloo.flix.language.ast.{SimplifiedAst, Type}
 import ca.uwaterloo.flix.util.Validation._
 import ca.uwaterloo.flix.util.{InternalCompilerException, Validation}
 
+import scala.util.control.Exception
+
 /**
   * Assigns stack offsets to each variable symbol in the program.
   *
@@ -159,6 +161,8 @@ object VarNumbering extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       case Expression.PutChannel(exp1, exp2,tpe, loc) =>
         val i1 = visitExp(exp1, i0)
         visitExp(exp2, i1)
+      case Expression.Spawn(exp, tpe, loc) =>
+        visitExp(exp, i0)
       case Expression.Ref(exp, tpe, loc) => visitExp(exp, i0)
       case Expression.Deref(exp, tpe, loc) => visitExp(exp, i0)
       case Expression.Assign(exp1, exp2, tpe, loc) =>

@@ -248,6 +248,8 @@ object CreateExecutableAst extends Phase[SimplifiedAst.Root, ExecutableAst.Root]
         ExecutableAst.Expression.GetChannel(toExecutable(exp), tpe, loc)
       case SimplifiedAst.Expression.PutChannel(exp1, exp2, tpe, loc) =>
         ExecutableAst.Expression.PutChannel(toExecutable(exp1), toExecutable(exp2), tpe, loc)
+      case SimplifiedAst.Expression.Spawn(exp, tpe, loc) =>
+        ExecutableAst.Expression.Spawn(toExecutable(exp), tpe, loc)
       case SimplifiedAst.Expression.Ref(exp, tpe, loc) =>
         val e = toExecutable(exp)
         ExecutableAst.Expression.Ref(e, tpe, loc)
