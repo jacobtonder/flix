@@ -23,8 +23,6 @@ import ca.uwaterloo.flix.language.ast.{SimplifiedAst, Type}
 import ca.uwaterloo.flix.util.Validation._
 import ca.uwaterloo.flix.util.{InternalCompilerException, Validation}
 
-import scala.util.control.Exception
-
 /**
   * Assigns stack offsets to each variable symbol in the program.
   *
