@@ -898,8 +898,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           //  select { sr+ } : t
           assert(rules.nonEmpty)
           // Extract the symbols, channels, and body expressions of each rule-
-          //val patterns = rules.map(_.pat)
-          //val channels = rules.map(_.chan)
           val bodies = rules.map(_.exp)
 
           val _ = rules map {
@@ -907,35 +905,14 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
               for {
                 ctpe <- visitExp(r.chan)
                 t1 <- Patterns.infer(r.pat, program)
-                //_ <- unifyM(t1, Type.Char, loc)
                 _ <- unifyM(ctpe, Type.mkChannel(t1), loc)
               } yield t1
-              //val t1 =
-              //val te2 = unifyM(ctpe, Type.mkChannel(t1), loc)
-              //liftM(Type.Int32)
-              //val ptpe = ctpe match {
-                //case Type.Apply(_, innerType) => liftM(innerType)
-              //}//
-              //unifyM(ctpe, Type.mkChannel(ptpe), loc)
-              //visitExp(r.exp)
           }
 
           for {
             actualBodyTypes <- seqM(bodies map visitExp)
             resultType <- unifyM(tvar :: actualBodyTypes, loc)
           } yield resultType
-
-//          for {
-//            channelTypes <- seqM(channels map visitExp)
-//            channelType <- unifyM(channelTypes, loc)
-//            patternsTypes <- Patterns.inferAll(patterns, program)
-//            patternType <- channelType match {
-//              case Type.Apply(_, innerType) => liftM(innerType)
-//            }
-//            _____________ <- unifyM(patternType :: patternsTypes, loc)
-//            actualBodyTypes <- seqM(bodies map visitExp)
-//            resultType <- unifyM(tvar :: actualBodyTypes, loc)
-//          } yield resultType
 
         /*
          * Reference expression.
