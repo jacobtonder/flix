@@ -373,7 +373,7 @@ object Effects extends Phase[Root, Root] {
         /**
           * Select Channel Expression.
           */
-        case Expression.SelectChannel(sym, chan, body, loc) => Expression.SelectChannel(sym, chan, body, loc).toSuccess
+        case Expression.SelectChannel(rules, tpe, eff, loc) => Expression.SelectChannel(rules, tpe, eff, loc).toSuccess
 
         /**
           * Reference Expression.
