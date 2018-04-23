@@ -38,4 +38,50 @@ def putChannel11(): Channel[Unit] = let ch = channel Unit; let _ = ch <- (); ch
 @test
 def putChannel12(): Channel[Int] = let ch = channel Int 1; let _ = ch <- 2; let _ = ch <- 3; let _ = ch <- 3; let _ = ch <- 5; ch
 
+@test
+def putChannel13(): Channel[Int] =
+    let ch = channel Int;
+    ch <- 1 <- 2 <- 3
 
+@test
+def putChannel14(): Unit =
+    let ch = channel Int;
+    let _ = ch <- 1 <- 2 <- 3;
+    ()
+
+@test
+def putChannel15(): Channel[Str] =
+    let ch = channel Str;
+    ch <- "a" <- "b" <- "c"
+
+@test
+def putChannel16(): Unit =
+    let ch = channel Str;
+    let _ = ch <- "a" <- "b" <- "c";
+    ()
+
+@test
+def putChannel17(): Channel[Unit] =
+    let ch = channel Unit;
+    ch <- () <- () <- ()
+
+@test
+def putChannel18(): Unit =
+    let ch = channel Unit;
+    let _ = ch <- () <- () <- ();
+    ()
+
+@test
+def putChannel19(): Channel[Channel[Int]] =
+    let ch1 = channel Channel[Int];
+    let ch2 = channel Int;
+    let ch3 = channel Int;
+    ch1 <- ch2 <- ch3
+
+@test
+def putChannel20(): Unit =
+    let ch1 = channel Channel[Int];
+    let ch2 = channel Int;
+    let ch3 = channel Int;
+    let _ = ch1 <- ch2 <- ch3;
+    ()

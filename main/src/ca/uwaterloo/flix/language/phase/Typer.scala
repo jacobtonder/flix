@@ -869,8 +869,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           for (
             tpe1 <- visitExp(exp1);
             tpe2 <- visitExp(exp2);
-            ctpe <- unifyM(tpe1, Type.mkChannel(tpe2), loc);
-            rtpe <- unifyM(tvar, Type.Unit, loc)
+            rtpe <- unifyM(tvar, tpe1, Type.mkChannel(tpe2), loc)
           ) yield rtpe
 
         /**
