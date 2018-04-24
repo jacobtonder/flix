@@ -412,6 +412,13 @@ object ParsedAst {
   object Expression {
 
     /**
+      * Statement Expression.
+      * @param exp1 the first expression.
+      * @param exp2 the last expression.
+      */
+    case class Statement(exp1: Expression, exp2: Expression) extends ParsedAst.Expression
+
+    /**
       * Wildcard Expression.
       *
       * Illegal in proper expressions, but allowed in predicates.
