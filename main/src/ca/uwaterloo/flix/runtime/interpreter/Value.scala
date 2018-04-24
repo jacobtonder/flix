@@ -19,6 +19,7 @@ package ca.uwaterloo.flix.runtime.interpreter
 import ca.uwaterloo.flix.api
 import ca.uwaterloo.flix.language.ast.{Symbol, Type}
 import ca.uwaterloo.flix.util.InternalRuntimeException
+import scala.collection.mutable.Queue
 
 sealed trait Value
 
@@ -162,4 +163,8 @@ object Value {
     final override def toString: String = throw InternalRuntimeException(s"Value.Tuple does not support `toString`.")
   }
 
+  case class Channel(size: Int32, tpe: Type) extends  Value {
+    def getCapacity: Int32 = size;
+    def getQueue: Queue[tpe.type] = Queue[tpe.type]();
+  }
 }
