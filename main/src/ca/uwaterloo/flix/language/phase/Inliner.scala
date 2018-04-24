@@ -157,7 +157,8 @@ object Inliner extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       case Expression.ArrayNew(elm, len, tpe, loc) => Expression.ArrayNew(visit(elm), len, tpe, loc)
       case Expression.ArrayLit(elms, tpe, loc) => Expression.ArrayLit(elms map visit, tpe, loc)
       case Expression.ArrayLoad(base, index, tpe, loc) => Expression.ArrayLoad(visit(base), visit(index), tpe, loc)
-      case Expression.ArrayStore(base, index, value, tpe, loc) => Expression.ArrayStore(visit(base), visit(index), visit(value), tpe, loc)
+      case Expression.ArrayStore(base, index, value, tpe, loc) =>
+        Expression.ArrayStore(visit(base), visit(index), visit(value), tpe, loc)
       case Expression.NewChannel(exp, tpe, loc) => Expression.NewChannel(visit(exp), tpe, loc)
       case Expression.GetChannel(exp, tpe, loc) => Expression.GetChannel(visit(exp), tpe, loc)
       case Expression.PutChannel(exp1, exp2, tpe, loc) => Expression.PutChannel(visit(exp1), visit(exp2), tpe, loc)

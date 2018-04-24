@@ -1495,7 +1495,6 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
     case ParsedAst.Expression.Hole(sp1, _, _) => sp1
     case ParsedAst.Expression.Lit(sp1, _, _) => sp1
     case ParsedAst.Expression.Apply(e1, _, _) => leftMostSourcePosition(e1)
-    case ParsedAst.Expression.PutChannel(e1, _, _) => leftMostSourcePosition(e1)
     case ParsedAst.Expression.Infix(e1, _, _, _) => leftMostSourcePosition(e1)
     case ParsedAst.Expression.Postfix(e1, _, _, _) => leftMostSourcePosition(e1)
     case ParsedAst.Expression.Lambda(sp1, _, _, _) => sp1
