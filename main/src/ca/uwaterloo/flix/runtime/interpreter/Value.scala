@@ -164,12 +164,20 @@ object Value {
   }
 
   case class Channel(len: Int, tpe: Type) extends  Value {
-    def getCapacity: Int = len;
+    def getType: Type = tpe
 
-    def getQueue: ConcurrentLinkedQueue[tpe.type] = new ConcurrentLinkedQueue[tpe.type]();
+    def getCapacity: Int = len
 
-    def getWaitingPutters : ConcurrentLinkedQueue[Unit => Unit] = new ConcurrentLinkedQueue[Unit => Unit]();
+    def getQueue: ConcurrentLinkedQueue[tpe.type] = new ConcurrentLinkedQueue[tpe.type]()
 
-    def getWaitingGetters = ConcurrentLinkedQueue[Unit => tpe.type] = new ConcurrentLinkedQueue[Unit => tpe.type]();
+    def getWaitingPutters : ConcurrentLinkedQueue[Unit => Unit] = new ConcurrentLinkedQueue[Unit => Unit]()
+
+    def getWaitingGetters : ConcurrentLinkedQueue[Unit => tpe.type] = new ConcurrentLinkedQueue[Unit => tpe.type]()
+
+    final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
+
+    final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
+
+    final override def toString: String = s"channel[$tpe]"
   }
 }
