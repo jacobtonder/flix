@@ -175,8 +175,7 @@ object Interpreter {
     //
     case Expression.NewChannel(len, tpe, loc) =>
       val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
-      Value.Channel(l, tpe).toString()
-
+      Value.Channel(l, tpe)
     //
     // ArrayLit expressions.
     //
