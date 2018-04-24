@@ -170,14 +170,14 @@ object Value {
 
     def getQueue: ConcurrentLinkedQueue[tpe.type] = new ConcurrentLinkedQueue[tpe.type]()
 
-    def getWaitingPutters : ConcurrentLinkedQueue[Unit => Unit] = new ConcurrentLinkedQueue[Unit => Unit]()
+    def getWaitingPutters = new ConcurrentLinkedQueue[Unit => Unit]()
 
-    def getWaitingGetters : ConcurrentLinkedQueue[Unit => tpe.type] = new ConcurrentLinkedQueue[Unit => tpe.type]()
+    def getWaitingGetters = new ConcurrentLinkedQueue[Unit => tpe.type]()
 
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
     final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
 
-    final override def toString: String = s"channel[$tpe]"
+    final override def toString: String = s"Channel[$tpe] $getCapacity"
   }
 }
