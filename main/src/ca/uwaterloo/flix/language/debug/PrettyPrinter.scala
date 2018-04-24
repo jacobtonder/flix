@@ -309,15 +309,17 @@ object PrettyPrinter {
 
         case Expression.SelectChannel(rules, tpe, loc) =>
           vt.text("select {")
+          vt << Indent << NewLine
           for (SimplifiedAst.SelectRule(sym, chan, body) <- rules) {
-            vt << NewLine << Indent
             vt.text("case ")
             fmtSym(sym, vt)
             vt.text(" <- ")
             visitExp(chan)
             vt.text(" => ")
             visitExp(body)
+            vt << NewLine
           }
+          vt << Dedent << NewLine
           vt.text("}")
 
         case Expression.Ref(exp, tpe, loc) =>
