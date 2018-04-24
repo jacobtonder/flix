@@ -493,7 +493,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     }
 
     def Statement: Rule1[ParsedAst.Expression] = rule {
-      Assign ~ optional(optWS ~ ";" ~ optWS ~ Assign ~> ParsedAst.Expression.Statement)
+      Assign ~ optional(optWS ~ atomic(";") ~ optWS ~ Assign ~ SP ~> ParsedAst.Expression.Statement)
     }
 
     def Assign: Rule1[ParsedAst.Expression] = rule {
@@ -553,7 +553,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
 
       // NB: We allow any operator, other than a reserved operator, to be matched by this rule.
       def Reserved2: Rule1[String] = rule {
-        capture("**" | "<=" | ">=" | "==" | "!=" | "&&" | "||" | "=>" | "->" | "<-")
+        capture("**" | "<=" | ">=" | "==" | "!=" | "&&" | "||" | "=>" | "->" | "<-" | ";")
       }
 
       // NB: We allow any operator, other than a reserved operator, to be matched by this rule.
