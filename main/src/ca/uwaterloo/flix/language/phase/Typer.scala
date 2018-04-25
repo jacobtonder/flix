@@ -829,21 +829,13 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
          */
         case ResolvedAst.Expression.NewChannel(exp, tpe, loc) =>
           //
-          //  e: Int8 | Int16 | Int32 | Int64 | BigInt
-          //  ----------------------------------------
+          //  e: Int32
+          //  ------------------------
           //  channel t e : Channel[t]
           //
           for {
             texp <- visitExp(exp)
-            _ <- texp match {
-              case Type.Int8 => unifyM(texp, Type.Int8, loc)
-              case Type.Int16 => unifyM(texp, Type.Int16, loc)
-              case Type.Int32 => unifyM(texp, Type.Int32, loc)
-              case Type.Int64 => unifyM(texp, Type.Int64, loc)
-              case Type.BigInt => unifyM(texp, Type.BigInt, loc)
-              case _ => unifyM(texp, Type.Int32, loc)
-            }
-              
+            _ <- unifyM(texp, Type.Int32, loc)
             resultType <- liftM(Type.mkChannel(tpe))
           } yield resultType
 
