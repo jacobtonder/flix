@@ -171,41 +171,6 @@ object Interpreter {
       Value.Arr(a, tpe.typeArguments.head)
 
     //
-    // NewChannel Expressions.
-    //
-    case Expression.NewChannel(len, tpe, loc) =>
-      val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
-      Value.Channel(l, tpe)
-
-    //
-    // PutChannel expressions.
-    //
-    case Expression.PutChannel(exp1, exp2, tpe, loc) =>
-      val v = eval(exp2, env0, henv0, lenv0, root)
-      val c = cast2channel(eval(exp1, env0, henv0, lenv0, root))
-      val ct = c.content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
-
-      exp2.tpe match {
-        case c.contentType =>
-          ct.add(v.asInstanceOf[AnyRef])
-        case _ => throw InternalRuntimeException("Type of element does not match type of channel")
-      }
-
-      c
-
-    //
-    // Spawn expressions.
-    //
-    case Expression.Spawn(exp, tpe, loc) =>
-      val clo = eval(exp, env0, henv0, lenv0, root)
-
-      val t = new Thread() {
-        override def run() = invokeClo(clo, List(ExecutableAst.Expression.Unit), env0, henv0, lenv0, root)
-      }
-      t.start()
-      Value.Unit
-
-    //
     // ArrayLit expressions.
     //
     case Expression.ArrayLit(elms, tpe, loc) =>
@@ -238,6 +203,29 @@ object Interpreter {
       }
 
     //
+    // NewChannel expressions.
+    //
+    case Expression.NewChannel(len, tpe, loc) =>
+      val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
+      Value.Channel(l, tpe)
+
+    //
+    // PutChannel expressions.
+    //
+    case Expression.PutChannel(exp1, exp2, tpe, loc) =>
+      val v = eval(exp2, env0, henv0, lenv0, root)
+      val c = cast2channel(eval(exp1, env0, henv0, lenv0, root))
+      val ct = c.content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+
+      exp2.tpe match {
+        case c.contentType =>
+          ct.add(v.asInstanceOf[AnyRef])
+        case _ => throw InternalRuntimeException("Type of element does not match type of channel")
+      }
+
+      c
+    
+    //
     // GetChannel expressions.
     //
     case Expression.GetChannel(exp, tpe, loc) =>
@@ -255,6 +243,18 @@ object Interpreter {
         throw InternalRuntimeException(s"Not implemented. Channel size: ${ct.size()}.")
       }
 
+    //
+    // Spawn expressions.
+    //
+    case Expression.Spawn(exp, tpe, loc) =>
+      val clo = eval(exp, env0, henv0, lenv0, root)
+
+      val t = new Thread() {
+        override def run() = invokeClo(clo, List(ExecutableAst.Expression.Unit), env0, henv0, lenv0, root)
+      }
+      t.start()
+      Value.Unit
+    
     //
     // Reference expressions.
     //
