@@ -178,7 +178,7 @@ object Interpreter {
       Value.Channel(l, tpe)
 
     //
-    // Spawn expression.
+    // Spawn expressions.
     //
     case Expression.Spawn(exp, tpe, loc) =>
       val clo = eval(exp, env0, henv0, lenv0, root)
