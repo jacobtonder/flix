@@ -168,11 +168,11 @@ object Value {
 
     val capacity: Int = len
 
-    val content: AnyRef = new ConcurrentLinkedQueue[tpe.type]()
+    val content: AnyRef = new ConcurrentLinkedQueue[AnyRef]()
 
-    val waitingPutters = new ConcurrentLinkedQueue[Thread]()
+    val waitingPutters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
-    val waitingGetters = new ConcurrentLinkedQueue[Thread]()
+    val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
