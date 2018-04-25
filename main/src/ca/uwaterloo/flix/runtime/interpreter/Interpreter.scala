@@ -182,18 +182,17 @@ object Interpreter {
     // PutChannel Expressions.
     //
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
-
-      //val v: AnyRef = eval(exp2, env0, henv0, lenv0, root)
+      val v = eval(exp2, env0, henv0, lenv0, root)
       val c = cast2channel(eval(exp1, env0, henv0, lenv0, root))
-      //val k = c.content.asInstanceOf[ConcurrentLinkedQueue[v.type]]
-/*
+      val ct = c.content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+
       exp2.tpe match {
         case c.contentType =>
-          k.add(v)
+          ct.add(v.asInstanceOf[AnyRef])
         case _ => throw InternalRuntimeException("Type of element does not match type of channel")
       }
-      */
-      Value.Unit
+
+      c
     //
     // ArrayLit expressions.
     //
