@@ -176,6 +176,19 @@ object Interpreter {
     case Expression.NewChannel(len, tpe, loc) =>
       val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
       Value.Channel(l, tpe)
+
+    //
+    // Spawn expressions.
+    //
+    case Expression.Spawn(exp, tpe, loc) =>
+      val clo = eval(exp, env0, henv0, lenv0, root)
+
+      val t = new Thread() {
+        override def run() = invokeClo(clo, List(ExecutableAst.Expression.Unit), env0, henv0, lenv0, root)
+      }
+      t.start()
+      Value.Unit
+
     //
     // ArrayLit expressions.
     //
