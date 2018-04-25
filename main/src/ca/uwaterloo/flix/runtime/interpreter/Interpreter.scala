@@ -179,7 +179,7 @@ object Interpreter {
       Value.Channel(l, tpe)
 
     //
-    // PutChannel Expressions.
+    // PutChannel expressions.
     //
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
       val v = eval(exp2, env0, henv0, lenv0, root)
@@ -205,7 +205,7 @@ object Interpreter {
       }
       t.start()
       Value.Unit
-    
+
     //
     // ArrayLit expressions.
     //
