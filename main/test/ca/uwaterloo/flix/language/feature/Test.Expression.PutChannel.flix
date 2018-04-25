@@ -99,9 +99,3 @@ def putChannel22(): Unit =
     let _ = ch1 <- <- ch2;
     ()
     */
-
-@test
-def putChannel23(): Unit =
-    let ch1 = channel Int;
-    let _ = ch1 <- 5i8;
-    ()
