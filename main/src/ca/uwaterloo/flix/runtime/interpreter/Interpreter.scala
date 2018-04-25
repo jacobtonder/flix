@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import ca.uwaterloo.flix.api._
 import ca.uwaterloo.flix.language.ast.ExecutableAst._
 import ca.uwaterloo.flix.language.ast._
-import ca.uwaterloo.flix.runtime.interpreter.Value.{Channel, Int32}
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import ca.uwaterloo.flix.util.tc.Show._
 
@@ -236,6 +235,24 @@ object Interpreter {
         b
       } else {
         throw InternalRuntimeException(s"Array index out of bounds: $i. Array length: ${b.elms.length}.")
+      }
+
+    //
+    // GetChannel expressions.
+    //
+    case Expression.GetChannel(exp, tpe, loc) =>
+      val c = cast2channel(eval(exp, env0, henv0, lenv0, root))
+      val ct = c.content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+      val i = 7
+
+      ct.add(i.asInstanceOf[AnyRef])
+      if (ct.peek() != null) {
+        val a = ct.poll()
+        a.asInstanceOf[AnyRef]
+      } else {
+
+        // TODO
+        throw InternalRuntimeException(s"Not implemented. Channel size: ${ct.size()}.")
       }
 
     //
