@@ -17,6 +17,7 @@
 package ca.uwaterloo.flix.runtime.interpreter
 
 import java.lang.reflect.Modifier
+import java.util.concurrent.ConcurrentLinkedQueue
 
 import ca.uwaterloo.flix.api._
 import ca.uwaterloo.flix.language.ast.ExecutableAst._
@@ -176,6 +177,23 @@ object Interpreter {
     case Expression.NewChannel(len, tpe, loc) =>
       val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
       Value.Channel(l, tpe)
+
+    //
+    // PutChannel Expressions.
+    //
+    case Expression.PutChannel(exp1, exp2, tpe, loc) =>
+
+      //val v: AnyRef = eval(exp2, env0, henv0, lenv0, root)
+      val c = cast2channel(eval(exp1, env0, henv0, lenv0, root))
+      //val k = c.content.asInstanceOf[ConcurrentLinkedQueue[v.type]]
+/*
+      exp2.tpe match {
+        case c.contentType =>
+          k.add(v)
+        case _ => throw InternalRuntimeException("Type of element does not match type of channel")
+      }
+      */
+      Value.Unit
     //
     // ArrayLit expressions.
     //
@@ -784,6 +802,14 @@ object Interpreter {
   private def cast2array(ref: AnyRef): Value.Arr = ref match {
     case v: Value.Arr => v
     case _ => throw InternalRuntimeException(s"Unexpected non-array value: ${ref.getClass.getName}.")
+  }
+
+  /**
+    * Cast the given reference `ref` to a channel value.
+    */
+  private def cast2channel(ref: AnyRef): Value.Channel = ref match {
+    case v: Value.Channel => v
+    case _ => throw InternalRuntimeException(s"Unexpected non-channel value: ${ref.getClass.getName}.")
   }
 
   /**
