@@ -220,10 +220,9 @@ object Interpreter {
       exp2.tpe match {
         case c.contentType =>
           ct.add(v.asInstanceOf[AnyRef])
+          c
         case _ => throw InternalRuntimeException("Type of element does not match type of channel")
       }
-
-      c
     
     //
     // GetChannel expressions.
