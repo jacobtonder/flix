@@ -176,11 +176,6 @@ object Value {
 
     val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
-    def put(value: AnyRef): Channel = {
-      content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].add(value.asInstanceOf[AnyRef])
-      this
-    }
-
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
     final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
@@ -203,8 +198,11 @@ object Value {
       }
     }
 
-    def put(): AnyRef = throw InternalRuntimeException("Channel.put is not implemented")
-
+    def put(value: AnyRef): Channel = {
+      content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].add(value.asInstanceOf[AnyRef])
+      this
+    }
+    
     def notifyGet(): Unit = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
 
     def notifyPut(): Unit = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
