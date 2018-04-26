@@ -164,20 +164,45 @@ object Value {
   }
 
   case class Channel(len: Int, tpe: Type) extends  Value {
-    def getType: Type = tpe
+    private val contentType: Type = tpe
 
-    def getCapacity: Int = len
+    private val capacity: Int = len
 
-    def getQueue: ConcurrentLinkedQueue[tpe.type] = new ConcurrentLinkedQueue[tpe.type]()
+    private val content: AnyRef = new ConcurrentLinkedQueue[AnyRef]()
 
-    def getWaitingPutters = new ConcurrentLinkedQueue[Unit => Unit]()
+    private val waitingPutters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
-    def getWaitingGetters = new ConcurrentLinkedQueue[Unit => tpe.type]()
+    private val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
     final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
 
-    final override def toString: String = s"Channel[$tpe] $getCapacity"
+    final override def toString: String = s"Channel[$tpe] $capacity"
+
+    def get(): AnyRef = {
+      val cc = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+      val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+      val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+      cc.peek() match {
+        case null => wp.peek() match {
+          case null => wg.add(Thread.currentThread())
+            Thread.currentThread().wait()
+            AnyRef
+          case _ => wp.poll().notify()
+            throw InternalRuntimeException(s"Not implemented. Channel size: ${cc.size()}.")
+        }
+        case _ => cc.poll()
+      }
+    }
+
+    def put(value: AnyRef): Channel = {
+      content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].add(value.asInstanceOf[AnyRef])
+      this
+    }
+
+    def notifyGet(): Unit = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
+
+    def notifyPut(): Unit = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
   }
 }

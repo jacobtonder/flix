@@ -85,7 +85,7 @@ def putChannel20(): Unit =
     let ch3 = channel Int;
     let _ = ch1 <- ch2 <- ch3;
     ()
-
+/*
 @test
 def putChannel21(): Channel[Int] =
     let ch1 = channel Int;
@@ -98,3 +98,4 @@ def putChannel22(): Unit =
     let ch2 = channel Int;
     let _ = ch1 <- <- ch2;
     ()
+    */
