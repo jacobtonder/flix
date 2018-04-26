@@ -164,8 +164,6 @@ object Value {
   }
 
   case class Channel(len: Int, tpe: Type) extends  Value {
-    // TODO: make fields private
-
     private val contentType: Type = tpe
 
     private val capacity: Int = len
@@ -198,10 +196,14 @@ object Value {
       }
     }
 
+<<<<<<< HEAD
     def put(value: AnyRef): Channel = {
       content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].add(value.asInstanceOf[AnyRef])
       this
     }
+=======
+    def put(): AnyRef = throw InternalRuntimeException("Channel.put is not implemented")
+>>>>>>> f48355cdeecc0fdb910b24628c7b9ca3f4c20d40
 
     def notifyGet(): Unit = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
 
