@@ -166,15 +166,15 @@ object Value {
   case class Channel(len: Int, tpe: Type) extends  Value {
     // TODO: make fields private
 
-    val contentType: Type = tpe
+    private val contentType: Type = tpe
 
-    val capacity: Int = len
+    private val capacity: Int = len
 
-    val content: AnyRef = new ConcurrentLinkedQueue[AnyRef]()
+    private val content: AnyRef = new ConcurrentLinkedQueue[AnyRef]()
 
-    val waitingPutters: AnyRef = new ConcurrentLinkedQueue[Thread]()
+    private val waitingPutters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
-    val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
+    private val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
@@ -202,7 +202,7 @@ object Value {
       content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].add(value.asInstanceOf[AnyRef])
       this
     }
-    
+
     def notifyGet(): Unit = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
 
     def notifyPut(): Unit = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
