@@ -231,9 +231,6 @@ object Interpreter {
     case Expression.GetChannel(exp, tpe, loc) =>
       val c = cast2channel(eval(exp, env0, henv0, lenv0, root))
       val ct = c.content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
-      val i = 7
-
-      ct.add(i.asInstanceOf[AnyRef])
       if (ct.peek() != null) {
         val a = ct.poll()
         a.asInstanceOf[AnyRef]
