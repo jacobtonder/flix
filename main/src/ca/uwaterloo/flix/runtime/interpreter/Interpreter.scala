@@ -224,22 +224,13 @@ object Interpreter {
       }
 
       c
-    
+
     //
     // GetChannel expressions.
     //
     case Expression.GetChannel(exp, tpe, loc) =>
       val c = cast2channel(eval(exp, env0, henv0, lenv0, root))
-      val ct = c.content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
-      if (ct.peek() != null) {
-        val a = ct.poll()
-        a.asInstanceOf[AnyRef]
-      } else {
-
-        // TODO
-        throw InternalRuntimeException(s"Not implemented. Channel size: ${ct.size()}.")
-      }
-
+      c.get()
     //
     // Spawn expressions.
     //
