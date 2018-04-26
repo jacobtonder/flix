@@ -175,7 +175,27 @@ object Value {
     val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
     def put(value: AnyRef): Channel = {
-      content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].add(value.asInstanceOf[AnyRef])
+      val c = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+      val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+      val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+
+      if (c.size() < capacity) { //If channel has room for more content
+        c.add(value)
+      }
+      else {                     //If channel is full
+        wg.peek() match {
+          case null => {  //If there is any getters waiting
+            wp.add(Thread.currentThread())
+            Thread.currentThread().wait()
+          }
+          case _ => {     //If there is no getters waiting
+            this.synchronized {
+              c.add(value)
+              wg.poll().notify()
+            }
+          }
+        }
+      }
       this
     }
 
