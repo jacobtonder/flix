@@ -181,7 +181,7 @@ object Value {
     final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
 
     final override def toString: String = s"Channel[$tpe] $capacity"
-    
+
     def get(): AnyRef = {
       val cc = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
       val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
