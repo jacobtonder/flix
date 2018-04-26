@@ -184,26 +184,20 @@ object Value {
       }
       else {                     //If channel is full
         wg.peek() match {
-          case null => {  //If there is any getters waiting
+          case null => {  //If there are any getters waiting
             wp.add(Thread.currentThread())
             Thread.currentThread().wait()
           }
-          case _ => {     //If there is no getters waiting
+          case _ => {     //If there are no getters waiting
             this.synchronized {
               c.add(value)
-              wg.poll().notify()
+              notifyGet()
             }
           }
         }
       }
       this
     }
-
-    final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
-
-    final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
-
-    final override def toString: String = s"Channel[$tpe] $capacity"
 
     def get(): AnyRef = {
       val cc = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
@@ -212,22 +206,23 @@ object Value {
       cc.peek() match {
         case null => wp.peek() match {
           case null => wg.add(Thread.currentThread())
-            Thread.currentThread().wait()
-            AnyRef
+        Thread.currentThread().wait()
+        AnyRef
           case _ => wp.poll().notify()
-            throw InternalRuntimeException(s"Not implemented. Channel size: ${cc.size()}.")
+        throw InternalRuntimeException(s"Not implemented. Channel size: ${cc.size()}.")
         }
         case _ => cc.poll()
       }
     }
 
-    def put(value: AnyRef): Channel = {
-      content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].add(value.asInstanceOf[AnyRef])
-      this
-    }
-
     def notifyGet(): Unit = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
 
     def notifyPut(): Unit = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
+
+    final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
+
+    final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
+
+    final override def toString: String = s"Channel[$tpe] $capacity"
   }
 }
