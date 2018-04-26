@@ -55,6 +55,10 @@ object Interpreter {
       case Some(v) => v
     }
 
+    case Expression.Statement(exp1, exp2, tpe, loc) =>
+      eval(exp1, env0, henv0, lenv0, root)
+      eval(exp2, env0, henv0, lenv0, root)
+
     //
     // Closure expressions.
     //
