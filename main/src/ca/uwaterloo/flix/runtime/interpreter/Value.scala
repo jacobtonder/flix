@@ -174,6 +174,11 @@ object Value {
 
     val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
+    def put(value: AnyRef): Channel = {
+      content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].add(value.asInstanceOf[AnyRef])
+      this
+    }
+
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
     final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
