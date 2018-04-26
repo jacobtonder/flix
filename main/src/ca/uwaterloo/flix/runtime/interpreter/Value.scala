@@ -163,7 +163,7 @@ object Value {
     final override def toString: String = throw InternalRuntimeException(s"Value.Tuple does not support `toString`.")
   }
 
-  case class Channel(len: Int, tpe: Type) extends  Value {
+  case class Channel(len: Int, tpe: Type) extends Value {
     val contentType: Type = tpe
 
     val capacity: Int = len
@@ -173,6 +173,11 @@ object Value {
     val waitingPutters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
     val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
+
+    def put(value: AnyRef): Channel = {
+      content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].add(value.asInstanceOf[AnyRef])
+      this
+    }
 
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
