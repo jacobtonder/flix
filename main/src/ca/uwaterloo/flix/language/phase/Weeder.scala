@@ -381,6 +381,13 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
         * @param unsafe `true` if we are inside an unsafe scope.
         */
       def visit(e0: ParsedAst.Expression, unsafe: Boolean): Validation[WeededAst.Expression, WeederError] = e0 match {
+        case ParsedAst.Expression.Statement(exp1, exp2, sp2) =>
+          val sp1 = leftMostSourcePosition(exp1)
+          val loc = mkSL(sp1, sp2)
+          @@(visit(exp1, unsafe), visit(exp2, unsafe)) map {
+            case (e1, e2) => WeededAst.Expression.Statement(e1, e2, loc)
+          }
+
         case ParsedAst.Expression.Wild(sp1, sp2) => IllegalWildcard(mkSL(sp1, sp2)).toFailure
 
         case ParsedAst.Expression.SName(sp1, ident, sp2) =>
@@ -1489,6 +1496,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
     * Returns the left most source position in the sub-tree of the expression `e`.
     */
   private def leftMostSourcePosition(e: ParsedAst.Expression): SourcePosition = e match {
+    case ParsedAst.Expression.Statement(e1, _, _) => leftMostSourcePosition(e1)
     case ParsedAst.Expression.Wild(sp1, _) => sp1
     case ParsedAst.Expression.SName(sp1, _, _) => sp1
     case ParsedAst.Expression.QName(sp1, _, _) => sp1
