@@ -166,6 +166,7 @@ object Value {
   }
 
   case class Channel(len: Int, tpe: Type) extends Value {
+    // TODO: make fields private
     val contentType: Type = tpe
 
     val capacity: Int = len
