@@ -163,16 +163,16 @@ object Value {
     final override def toString: String = throw InternalRuntimeException(s"Value.Tuple does not support `toString`.")
   }
 
-  case class Channel(len: Int, tpe: Type) extends Value {
-    val contentType: Type = tpe
+  case class Channel(len: Int, tpe: Type) extends  Value {
+    private val contentType: Type = tpe
 
-    val capacity: Int = len
+    private val capacity: Int = len
 
-    val content: AnyRef = new ConcurrentLinkedQueue[AnyRef]()
+    private val content: AnyRef = new ConcurrentLinkedQueue[AnyRef]()
 
-    val waitingPutters: AnyRef = new ConcurrentLinkedQueue[Thread]()
+    private val waitingPutters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
-    val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
+    private val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
     def put(value: AnyRef): Channel = {
       val c = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
@@ -220,5 +220,14 @@ object Value {
         case _ => cc.poll()
       }
     }
+
+    def put(value: AnyRef): Channel = {
+      content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].add(value.asInstanceOf[AnyRef])
+      this
+    }
+
+    def notifyGet(): Unit = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
+
+    def notifyPut(): Unit = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
   }
 }
