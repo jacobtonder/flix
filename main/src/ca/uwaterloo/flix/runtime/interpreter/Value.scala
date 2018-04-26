@@ -21,8 +21,6 @@ import ca.uwaterloo.flix.language.ast.{Symbol, Type}
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import java.util.concurrent.ConcurrentLinkedQueue
 
-import jdk.jshell.spi.ExecutionControl.NotImplementedException
-
 sealed trait Value
 
 object Value {
@@ -188,7 +186,7 @@ object Value {
     final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
 
     final override def toString: String = s"Channel[$tpe] $capacity"
-
+    
     def get(): AnyRef = {
       val cc = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
       val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
@@ -205,7 +203,7 @@ object Value {
       }
     }
 
-    def put(): AnyRef = throw new NotImplementedException("Channel.put is not implemented")
+    def put(): AnyRef = throw InternalRuntimeException("Channel.put is not implemented")
 
     def notifyGet(): Unit = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
 
