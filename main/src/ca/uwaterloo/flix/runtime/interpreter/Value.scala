@@ -204,5 +204,21 @@ object Value {
     final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
 
     final override def toString: String = s"Channel[$tpe] $capacity"
+
+    def get(): AnyRef = {
+      val cc = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+      val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+      val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+      cc.peek() match {
+        case null => wp.peek() match {
+          case null => wg.add(Thread.currentThread())
+            Thread.currentThread().wait()
+            AnyRef
+          case _ => wp.poll().notify()
+            throw InternalRuntimeException(s"Not implemented. Channel size: ${cc.size()}.")
+        }
+        case _ => cc.poll()
+      }
+    }
   }
 }
