@@ -20,6 +20,7 @@ import ca.uwaterloo.flix.api
 import ca.uwaterloo.flix.language.ast.{Symbol, Type}
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import java.util.concurrent.ConcurrentLinkedQueue
+import java.util.concurrent.locks
 
 sealed trait Value
 
@@ -175,49 +176,214 @@ object Value {
     private val waitingGetters: AnyRef = new ConcurrentLinkedQueue[Thread]()
 
     def put(value: AnyRef): Channel = {
-      val c = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
-      val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
-      val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+      this.synchronized {
+        val c = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+        val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+        val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
 
-      if (c.size() < capacity) { //If channel has room for more content
-        c.add(value)
-      }
-      else {                     //If channel is full
-        wg.peek() match {
-          case null => {  //If there are any getters waiting
-            wp.add(Thread.currentThread())
-            Thread.currentThread().wait()
-          }
-          case _ => {     //If there are no getters waiting
-            this.synchronized {
-              c.add(value)
-              notifyGet()
-            }
+        println(s"(Thread: ${Thread.currentThread().getId}  -  Put").asInstanceOf[AnyRef]
+
+        if (c.size() < capacity) {  //If channel has room for more content
+          println(s"Thread: ${Thread.currentThread().getId}  -  Add to content").asInstanceOf[AnyRef]
+          c.add(value)
+          println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+
+          wg.peek() match {           //Lookup if any waiting getters exists
+            case null =>              //If no waiting getters exists DO NOTHING
+            case _ =>                 //If some waiting getters exist NOTIFY IT
+              val wgToNotify = wg.poll().asInstanceOf[Thread]
+              println(s"Thread: ${Thread.currentThread().getId}  -  Notifies Thread ${wgToNotify.getId}").asInstanceOf[AnyRef]
+              notifyAll()
           }
         }
+        else {                      //If channel is full
+          println(s"Thread: ${Thread.currentThread().getId}  -  Add to Waiting Putters").asInstanceOf[AnyRef]
+          wp.add(Thread.currentThread())
+          println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+
+          wg.peek() match {           //Lookup waiting getters
+            case null =>              //If no waiting getters exists GO TO SLEEP
+              println(s"Thread: ${Thread.currentThread().getId} goes to sleep!").asInstanceOf[AnyRef]
+              wait()
+
+              println("PUTTER WOKEN").asInstanceOf[AnyRef]
+              println(s"Thread: ${Thread.currentThread.getId}  -  Remove self from Waiting Putters, put content").asInstanceOf[AnyRef]
+              wp.poll()
+              c.add(value)
+              println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+            case _ =>                 //If some waiting getters exist NOTIFY IT
+              val wgToNotify = wg.poll().asInstanceOf[Thread]
+              println(s"Thread: ${Thread.currentThread().getId}  -  Notifies Thread ${wgToNotify.getId}").asInstanceOf[AnyRef]
+              notifyAll()
+          }
+        }
+
+        this
       }
-      this
     }
 
     def get(): AnyRef = {
-      val cc = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
-      val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
-      val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
-      cc.peek() match {
-        case null => wp.peek() match {
-          case null => wg.add(Thread.currentThread())
-        Thread.currentThread().wait()
-        AnyRef
-          case _ => wp.poll().notify()
-        throw InternalRuntimeException(s"Not implemented. Channel size: ${cc.size()}.")
+      this.synchronized {
+        val c = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+        val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+        val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+
+        println(s"Thread: ${Thread.currentThread().getId}  -  Get").asInstanceOf[AnyRef]
+
+        c.peek() match {              //Lookup elements in content
+          case null =>                //If no element exists ADD TO WAITING GETTERS AND PUT TO SLEEP
+            println(s"Thread: ${Thread.currentThread().getId}  -  Add to Waiting Getters and wait").asInstanceOf[AnyRef]
+            wg.add(Thread.currentThread())
+            println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+
+            wp.peek() match{
+              case null =>              //If no waiting putters exists NO NOTHING
+              case _ =>                 //If some waiting putters exists NOTIFY IT
+                val wpToNotify = wp.poll().asInstanceOf[Thread]
+                println(s"Thread: ${Thread.currentThread().getId}  -  Notifies Thread ${wpToNotify.getId}").asInstanceOf[AnyRef]
+                notifyAll()
+
+            }
+
+            println(s"Thread: ${Thread.currentThread().getId} goes to sleep!").asInstanceOf[AnyRef]
+            wait()
+
+            println("GETTER WOKEN").asInstanceOf[AnyRef]
+            println(s"Thread: ${Thread.currentThread.getId}  -  Remove self from Waiting Getters, take and return content").asInstanceOf[AnyRef]
+            wg.poll()
+            val tmp = c.poll()
+            println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+            return tmp
+          //}
+
+          case _ =>                   //If some element exists
+            println(s"Thread: ${Thread.currentThread().getId}  -  Take and return content").asInstanceOf[AnyRef]
+            val tmp = c.poll()
+            println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+            return tmp
         }
-        case _ => cc.poll()
+
+        AnyRef
+      }
+    }
+    /*
+    def put(value: AnyRef): Channel = {
+      this.synchronized {
+        val c = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+        val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+        val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+
+        println(s"Thread: ${Thread.currentThread()}  -  Put").asInstanceOf[AnyRef]
+
+        if (c.size() < capacity) { //If channel has room for more content
+          wg.peek() match {
+            case null =>
+              //synchronized {
+                println(s"Thread: ${Thread.currentThread()}  -  Add to content").asInstanceOf[AnyRef]
+                c.add(value)
+                println(s"c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+              //}
+            case _ => { //If there are any getters waiting
+              //wg.peek().synchronized {
+                println(s"Thread: ${Thread.currentThread()}  -  Add to content and notify").asInstanceOf[AnyRef]
+                c.add(value)
+                println(s"c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+              //}
+                notifyGet()
+            }
+          }
+        }
+        else { //If channel is full
+          wg.peek() match {
+            case null => { //If there are no getters waiting
+              //synchronized {
+                println(s"Thread: ${Thread.currentThread()}  -  Add to Waiting Putters").asInstanceOf[AnyRef]
+                wp.add(Thread.currentThread())
+                println(s"c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+                println(s"Thread: ${Thread.currentThread()} goes to sleep!").asInstanceOf[AnyRef]
+              //}
+                Thread.currentThread().wait()
+                println("PUTTER WOKEN")
+
+            }
+            case _ => { //If there are any getters waiting
+              //wg.peek().synchronized {
+                println(s"Thread: ${Thread.currentThread()}  -  Add to content and notify").asInstanceOf[AnyRef]
+                c.add(value)
+                println(s"c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+              //}
+                notifyGet()
+            }
+          }
+        }
+        this
       }
     }
 
-    def notifyGet(): Unit = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
+    def get(): AnyRef = {
+      this.synchronized {
+        val cc = content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+        val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+        val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
+        //synchronized {
+          println(s"Thread: ${Thread.currentThread()}  -  Get").asInstanceOf[AnyRef]
+        //}
+        cc.peek() match {
+          case null => wp.peek() match {
+            case null =>
+              //synchronized {
+                println(s"Thread: ${Thread.currentThread()}  -  Add to Waiting Getters and wait").asInstanceOf[AnyRef]
+                wg.add(Thread.currentThread())
+                println(s"c.size = ${cc.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+              //}
+                println(s"Thread: ${Thread.currentThread()} goes to sleep!").asInstanceOf[AnyRef]
+                Thread.currentThread().wait()
+                println("GETTER WOKEN").asInstanceOf[AnyRef]
+                //synchronized {
+                  println(s"Thread: ${Thread.currentThread()}  -  Remove self from Waiting Getters, take and return content").asInstanceOf[AnyRef]
+                  wg.poll()
+                  val tmp = cc.poll()
+                  println(s"c.size = ${cc.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+                  tmp
+                //}
 
-    def notifyPut(): Unit = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek().notify()
+
+            case _ =>
+              //wp.peek().synchronized {
+                println(s"Thread: ${Thread.currentThread()}  -  Add to Waiting Getters and notify").asInstanceOf[AnyRef]
+                wg.add(Thread.currentThread())
+                println(s"c.size = ${cc.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+              //}
+                notifyPut()
+
+              throw InternalRuntimeException(s"Not implemented. Channel size: ${cc.size()}.")
+          }
+          case _ =>
+            //synchronized {
+              println(s"Thread: ${Thread.currentThread()}  -  Take and return content").asInstanceOf[AnyRef]
+              val tmp = cc.poll()
+              println(s"c.size = ${cc.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+              tmp
+            }
+        //}
+      }
+    }
+*/
+    def notifyGet(): Unit = {
+      this.synchronized{
+        val g = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek()
+        println(s"Notifies waiting getter ${g}")
+        g.notifyAll()
+      }
+    }
+
+    def notifyPut(): Unit = {
+      this.synchronized {
+        val p = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[Thread]].peek()
+        println(s"Notifies waiting putter ${p}")
+        p.notifyAll()
+      }
+    }
 
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 

@@ -1,7 +1,22 @@
 /////////////////////////////////////////////////////////////////////////////
 // Put channel expressions                                                 //
 /////////////////////////////////////////////////////////////////////////////
+@test
+def spawnConcurrentProcesses(): Channel[Int] =
+    let ch = channel Int 1;
+    let v = 5;
+    let _ = spawn putChannel0(ch);
+    let _ = spawn getChannel0(ch);
+    let _ = spawn putChannel0(ch);
+    let _ = spawn getChannel0(ch);
+    let _ = spawn putChannel0(ch);
+    let _ = spawn getChannel0(ch);
+    ch
 
+def putChannel0(ch: Channel[Int]): Channel[Int] = let _ = ch <- 5; ch
+def getChannel0(ch: Channel[Int]): Int = <- ch
+
+/*
 @test
 def putChannel01(): Channel[Int] = let ch = channel Int; let _ = ch <- 2; ch
 
@@ -85,7 +100,7 @@ def putChannel20(): Unit =
     let ch3 = channel Int;
     let _ = ch1 <- ch2 <- ch3;
     ()
-/*
+
 @test
 def putChannel21(): Channel[Int] =
     let ch1 = channel Int;
@@ -98,4 +113,5 @@ def putChannel22(): Unit =
     let ch2 = channel Int;
     let _ = ch1 <- <- ch2;
     ()
-    */
+
+*/
