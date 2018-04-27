@@ -181,7 +181,7 @@ object Value {
         val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
         val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
 
-        println(s"(Thread: ${Thread.currentThread().getId}  -  Put").asInstanceOf[AnyRef]
+        println(s"Thread: ${Thread.currentThread().getId}  -  Put").asInstanceOf[AnyRef]
 
         if (c.size() < capacity) {  //If channel has room for more content
           println(s"Thread: ${Thread.currentThread().getId}  -  Add to content").asInstanceOf[AnyRef]
@@ -191,7 +191,7 @@ object Value {
           wg.peek() match {           //Lookup if any waiting getters exists
             case null =>              //If no waiting getters exists DO NOTHING
             case _ =>                 //If some waiting getters exist NOTIFY IT
-              val wgToNotify = wg.poll().asInstanceOf[Thread]
+              val wgToNotify = wg.peek().asInstanceOf[Thread]
               println(s"Thread: ${Thread.currentThread().getId}  -  Notifies Thread ${wgToNotify.getId}").asInstanceOf[AnyRef]
               notifyAll()
           }
@@ -212,7 +212,7 @@ object Value {
               c.add(value)
               println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
             case _ =>                 //If some waiting getters exist NOTIFY IT
-              val wgToNotify = wg.poll().asInstanceOf[Thread]
+              val wgToNotify = wg.peek().asInstanceOf[Thread]
               println(s"Thread: ${Thread.currentThread().getId}  -  Notifies Thread ${wgToNotify.getId}").asInstanceOf[AnyRef]
               notifyAll()
           }
@@ -239,7 +239,7 @@ object Value {
             wp.peek() match{
               case null =>              //If no waiting putters exists NO NOTHING
               case _ =>                 //If some waiting putters exists NOTIFY IT
-                val wpToNotify = wp.poll().asInstanceOf[Thread]
+                val wpToNotify = wp.peek().asInstanceOf[Thread]
                 println(s"Thread: ${Thread.currentThread().getId}  -  Notifies Thread ${wpToNotify.getId}").asInstanceOf[AnyRef]
                 notifyAll()
 
