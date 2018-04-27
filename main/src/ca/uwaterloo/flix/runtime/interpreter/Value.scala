@@ -206,7 +206,7 @@ object Value {
               println(s"Thread: ${Thread.currentThread().getId} goes to sleep!").asInstanceOf[AnyRef]
               wait()
 
-              println("PUTTER WOKEN").asInstanceOf[AnyRef]
+              println("PUTTER ${Thread.currentThread().getId} WOKEN").asInstanceOf[AnyRef]
               println(s"Thread: ${Thread.currentThread.getId}  -  Remove self from Waiting Putters, put content").asInstanceOf[AnyRef]
               wp.poll()
               c.add(value)
@@ -248,12 +248,21 @@ object Value {
             println(s"Thread: ${Thread.currentThread().getId} goes to sleep!").asInstanceOf[AnyRef]
             wait()
 
-            println("GETTER WOKEN").asInstanceOf[AnyRef]
-            println(s"Thread: ${Thread.currentThread.getId}  -  Remove self from Waiting Getters, take and return content").asInstanceOf[AnyRef]
-            wg.poll()
-            val tmp = c.poll()
-            println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
-            return tmp
+            println(s"GETTER Thread: ${Thread.currentThread().getId} WOKEN").asInstanceOf[AnyRef]
+            c.peek() match {
+              case null =>
+                notifyAll()
+                wait()
+                //get()
+              case _ =>
+            }
+                println(s"Thread: ${Thread.currentThread.getId}  -  Remove self from Waiting Getters, take and return content").asInstanceOf[AnyRef]
+                wg.poll()
+                val tmp = c.poll()
+                println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+                return tmp
+
+
           //}
 
           case _ =>                   //If some element exists
