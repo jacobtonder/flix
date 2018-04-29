@@ -100,3 +100,48 @@ def f20(): Color = Color.New("Green")
 
 @test
 def testSpawn20(): Unit = spawn f20()
+
+def f21(x: Int): Int = x
+
+@test
+def testSpawn21(): Unit = spawn f21(3)
+
+def f22(x: Str): Str = x
+
+@test
+def testSpawn22(): Unit = spawn f22("str")
+
+def f23(x: Char): Char = x
+
+@test
+def testSpawn23(): Unit = spawn f23('2')
+
+def f24(x: Float64): Float64 = x
+
+@test
+def testSpawn24(): Unit = spawn f24(3.2)
+
+def f25(x: Int, y: Int): Int = x + y
+
+@test
+def testSpawn25(): Unit = spawn f25(1, 2)
+
+def f26(x: Int, y: Str): Int = x
+
+@test
+def testSpawn26(): Unit = spawn f26(1, "str")
+
+def f27(x: Int, y: Char): Int = x
+
+@test
+def testSpawn27(): Unit = spawn f27(1, 'c')
+
+def f28(x: Int, y: Float64): Int = x
+
+@test
+def testSpawn28(): Unit = spawn f28(1, 2.2)
+
+def f29(x: Int, y: Int, z: Int): Int = x + y + z
+
+@test
+def testSpawn29(): Unit = spawn f29(1, 2, 3)
