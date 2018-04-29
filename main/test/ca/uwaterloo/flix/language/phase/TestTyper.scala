@@ -153,6 +153,36 @@ class TestTyper extends FunSuite with TestUtils {
     expectError[UnificationError](result)
   }
 
+  test("Expression.Spawn.TypeError.MismatchArrowType") {
+    val input =
+      """
+        |def t(): Int = 42
+        |def f(): Unit = spawn t(2)
+      """.stripMargin
+    val result = new Flix().addStr(input).compile()
+    expectError[UnificationError](result)
+  }
+
+  test("Expression.Spawn.TypeError.MismatchArrowType") {
+    val input =
+      """
+        |def t(x: Int): Int = x
+        |def f(): Unit = spawn t()
+      """.stripMargin
+    val result = new Flix().addStr(input).compile()
+    expectError[UnificationError](result)
+  }
+
+  test("Expression.Spawn.TypeError.MismatchArrowType") {
+    val input =
+      """
+        |def t(x: Int, y: Int): Int = x + y
+        |def f(): Unit = spawn t(2)
+      """.stripMargin
+    val result = new Flix().addStr(input).compile()
+    expectError[UnificationError](result)
+  }
+
   test("Expression.SelectChannel.TypeError.String.IllegalReturnType") {
     val input =
       """def f(ch: Channel[Int]): Int = select {
