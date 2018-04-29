@@ -661,7 +661,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
           def createExpression(params: List[ParsedAst.Expression], arguments: List[Name.Ident], paramNumber: Int): Validation[WeededAst.Expression, WeederError] =
             params match {
               case h :: t =>
-                val param = Name.Ident(sp1, s"x$${paramNumber}", sp2)
+                val param = Name.Ident(sp1, s"x$$${paramNumber}", sp2)
 
                 @@(visit(h, unsafe), createExpression(t, param :: arguments, paramNumber + 1)) map {
                   case (e1, e2) => WeededAst.Expression.Let(param, e1, e2, loc) // let x$n = en
