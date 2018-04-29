@@ -100,3 +100,8 @@ def f20(): Color = Color.New("Green")
 
 @test
 def testSpawn20(): Unit = spawn f20()
+
+def f21(a: Int, b: Str): Int = a
+
+@test
+def testSpawn21(): Unit = spawn f21(21, "test")
