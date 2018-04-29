@@ -186,7 +186,7 @@ object Value {
         if (c.size() < capacity) {  //If channel has room for more content
           println(s"Thread: ${Thread.currentThread().getId()}  -  Add to content").asInstanceOf[AnyRef]
           c.add(value)
-          println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+          printState;
 
           wg.peek() match {           //Lookup if any waiting getters exists
             case null =>              //If no waiting getters exists DO NOTHING
@@ -200,14 +200,14 @@ object Value {
           if (wg.size() > wp.size() + c.size()) { //If there are any excess waiting getters
             println(s"Thread: ${Thread.currentThread().getId()}  -  Add to content and notify wg").asInstanceOf[AnyRef]
             c.add(value)
-            println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+            printState;
             notifyAll()
           }
           else {
             println(s"Thread: ${Thread.currentThread().getId()}  -  Add to wp").asInstanceOf[AnyRef]
             wp.add(Thread.currentThread())
             println(s"Thread: ${Thread.currentThread().getId()}  -  goes to sleep!").asInstanceOf[AnyRef]
-            println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+            printState;
             wait()
             println(s"PUTTER ${Thread.currentThread().getId()} WOKEN").asInstanceOf[AnyRef]
             wp.remove(Thread.currentThread())
@@ -254,7 +254,7 @@ object Value {
           case null =>                //If no element exists ADD TO WAITING GETTERS AND PUT TO SLEEP
             println(s"Thread: ${Thread.currentThread().getId()}  -  Add to Waiting Getters and wait").asInstanceOf[AnyRef]
             wg.add(Thread.currentThread())
-            println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+            printState;
 
             wp.peek() match{            //Lookup waiting putters
               case null =>              //If no waiting putters exists NO NOTHING
@@ -290,13 +290,18 @@ object Value {
           case _ =>                   //If some element exists
             println(s"Thread: ${Thread.currentThread().getId}  -  Take and return content").asInstanceOf[AnyRef]
             val tmp = c.poll()
-            println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+            printState;
             return tmp
         }
-
         AnyRef
       }
     }
+    def printState =
+      println(s"      STATE OF CHANNEL ${content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].hashCode()}: " +
+        s"c.size = ${content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].size()}; " +
+        s"wp.size = ${waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].size()}; " +
+        s"wg.size = ${waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].size()}").asInstanceOf[AnyRef]
+
     /*
     def put(value: AnyRef): Channel = {
       this.synchronized {
