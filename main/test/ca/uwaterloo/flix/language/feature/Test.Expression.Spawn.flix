@@ -145,3 +145,8 @@ def f29(x: Int, y: Int, z: Int): Int = x + y + z
 
 @test
 def testSpawn29(): Unit = spawn f29(1, 2, 3)
+
+def f30(x: Unit): Unit = ()
+
+@test
+def testSpawn30(): Unit = spawn f30(spawn f30(()))
