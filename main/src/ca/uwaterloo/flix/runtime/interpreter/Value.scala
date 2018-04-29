@@ -181,39 +181,39 @@ object Value {
         val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
         val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
 
-        println(s"Thread: ${Thread.currentThread().getId}  -  Put").asInstanceOf[AnyRef]
+        println(s"Thread: ${Thread.currentThread().getId()}  -  Put").asInstanceOf[AnyRef]
 
         if (c.size() < capacity) {  //If channel has room for more content
-          println(s"Thread: ${Thread.currentThread().getId}  -  Add to content").asInstanceOf[AnyRef]
+          println(s"Thread: ${Thread.currentThread().getId()}  -  Add to content").asInstanceOf[AnyRef]
           c.add(value)
           println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
-
+          
           wg.peek() match {           //Lookup if any waiting getters exists
             case null =>              //If no waiting getters exists DO NOTHING
             case _ =>                 //If some waiting getters exist NOTIFY IT
               val wgToNotify = wg.peek().asInstanceOf[Thread]
-              println(s"Thread: ${Thread.currentThread().getId}  -  Notifies Thread ${wgToNotify.getId}").asInstanceOf[AnyRef]
+              println(s"Thread: ${Thread.currentThread().getId()}  -  Notifies Thread ${wgToNotify.getId()}").asInstanceOf[AnyRef]
               notifyAll()
           }
         }
         else {                      //If channel is full
-          println(s"Thread: ${Thread.currentThread().getId}  -  Add to Waiting Putters").asInstanceOf[AnyRef]
+          println(s"Thread: ${Thread.currentThread().getId()}  -  Add to Waiting Putters").asInstanceOf[AnyRef]
           wp.add(Thread.currentThread())
           println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
 
           wg.peek() match {           //Lookup waiting getters
             case null =>              //If no waiting getters exists GO TO SLEEP
-              println(s"Thread: ${Thread.currentThread().getId} goes to sleep!").asInstanceOf[AnyRef]
+              println(s"Thread: ${Thread.currentThread().getId()} goes to sleep!").asInstanceOf[AnyRef]
               wait()
 
-              println("PUTTER ${Thread.currentThread().getId} WOKEN").asInstanceOf[AnyRef]
-              println(s"Thread: ${Thread.currentThread.getId}  -  Remove self from Waiting Putters, put content").asInstanceOf[AnyRef]
+              println(s"PUTTER ${Thread.currentThread().getId()} WOKEN").asInstanceOf[AnyRef]
+              println(s"Thread: ${Thread.currentThread.getId()}  -  Remove self from Waiting Putters, put content").asInstanceOf[AnyRef]
               wp.poll()
               c.add(value)
               println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
             case _ =>                 //If some waiting getters exist NOTIFY IT
               val wgToNotify = wg.peek().asInstanceOf[Thread]
-              println(s"Thread: ${Thread.currentThread().getId}  -  Notifies Thread ${wgToNotify.getId}").asInstanceOf[AnyRef]
+              println(s"Thread: ${Thread.currentThread().getId()}  -  Notifies Thread ${wgToNotify.getId()}").asInstanceOf[AnyRef]
               notifyAll()
           }
         }
@@ -228,32 +228,33 @@ object Value {
         val wg = waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
         val wp = waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]]
 
-        println(s"Thread: ${Thread.currentThread().getId}  -  Get").asInstanceOf[AnyRef]
+        println(s"Thread: ${Thread.currentThread().getId()}  -  Get").asInstanceOf[AnyRef]
 
         c.peek() match {              //Lookup elements in content
           case null =>                //If no element exists ADD TO WAITING GETTERS AND PUT TO SLEEP
-            println(s"Thread: ${Thread.currentThread().getId}  -  Add to Waiting Getters and wait").asInstanceOf[AnyRef]
+            println(s"Thread: ${Thread.currentThread().getId()}  -  Add to Waiting Getters and wait").asInstanceOf[AnyRef]
             wg.add(Thread.currentThread())
             println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
 
-            wp.peek() match{
+            wp.peek() match{            //Lookup waiting putters
               case null =>              //If no waiting putters exists NO NOTHING
               case _ =>                 //If some waiting putters exists NOTIFY IT
                 val wpToNotify = wp.peek().asInstanceOf[Thread]
-                println(s"Thread: ${Thread.currentThread().getId}  -  Notifies Thread ${wpToNotify.getId}").asInstanceOf[AnyRef]
+                println(s"Thread: ${Thread.currentThread().getId()}  -  Notifies Thread ${wpToNotify.getId()}").asInstanceOf[AnyRef]
                 notifyAll()
-
             }
 
-            println(s"Thread: ${Thread.currentThread().getId} goes to sleep!").asInstanceOf[AnyRef]
+            println(s"Thread: ${Thread.currentThread().getId()} goes to sleep!").asInstanceOf[AnyRef]
             wait()
-
+            get()
+          /*
             println(s"GETTER Thread: ${Thread.currentThread().getId} WOKEN").asInstanceOf[AnyRef]
             c.peek() match {
               case null =>
                 notifyAll()
+                println("Wait:").asInstanceOf[AnyRef]
                 wait()
-                //get()
+                println("Unwait:").asInstanceOf[AnyRef]
               case _ =>
             }
                 println(s"Thread: ${Thread.currentThread.getId}  -  Remove self from Waiting Getters, take and return content").asInstanceOf[AnyRef]
@@ -261,9 +262,8 @@ object Value {
                 val tmp = c.poll()
                 println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
                 return tmp
-
-
           //}
+          */
 
           case _ =>                   //If some element exists
             println(s"Thread: ${Thread.currentThread().getId}  -  Take and return content").asInstanceOf[AnyRef]
