@@ -153,7 +153,7 @@ class TestTyper extends FunSuite with TestUtils {
     expectError[UnificationError](result)
   }
 
-  test("Expression.Spawn.TypeError.MismatchArrowType") {
+  test("Expression.Spawn.TypeError.MismatchArrowType.01") {
     val input =
       """
         |def t(): Int = 42
@@ -163,7 +163,7 @@ class TestTyper extends FunSuite with TestUtils {
     expectError[UnificationError](result)
   }
 
-  test("Expression.Spawn.TypeError.MismatchArrowType") {
+  test("Expression.Spawn.TypeError.MismatchArrowType.02") {
     val input =
       """
         |def t(x: Int): Int = x
@@ -173,7 +173,7 @@ class TestTyper extends FunSuite with TestUtils {
     expectError[UnificationError](result)
   }
 
-  test("Expression.Spawn.TypeError.MismatchArrowType") {
+  test("Expression.Spawn.TypeError.MismatchArrowType.03") {
     val input =
       """
         |def t(x: Int, y: Int): Int = x + y
