@@ -187,7 +187,7 @@ object Value {
           println(s"Thread: ${Thread.currentThread().getId()}  -  Add to content").asInstanceOf[AnyRef]
           c.add(value)
           println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
-          
+
           wg.peek() match {           //Lookup if any waiting getters exists
             case null =>              //If no waiting getters exists DO NOTHING
             case _ =>                 //If some waiting getters exist NOTIFY IT
@@ -197,6 +197,25 @@ object Value {
           }
         }
         else {                      //If channel is full
+          if (wg.size() > wp.size() + c.size()) { //If there are any excess waiting getters
+            println(s"Thread: ${Thread.currentThread().getId()}  -  Add to content and notify wg").asInstanceOf[AnyRef]
+            c.add(value)
+            println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+            notifyAll()
+          }
+          else {
+            println(s"Thread: ${Thread.currentThread().getId()}  -  Add to wp").asInstanceOf[AnyRef]
+            wp.add(Thread.currentThread())
+            println(s"Thread: ${Thread.currentThread().getId()}  -  goes to sleep!").asInstanceOf[AnyRef]
+            println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+            wait()
+            println(s"PUTTER ${Thread.currentThread().getId()} WOKEN").asInstanceOf[AnyRef]
+            wp.remove(Thread.currentThread())
+            put(value)
+          }
+
+
+          /*
           println(s"Thread: ${Thread.currentThread().getId()}  -  Add to Waiting Putters").asInstanceOf[AnyRef]
           wp.add(Thread.currentThread())
           println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
@@ -216,6 +235,7 @@ object Value {
               println(s"Thread: ${Thread.currentThread().getId()}  -  Notifies Thread ${wgToNotify.getId()}").asInstanceOf[AnyRef]
               notifyAll()
           }
+          */
         }
 
         this
@@ -246,6 +266,8 @@ object Value {
 
             println(s"Thread: ${Thread.currentThread().getId()} goes to sleep!").asInstanceOf[AnyRef]
             wait()
+            println(s"GETTER ${Thread.currentThread().getId()} WOKEN").asInstanceOf[AnyRef]
+            wg.remove(Thread.currentThread())
             get()
           /*
             println(s"GETTER Thread: ${Thread.currentThread().getId} WOKEN").asInstanceOf[AnyRef]
