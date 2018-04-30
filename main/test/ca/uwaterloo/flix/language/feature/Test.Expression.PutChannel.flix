@@ -45,7 +45,25 @@ def putChannelI804(): Int8 =
     let _ = spgI8(ch3, ch2);
     <- ch3
 
+@test
+def putChannelI805(): Int8 =
+    let ch1 = channel Int8 0;
+    let ch2 = channel Int8 1;
+    let ch3 = channel Int8 0;
+    let _ = spI8(ch1, 1i8);
+    let _ = spI8(ch1, 1i8);
+    let _ = sptgI8(ch3, ch2, ch1);
+    let _ = sptgI8(ch3, ch2, ch1);
+    let _ = sgI8(ch3);
+    <- ch3
 
+@test
+def putChannelI806(): Int8 =
+    let ch = channel Int8;
+    let _ = spmI8(ch, 1i8, 1i8);
+    let _ = sgI8(ch);
+    <- ch
+/*
 @test
 def putChannelI1601(): Int16 =
     let ch = channel Int16;
@@ -220,8 +238,94 @@ def putChannelIBI04(): BigInt =
     let _ = spgBI(ch3, ch2);
     let _ = spgBI(ch3, ch2);
     <- ch3
-
     
+    
+@test
+def putChannelUnit01(): Unit =
+    let ch = channel Unit;
+    let _ = spUnit(ch, ());
+    <- ch
+
+@test
+def putChannelIUnit02(): Unit =
+    let ch1 = channel Unit;
+    let ch2 = channel Unit;
+    let _ = spUnit(ch1, ());
+    let _ = spgUnit(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelIUnit03(): Unit =
+    let ch1 = channel Unit;
+    let ch2 = channel Unit;
+    let ch3 = channel Unit;
+    let _ = spUnit(ch1, ());
+    let _ = spUnit(ch1, ());
+    let _ = spgUnit(ch2, ch1);
+    let _ = spgUnit(ch2, ch1);
+    let _ = spgUnit(ch3, ch2);
+    let _ = sgUnit(ch2);
+    <- ch3
+
+@test
+def putChannelIUnit04(): Unit =
+    let ch1 = channel Unit 1;
+    let ch2 = channel Unit 1;
+    let ch3 = channel Unit 1;
+    let _ = spUnit(ch1, ());
+    let _ = spUnit(ch1, ());
+    let _ = spUnit(ch1, ());
+    let _ = spUnit(ch1, ());
+    let _ = spgUnit(ch2, ch1);
+    let _ = spgUnit(ch2, ch1);
+    let _ = spgUnit(ch2, ch1);
+    let _ = spgUnit(ch3, ch2);
+    let _ = spgUnit(ch3, ch2);
+    <- ch3
+
+@test
+def putChannelBool01(): Bool =
+    let ch = channel Bool;
+    let _ = spBool(ch, true);
+    <- ch
+
+@test
+def putChannelBool02(): Bool =
+    let ch1 = channel Bool;
+    let ch2 = channel Bool;
+    let _ = spBool(ch1, true);
+    let _ = spgBool(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelBool03(): Bool =
+    let ch1 = channel Bool;
+    let ch2 = channel Bool;
+    let ch3 = channel Bool;
+    let _ = spBool(ch1, true);
+    let _ = spBool(ch1, true);
+    let _ = spgBool(ch2, ch1);
+    let _ = spgBool(ch2, ch1);
+    let _ = spgBool(ch3, ch2);
+    let _ = sgBool(ch2);
+    <- ch3
+
+@test
+def putChannelBool04(): Bool =
+    let ch1 = channel Bool 1;
+    let ch2 = channel Bool 1;
+    let ch3 = channel Bool 1;
+    let _ = spBool(ch1, true);
+    let _ = spBool(ch1, true);
+    let _ = spBool(ch1, true);
+    let _ = spBool(ch1, true);
+    let _ = spgBool(ch2, ch1);
+    let _ = spgBool(ch2, ch1);
+    let _ = spgBool(ch2, ch1);
+    let _ = spgBool(ch3, ch2);
+    let _ = spgBool(ch3, ch2);
+    <- ch3
+*/
 /*
 @test
 def putChannel02(): Channel[Int8] =
@@ -336,6 +440,12 @@ def sgI8(from: Channel[Int8]): Unit =
 def spgI8(to: Channel[Int8], from: Channel[Int8]): Unit =
     spawn putGetI8(to, from)
 
+def sptgI8(to: Channel[Int8], through: Channel[Int8], from: Channel[Int8]): Unit =
+    spawn putThroughGet(to, through, from)
+
+def spmI8(to: Channel[Int8], v1: Int8, v2: Int8): Unit =
+    spawn putMultiple(to, v1, v2)
+
 def putI8(to: Channel[Int8], v: Int8): Channel[Int8] =
     to <- v
 
@@ -344,6 +454,12 @@ def getI8(from: Channel[Int8]): Int8 =
 
 def putGetI8(to: Channel[Int8], from: Channel[Int8]): Channel[Int8] =
     to <- <- from
+
+def putThroughGet(to: Channel[Int8], through: Channel[Int8], from: Channel[Int8]): Channel[Int8] =
+    to <- <- through <- <- from
+
+def putMultiple(to: Channel[Int8], v1: Int8, v2: Int8): Channel[Int8] =
+    to <- v1 <- v2
 
 
 // Int16
@@ -428,22 +544,43 @@ def putGetBI(to: Channel[BigInt], from: Channel[BigInt]): Channel[BigInt] =
     to <- <- from
 
 
-// Int8
-def sp(to: Channel[Int], v: Int): Unit =
-    spawn put(to, v)
+// Unit
+def spUnit(to: Channel[Unit], v: Unit): Unit =
+    spawn putUnit(to, v)
 
-def sg(from: Channel[Int]): Unit =
-    spawn get(from)
+def sgUnit(from: Channel[Unit]): Unit =
+    spawn getUnit(from)
 
-def spg(to: Channel[Int], from: Channel[Int]): Unit =
-    spawn putGet(to, from)
+def spgUnit(to: Channel[Unit], from: Channel[Unit]): Unit =
+    spawn putGetUnit(to, from)
 
 
-def put(to: Channel[Int], v: Int): Channel[Int] =
+def putUnit(to: Channel[Unit], v: Unit): Channel[Unit] =
     to <- v
 
-def get(from: Channel[Int]): Int =
+def getUnit(from: Channel[Unit]): Unit =
     <- from
 
-def putGet(to: Channel[Int], from: Channel[Int]): Channel[Int] =
+def putGetUnit(to: Channel[Unit], from: Channel[Unit]): Channel[Unit] =
+    to <- <- from
+
+
+// Bool
+def spBool(to: Channel[Bool], v: Bool): Unit =
+    spawn putBool(to, v)
+
+def sgBool(from: Channel[Bool]): Unit =
+    spawn getBool(from)
+
+def spgBool(to: Channel[Bool], from: Channel[Bool]): Unit =
+    spawn putGetBool(to, from)
+
+
+def putBool(to: Channel[Bool], v: Bool): Channel[Bool] =
+    to <- v
+
+def getBool(from: Channel[Bool]): Bool =
+    <- from
+
+def putGetBool(to: Channel[Bool], from: Channel[Bool]): Channel[Bool] =
     to <- <- from

@@ -245,13 +245,12 @@ object Value {
             println(s"GETTER ${Thread.currentThread().getId()} WOKEN")
             wg.remove(Thread.currentThread())
             get()
-
           case _ => //If some element exists
             println(s"Thread: ${Thread.currentThread().getId}  -  Take and return content")
             val tmp = c.poll()
             notifyAll()
             printState;
-            println(s"elemt got: ${tmp}")
+            println(s"element got i channel ${content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].hashCode() % 100}: ${tmp}")
             return tmp
         }
       }
