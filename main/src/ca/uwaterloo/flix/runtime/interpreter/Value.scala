@@ -249,12 +249,14 @@ object Value {
           case _ => //If some element exists
             println(s"Thread: ${Thread.currentThread().getId}  -  Take and return content")
             val tmp = c.poll()
+            notifyAll()
             printState;
             println(s"elemt got: ${tmp}")
             return tmp
         }
       }
     }
+
     def printState =
       println(s"      STATE OF CHANNEL ${content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].hashCode() % 100}: " +
         s"Thread: ${Thread.currentThread().getId} " +
