@@ -250,15 +250,15 @@ object Value {
 
         println(s"Thread: ${Thread.currentThread().getId()}  -  Get").asInstanceOf[AnyRef]
 
-        c.peek() match {              //Lookup elements in content
-          case null =>                //If no element exists ADD TO WAITING GETTERS AND PUT TO SLEEP
+        c.peek() match { //Lookup elements in content
+          case null => //If no element exists ADD TO WAITING GETTERS AND PUT TO SLEEP
             println(s"Thread: ${Thread.currentThread().getId()}  -  Add to Waiting Getters and wait").asInstanceOf[AnyRef]
             wg.add(Thread.currentThread())
             printState;
 
-            wp.peek() match{            //Lookup waiting putters
-              case null =>              //If no waiting putters exists NO NOTHING
-              case _ =>                 //If some waiting putters exists NOTIFY IT
+            wp.peek() match { //Lookup waiting putters
+              case null => //If no waiting putters exists NO NOTHING
+              case _ => //If some waiting putters exists NOTIFY IT
                 val wpToNotify = wp.peek().asInstanceOf[Thread]
                 println(s"Thread: ${Thread.currentThread().getId()}  -  Notifies Thread ${wpToNotify.getId()}").asInstanceOf[AnyRef]
                 notifyAll()
@@ -270,24 +270,24 @@ object Value {
             wg.remove(Thread.currentThread())
             get()
           /*
-            println(s"GETTER Thread: ${Thread.currentThread().getId} WOKEN").asInstanceOf[AnyRef]
-            c.peek() match {
-              case null =>
-                notifyAll()
-                println("Wait:").asInstanceOf[AnyRef]
-                wait()
-                println("Unwait:").asInstanceOf[AnyRef]
-              case _ =>
-            }
-                println(s"Thread: ${Thread.currentThread.getId}  -  Remove self from Waiting Getters, take and return content").asInstanceOf[AnyRef]
-                wg.poll()
-                val tmp = c.poll()
-                println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
-                return tmp
-          //}
-          */
+          println(s"GETTER Thread: ${Thread.currentThread().getId} WOKEN").asInstanceOf[AnyRef]
+          c.peek() match {
+            case null =>
+              notifyAll()
+              println("Wait:").asInstanceOf[AnyRef]
+              wait()
+              println("Unwait:").asInstanceOf[AnyRef]
+            case _ =>
+          }
+              println(s"Thread: ${Thread.currentThread.getId}  -  Remove self from Waiting Getters, take and return content").asInstanceOf[AnyRef]
+              wg.poll()
+              val tmp = c.poll()
+              println(s"      c.size = ${c.size()}; wp.size = ${wp.size()}; wg.size = ${wg.size()}").asInstanceOf[AnyRef]
+              return tmp
+        //}
+        */
 
-          case _ =>                   //If some element exists
+          case _ => //If some element exists
             println(s"Thread: ${Thread.currentThread().getId}  -  Take and return content").asInstanceOf[AnyRef]
             val tmp = c.poll()
             printState;
@@ -298,6 +298,7 @@ object Value {
     }
     def printState =
       println(s"      STATE OF CHANNEL ${content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].hashCode()}: " +
+        s"Thread: ${Thread.currentThread().getId} " +
         s"c.size = ${content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].size()}; " +
         s"wp.size = ${waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].size()}; " +
         s"wg.size = ${waitingGetters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].size()}").asInstanceOf[AnyRef]
