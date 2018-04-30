@@ -45,6 +45,183 @@ def putChannelI804(): Int8 =
     let _ = spgI8(ch3, ch2);
     <- ch3
 
+
+@test
+def putChannelI1601(): Int16 =
+    let ch = channel Int16;
+    let _ = spI16(ch, 1i16);
+    <- ch
+
+@test
+def putChannelI1602(): Int16 =
+    let ch1 = channel Int16;
+    let ch2 = channel Int16;
+    let _ = spI16(ch1, 1i16);
+    let _ = spgI16(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelI1603(): Int16 =
+    let ch1 = channel Int16;
+    let ch2 = channel Int16;
+    let ch3 = channel Int16;
+    let _ = spI16(ch1, 1i16);
+    let _ = spI16(ch1, 1i16);
+    let _ = spgI16(ch2, ch1);
+    let _ = spgI16(ch2, ch1);
+    let _ = spgI16(ch3, ch2);
+    let _ = sgI16(ch2);
+    <- ch3
+
+@test
+def putChannelI1604(): Int16 =
+    let ch1 = channel Int16 1;
+    let ch2 = channel Int16 1;
+    let ch3 = channel Int16 1;
+    let _ = spI16(ch1, 1i16);
+    let _ = spI16(ch1, 1i16);
+    let _ = spI16(ch1, 1i16);
+    let _ = spI16(ch1, 1i16);
+    let _ = spgI16(ch2, ch1);
+    let _ = spgI16(ch2, ch1);
+    let _ = spgI16(ch2, ch1);
+    let _ = spgI16(ch3, ch2);
+    let _ = spgI16(ch3, ch2);
+    <- ch3
+    
+
+@test
+def putChannelI3201(): Int32 =
+    let ch = channel Int32;
+    let _ = spI32(ch, 1i32);
+    <- ch
+
+@test
+def putChannelI3202(): Int32 =
+    let ch1 = channel Int32;
+    let ch2 = channel Int32;
+    let _ = spI32(ch1, 1i32);
+    let _ = spgI32(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelI3203(): Int32 =
+    let ch1 = channel Int32;
+    let ch2 = channel Int32;
+    let ch3 = channel Int32;
+    let _ = spI32(ch1, 1i32);
+    let _ = spI32(ch1, 1i32);
+    let _ = spgI32(ch2, ch1);
+    let _ = spgI32(ch2, ch1);
+    let _ = spgI32(ch3, ch2);
+    let _ = sgI32(ch2);
+    <- ch3
+
+@test
+def putChannelI3204(): Int32 =
+    let ch1 = channel Int32 1;
+    let ch2 = channel Int32 1;
+    let ch3 = channel Int32 1;
+    let _ = spI32(ch1, 1i32);
+    let _ = spI32(ch1, 1i32);
+    let _ = spI32(ch1, 1i32);
+    let _ = spI32(ch1, 1i32);
+    let _ = spgI32(ch2, ch1);
+    let _ = spgI32(ch2, ch1);
+    let _ = spgI32(ch2, ch1);
+    let _ = spgI32(ch3, ch2);
+    let _ = spgI32(ch3, ch2);
+    <- ch3
+    
+    
+@test
+def putChannelI6401(): Int64 =
+    let ch = channel Int64;
+    let _ = spI64(ch, 1i64);
+    <- ch
+
+@test
+def putChannelI6402(): Int64 =
+    let ch1 = channel Int64;
+    let ch2 = channel Int64;
+    let _ = spI64(ch1, 1i64);
+    let _ = spgI64(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelI6403(): Int64 =
+    let ch1 = channel Int64;
+    let ch2 = channel Int64;
+    let ch3 = channel Int64;
+    let _ = spI64(ch1, 1i64);
+    let _ = spI64(ch1, 1i64);
+    let _ = spgI64(ch2, ch1);
+    let _ = spgI64(ch2, ch1);
+    let _ = spgI64(ch3, ch2);
+    let _ = sgI64(ch2);
+    <- ch3
+
+@test
+def putChannelI6404(): Int64 =
+    let ch1 = channel Int64 1;
+    let ch2 = channel Int64 1;
+    let ch3 = channel Int64 1;
+    let _ = spI64(ch1, 1i64);
+    let _ = spI64(ch1, 1i64);
+    let _ = spI64(ch1, 1i64);
+    let _ = spI64(ch1, 1i64);
+    let _ = spgI64(ch2, ch1);
+    let _ = spgI64(ch2, ch1);
+    let _ = spgI64(ch2, ch1);
+    let _ = spgI64(ch3, ch2);
+    let _ = spgI64(ch3, ch2);
+    <- ch3
+    
+    
+@test
+def putChannelIBI01(): BigInt =
+    let ch = channel BigInt;
+    let _ = spBI(ch, 1ii);
+    <- ch
+
+@test
+def putChannelIBI02(): BigInt =
+    let ch1 = channel BigInt;
+    let ch2 = channel BigInt;
+    let _ = spBI(ch1, 1ii);
+    let _ = spgBI(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelIBI03(): BigInt =
+    let ch1 = channel BigInt;
+    let ch2 = channel BigInt;
+    let ch3 = channel BigInt;
+    let _ = spBI(ch1, 1ii);
+    let _ = spBI(ch1, 1ii);
+    let _ = spgBI(ch2, ch1);
+    let _ = spgBI(ch2, ch1);
+    let _ = spgBI(ch3, ch2);
+    let _ = sgBI(ch2);
+    <- ch3
+
+@test
+def putChannelIBI04(): BigInt =
+    let ch1 = channel BigInt 1;
+    let ch2 = channel BigInt 1;
+    let ch3 = channel BigInt 1;
+    let _ = spBI(ch1, 1ii);
+    let _ = spBI(ch1, 1ii);
+    let _ = spBI(ch1, 1ii);
+    let _ = spBI(ch1, 1ii);
+    let _ = spgBI(ch2, ch1);
+    let _ = spgBI(ch2, ch1);
+    let _ = spgBI(ch2, ch1);
+    let _ = spgBI(ch3, ch2);
+    let _ = spgBI(ch3, ch2);
+    <- ch3
+
+    
 /*
 @test
 def putChannel02(): Channel[Int8] =
