@@ -176,12 +176,6 @@ object Interpreter {
       Value.Arr(a, tpe.typeArguments.head)
 
     //
-    // NewChannel Expressions.
-    //
-    case Expression.NewChannel(len, tpe, loc) =>
-      val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
-      Value.Channel(l, tpe)
-    //
     // ArrayLit expressions.
     //
     case Expression.ArrayLit(elms, tpe, loc) =>
@@ -221,18 +215,20 @@ object Interpreter {
       Value.Channel(l, tpe)
 
     //
+    // GetChannel expressions.
+    //
+    case Expression.GetChannel(exp, tpe, loc) =>
+      val c = cast2channel(eval(exp, env0, henv0, lenv0, root))
+      c.get()
+
+    //
     // PutChannel expressions.
     //
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
       val v = eval(exp2, env0, henv0, lenv0, root)
       val c = cast2channel(eval(exp1, env0, henv0, lenv0, root))
       c.put(v)
-    //
-    // GetChannel expressions.
-    //
-    case Expression.GetChannel(exp, tpe, loc) =>
-      val c = cast2channel(eval(exp, env0, henv0, lenv0, root))
-      c.get()
+
     //
     // Spawn expressions.
     //
@@ -244,7 +240,7 @@ object Interpreter {
       }
       t.start()
       Value.Unit
-    
+
     //
     // Reference expressions.
     //
