@@ -144,7 +144,7 @@ object WeededAst {
 
     case class ArrayStore(base: WeededAst.Expression, index: WeededAst.Expression, value: WeededAst.Expression, loc: SourceLocation) extends WeededAst.Expression
 
-    case class NewChannel(exp: WeededAst.Expression, tpe: WeededAst.Type, loc: SourceLocation) extends WeededAst.Expression
+    case class NewChannel(exp: WeededAst.Expression, ctpe: WeededAst.Type, loc: SourceLocation) extends WeededAst.Expression
     
     case class GetChannel(exp: WeededAst.Expression, loc: SourceLocation) extends WeededAst.Expression
 

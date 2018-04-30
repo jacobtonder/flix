@@ -163,7 +163,7 @@ object Value {
     final override def toString: String = throw InternalRuntimeException(s"Value.Tuple does not support `toString`.")
   }
 
-  case class Channel(len: Int, tpe: Type) extends  Value {
+  case class Channel(len: Int, tpe: Type) extends Value {
     private val contentType: Type = tpe
 
     private val capacity: Int = len

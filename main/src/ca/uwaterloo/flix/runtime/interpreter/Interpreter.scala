@@ -176,12 +176,6 @@ object Interpreter {
       Value.Arr(a, tpe.typeArguments.head)
 
     //
-    // NewChannel Expressions.
-    //
-    case Expression.NewChannel(len, tpe, loc) =>
-      val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
-      Value.Channel(l, tpe)
-    //
     // ArrayLit expressions.
     //
     case Expression.ArrayLit(elms, tpe, loc) =>
