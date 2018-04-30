@@ -1,30 +1,63 @@
 /////////////////////////////////////////////////////////////////////////////
 // Put channel expressions                                                 //
 /////////////////////////////////////////////////////////////////////////////
-@test
-def spawnConcurrentProcesses(): Channel[Int] =
-    let ch = channel Int 1;
-    let v = 5;
-    let _ = spawn putChannel0(ch);
-    let _ = spawn getChannel0(ch);
-    let _ = spawn putChannel0(ch);
-    let _ = spawn getChannel0(ch);
-    let _ = spawn putChannel0(ch);
-    let _ = spawn getChannel0(ch);
-    ch
 
-def putChannel0(ch: Channel[Int]): Channel[Int] = let _ = ch <- 5; ch
-def getChannel0(ch: Channel[Int]): Int = <- ch
+@test
+def putChannelI801(): Int8 =
+    let ch = channel Int8;
+    let _ = spI8(ch, 1i8);
+    <- ch
+
+@test
+def putChannelI802(): Int8 =
+    let ch1 = channel Int8;
+    let ch2 = channel Int8;
+    let _ = spI8(ch1, 1i8);
+    let _ = spgI8(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelI803(): Int8 =
+    let ch1 = channel Int8;
+    let ch2 = channel Int8;
+    let ch3 = channel Int8;
+    let _ = spI8(ch1, 1i8);
+    let _ = spI8(ch1, 1i8);
+    let _ = spgI8(ch2, ch1);
+    let _ = spgI8(ch2, ch1);
+    let _ = spgI8(ch3, ch2);
+    let _ = sgI8(ch2);
+    <- ch3
+
+@test
+def putChannelI804(): Int8 =
+    let ch1 = channel Int8 1;
+    let ch2 = channel Int8 1;
+    let ch3 = channel Int8 1;
+    let _ = spI8(ch1, 1i8);
+    let _ = spI8(ch1, 1i8);
+    let _ = spI8(ch1, 1i8);
+    let _ = spI8(ch1, 1i8);
+    let _ = spgI8(ch2, ch1);
+    let _ = spgI8(ch2, ch1);
+    let _ = spgI8(ch2, ch1);
+    let _ = spgI8(ch3, ch2);
+    let _ = spgI8(ch3, ch2);
+    <- ch3
 
 /*
 @test
-def putChannel01(): Channel[Int] = let ch = channel Int; let _ = ch <- 2; ch
+def putChannel02(): Channel[Int8] =
+    let ch = channel Int8;
+    let _ = sp(ch, 2i8);
+    <- ch
+
 
 @test
-def putChannel02(): Channel[Int8] = let ch = channel Int8; let _ = ch <- 2i8; ch
-
-@test
-def putChannel03(): Channel[Int16] = let ch = channel Int16; let _ = ch <- 2i16; ch
+def putChannel03(): Channel[Int16] =
+    let ch = channel Int16;
+    let _ = ch <- 2i16;
+    ch
 
 @test
 def putChannel04(): Channel[Int64] = let ch = channel Int64; let _ = ch <- 2i64; ch
@@ -115,3 +148,125 @@ def putChannel22(): Unit =
     ()
 
 */
+
+// Int8
+def spI8(to: Channel[Int8], v: Int8): Unit =
+    spawn putI8(to, v)
+
+def sgI8(from: Channel[Int8]): Unit =
+    spawn getI8(from)
+
+def spgI8(to: Channel[Int8], from: Channel[Int8]): Unit =
+    spawn putGetI8(to, from)
+
+def putI8(to: Channel[Int8], v: Int8): Channel[Int8] =
+    to <- v
+
+def getI8(from: Channel[Int8]): Int8 =
+    <- from
+
+def putGetI8(to: Channel[Int8], from: Channel[Int8]): Channel[Int8] =
+    to <- <- from
+
+
+// Int16
+def spI16(to: Channel[Int16], v: Int16): Unit =
+    spawn putI16(to, v)
+
+def sgI16(from: Channel[Int16]): Unit =
+    spawn getI16(from)
+
+def spgI16(to: Channel[Int16], from: Channel[Int16]): Unit =
+    spawn putGetI16(to, from)
+
+def putI16(to: Channel[Int16], v: Int16): Channel[Int16] =
+    to <- v
+
+def getI16(from: Channel[Int16]): Int16 =
+    <- from
+
+def putGetI16(to: Channel[Int16], from: Channel[Int16]): Channel[Int16] =
+    to <- <- from
+
+
+// Int32
+def spI32(to: Channel[Int32], v: Int32): Unit =
+    spawn putI32(to, v)
+
+def sgI32(from: Channel[Int32]): Unit =
+    spawn getI32(from)
+
+def spgI32(to: Channel[Int32], from: Channel[Int32]): Unit =
+    spawn putGetI32(to, from)
+
+def putI32(to: Channel[Int32], v: Int32): Channel[Int32] =
+    to <- v
+
+def getI32(from: Channel[Int32]): Int32 =
+    <- from
+
+def putGetI32(to: Channel[Int32], from: Channel[Int32]): Channel[Int32] =
+    to <- <- from
+
+
+// Int64
+def spI64(to: Channel[Int64], v: Int64): Unit =
+    spawn putI64(to, v)
+
+def sgI64(from: Channel[Int64]): Unit =
+    spawn getI64(from)
+
+def spgI64(to: Channel[Int64], from: Channel[Int64]): Unit =
+    spawn putGetI64(to, from)
+
+
+def putI64(to: Channel[Int64], v: Int64): Channel[Int64] =
+    to <- v
+
+def getI64(from: Channel[Int64]): Int64 =
+    <- from
+
+def putGetI64(to: Channel[Int64], from: Channel[Int64]): Channel[Int64] =
+    to <- <- from
+
+
+// BigInt
+def spBI(to: Channel[BigInt], v: BigInt): Unit =
+    spawn putBI(to, v)
+
+def sgBI(from: Channel[BigInt]): Unit =
+    spawn getBI(from)
+
+def spgBI(to: Channel[BigInt], from: Channel[BigInt]): Unit =
+    spawn putGetBI(to, from)
+
+
+def putBI(to: Channel[BigInt], v: BigInt): Channel[BigInt] =
+    to <- v
+
+def getBI(from: Channel[BigInt]): BigInt =
+    <- from
+
+def putGetBI(to: Channel[BigInt], from: Channel[BigInt]): Channel[BigInt] =
+    to <- <- from
+
+
+// Int8
+def sp(to: Channel[Int], v: Int): Unit =
+    spawn put(to, v)
+
+def sg(from: Channel[Int]): Unit =
+    spawn get(from)
+
+def spg(to: Channel[Int], from: Channel[Int]): Unit =
+    spawn putGet(to, from)
+
+
+def put(to: Channel[Int], v: Int): Channel[Int] =
+    to <- v
+
+def get(from: Channel[Int]): Int =
+    <- from
+
+def putGet(to: Channel[Int], from: Channel[Int]): Channel[Int] =
+    to <- <- from
