@@ -291,13 +291,13 @@ object Value {
             println(s"Thread: ${Thread.currentThread().getId}  -  Take and return content").asInstanceOf[AnyRef]
             val tmp = c.poll()
             printState;
+            println(s"elemt got: ${tmp}")
             return tmp
         }
-        AnyRef
       }
     }
     def printState =
-      println(s"      STATE OF CHANNEL ${content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].hashCode()}: " +
+      println(s"      STATE OF CHANNEL ${content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].hashCode() % 100}: " +
         s"Thread: ${Thread.currentThread().getId} " +
         s"c.size = ${content.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].size()}; " +
         s"wp.size = ${waitingPutters.asInstanceOf[ConcurrentLinkedQueue[AnyRef]].size()}; " +
