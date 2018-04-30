@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue
 import ca.uwaterloo.flix.api._
 import ca.uwaterloo.flix.language.ast.ExecutableAst._
 import ca.uwaterloo.flix.language.ast._
+import ca.uwaterloo.flix.runtime.interpreter.Value.{Channel, Int32}
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import ca.uwaterloo.flix.util.tc.Show._
 
@@ -174,6 +175,12 @@ object Interpreter {
       }
       Value.Arr(a, tpe.typeArguments.head)
 
+    //
+    // NewChannel Expressions.
+    //
+    case Expression.NewChannel(len, tpe, loc) =>
+      val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
+      Value.Channel(l, tpe)
     //
     // ArrayLit expressions.
     //
