@@ -373,10 +373,10 @@ object Effects extends Phase[Root, Root] {
         /**
           * NewChannel Expression.
           */
-        case Expression.NewChannel(exp, tpe, eff, loc) =>
+        case Expression.NewChannel(exp, ctpe, tpe, eff, loc) =>
           for {
             e <- visitExp(exp, env0)
-          } yield Expression.NewChannel(e, tpe, eff, loc)
+          } yield Expression.NewChannel(e, ctpe, tpe, eff, loc)
 
         /**
           * GetChannel Expression.

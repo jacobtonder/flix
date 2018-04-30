@@ -67,6 +67,11 @@ object JvmType {
   val String: JvmType.Reference = Reference(JvmName.String)
 
   /**
+    * The `ca.uwaterloo.flix.api.Channel` type.
+    */
+  val Channel: JvmType.Reference = Reference(JvmName.Object)
+
+  /**
     * The `ca.uwaterloo.flix.api.Tuple` type
     */
   val Tuple: JvmType.Reference = Reference(JvmName.Tuple)

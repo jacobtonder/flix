@@ -624,12 +624,12 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
             case (b, i, v) => WeededAst.Expression.ArrayStore(b, i, v, mkSL(sp1, sp2))
           }
 
-        case ParsedAst.Expression.NewChannel(sp1, tpe, expOpt, sp2) =>
+        case ParsedAst.Expression.NewChannel(sp1, ctpe, expOpt, sp2) =>
           expOpt match {
             case None =>
               // Case 1: NewChannel takes no expression that states the buffer size
               val bufferSize = WeededAst.Expression.Int32(lit = 0, mkSL(sp2, sp2))
-              WeededAst.Expression.NewChannel(bufferSize, Types.weed(tpe), mkSL(sp1, sp2)).toSuccess
+              WeededAst.Expression.NewChannel(bufferSize, Types.weed(ctpe), mkSL(sp1, sp2)).toSuccess
             case Some(exp) =>
               // Case 2: NewChannel takes an expression that states the buffer size
               exp match {
@@ -637,7 +637,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
                     IllegalBufferSize(mkSL(sp1, sp2)).toFailure
                 case _ =>
                   visit(exp, unsafe) map {
-                    case e => WeededAst.Expression.NewChannel(e, Types.weed(tpe), mkSL(sp1, sp2))
+                    case e => WeededAst.Expression.NewChannel(e, Types.weed(ctpe), mkSL(sp1, sp2))
                   }
               }
           }
