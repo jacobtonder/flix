@@ -183,11 +183,9 @@ object Value {
 
         println(s"Thread: ${Thread.currentThread().getId()}  -  Put")
 
-        if (c.size() < capacity) {  //If channel has room for more content
+        if(c.offer(value)) {
           println(s"Thread: ${Thread.currentThread().getId()}  -  Add to content")
-          c.add(value)
           printState;
-
           wg.peek() match {           //Lookup if any waiting getters exists
             case null =>              //If no waiting getters exists DO NOTHING
             case _ =>                 //If some waiting getters exist NOTIFY IT
@@ -197,7 +195,7 @@ object Value {
           }
         }
         else {                      //If channel is full
-          if (wg.size() > wp.size() + c.size()) { //If there are any excess waiting getters
+          if (wg.poll() != null) { //If there are any excess waiting getters
             println(s"Thread: ${Thread.currentThread().getId()}  -  Add to content and notify wg")
             c.add(value)
             printState;
@@ -243,7 +241,7 @@ object Value {
             println(s"Thread: ${Thread.currentThread().getId()} goes to sleep!")
             wait()
             println(s"GETTER ${Thread.currentThread().getId()} WOKEN")
-            wg.remove(Thread.currentThread())
+            //wg.remove(Thread.currentThread())
             get()
           case _ => //If some element exists
             println(s"Thread: ${Thread.currentThread().getId}  -  Take and return content")
