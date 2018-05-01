@@ -489,7 +489,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
   object Expressions {
 
     def Statement: Rule1[ParsedAst.Expression] = rule {
-      Block ~ zeroOrMore(optWS ~ atomic(";") ~ optWS ~ Block ~ SP ~> ParsedAst.Expression.Statement)
+      Block ~ optional(optWS ~ atomic(";") ~ optWS ~ Statement ~ SP ~> ParsedAst.Expression.Statement)
     }
 
     def Block: Rule1[ParsedAst.Expression] = rule {
@@ -630,11 +630,11 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     }
 
     def LetRec: Rule1[ParsedAst.Expression.LetRec] = rule {
-      SP ~ atomic("letrec") ~ WS ~ Names.Variable ~ optWS ~ "=" ~ optWS ~ Expression ~ optWS ~ ";" ~ optWS ~ Expression ~ SP ~> ParsedAst.Expression.LetRec
+      SP ~ atomic("letrec") ~ WS ~ Names.Variable ~ optWS ~ "=" ~ optWS ~ Block ~ optWS ~ ";" ~ optWS ~ Expression ~ SP ~> ParsedAst.Expression.LetRec
     }
 
     def LetMatch: Rule1[ParsedAst.Expression.LetMatch] = rule {
-      SP ~ atomic("let") ~ WS ~ Pattern ~ optWS ~ optional(":" ~ optWS ~ Type ~ optWS) ~ "=" ~ optWS ~ Block ~ optWS ~ ";" ~ optWS ~ Block ~ SP ~> ParsedAst.Expression.LetMatch
+      SP ~ atomic("let") ~ WS ~ Pattern ~ optWS ~ optional(":" ~ optWS ~ Type ~ optWS) ~ "=" ~ optWS ~ Block ~ optWS ~ ";" ~ optWS ~ Expression ~ SP ~> ParsedAst.Expression.LetMatch
     }
 
     def Match: Rule1[ParsedAst.Expression.Match] = {

@@ -150,6 +150,66 @@ def f19(): Channel[Int] =
     channel Int;
     channel Int
 
+def f20(): Int =
+    () -> 2()
+
+def f21(): Int =
+    () -> 2;
+    2
+
+def f30(): Int =
+    let x = 4;
+    ();
+    3
+
+def f31(): Int =
+    let x = 4;
+    let y = 3;
+    ();
+    3
+
+def f32(): Int =
+    let x = (() -> 2);
+    x()
+
+def f33(): Int =
+    let x = (() -> 2);
+    let y = x();
+    y
+
+def t01(): Int = 42
+
+def f34(): Int =
+    let diff = t01();
+    let g = ((a, b, c) -> a + b + c);
+    t01()
+
+def f35(): Int =
+    let diff = t01();
+    (let g = (a, b, c) -> a + b + c;
+        y);
+        ();
+    g(1, 2, 3)
+
+def f36(): Int =
+    let diff = t01();
+    let g = ((a, b, c) -> if (true) a else b);
+    g(2, 1, 1)
+/*
+def differenceWithKey[k, v](f: (k, v, v) -> Option[v], m1: Map[k, v], m2: Map[k, v]): Map[k, v] =
+        let diff = filterWithKey((k, v) -> !memberOf(k, m2), m1);
+        let g = (k, v, m) -> if (memberOf(k, m1))
+                                match get(k, m1) with {
+                                    case Some(v1) => match f(k, v1, v) with {
+                                        case None => m
+                                        case Some(w) => insert(k, w, m)
+                                    }
+                                    case None => ??? // Shouldn't happen
+                                }
+                             else m;
+        foldRightWithKey(g, diff, m2)
+*/
+
 //@test
 //def testStatement19(): Bool = f19() `assertEq!` channel Int
 
