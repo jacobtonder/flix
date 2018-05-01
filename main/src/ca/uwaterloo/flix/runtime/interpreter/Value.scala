@@ -20,7 +20,6 @@ import ca.uwaterloo.flix.api
 import ca.uwaterloo.flix.language.ast.{Symbol, Type}
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import java.util.concurrent.ConcurrentLinkedQueue
-import java.util.concurrent.locks
 
 sealed trait Value
 
