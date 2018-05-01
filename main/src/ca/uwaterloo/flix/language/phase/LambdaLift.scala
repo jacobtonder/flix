@@ -195,8 +195,8 @@ object LambdaLift extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
         Expression.ArrayLoad(visit(base), visit(index), tpe, loc)
       case Expression.ArrayStore(base, index, value, tpe, loc) =>
         Expression.ArrayStore(visit(base), visit(index), visit(value), tpe, loc)
-      case Expression.NewChannel(exp, tpe, loc) =>
-        Expression.NewChannel(visit(exp), tpe, loc)
+      case Expression.NewChannel(exp, ctpe, tpe, loc) =>
+        Expression.NewChannel(visit(exp), ctpe, tpe, loc)
       case Expression.GetChannel(exp, tpe, loc) =>
         Expression.GetChannel(visit(exp), tpe, loc)
       case Expression.PutChannel(exp1, exp2, tpe, loc) =>
