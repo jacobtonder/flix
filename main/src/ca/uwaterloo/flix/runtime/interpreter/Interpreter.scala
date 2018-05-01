@@ -234,10 +234,10 @@ object Interpreter {
       c.queue.put(v)
       c
 
-    case Expression.SelectChannel(rules, tpe, loc) =>
+    /*case Expression.SelectChannel(rules, tpe, loc) =>
       val lock = new ReentrantLock()
       lock.lock()
-      lock.lock()
+      lock.lock()*/
 
     //
     // Spawn expressions.

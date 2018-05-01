@@ -165,7 +165,7 @@ object Value {
     final override def toString: String = throw InternalRuntimeException(s"Value.Tuple does not support `toString`.")
   }
 
-  case class Channel(queue: BlockingQueue[AnyRef], locks: ConcurrentHashMap[Lock]) extends  Value {
+  case class Channel(queue: BlockingQueue[AnyRef]) extends  Value {
 
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
