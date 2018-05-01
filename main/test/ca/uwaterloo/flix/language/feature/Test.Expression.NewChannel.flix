@@ -355,7 +355,7 @@ def testNewChannel112(): Channel[Str] = channel Str 2
 
 //@test
 //def testNewChannel113(): Channel[(Int, Int)] = channel (Int, Int) 2
-//
+
 //@test
 //def testNewChannel114(): Channel[Opt[Int]] = channel Opt[Int] 2
 
