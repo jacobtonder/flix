@@ -381,13 +381,6 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
         * @param unsafe `true` if we are inside an unsafe scope.
         */
       def visit(e0: ParsedAst.Expression, unsafe: Boolean): Validation[WeededAst.Expression, WeederError] = e0 match {
-        case ParsedAst.Expression.Statement(exp1, exp2, sp2) =>
-          val sp1 = leftMostSourcePosition(exp1)
-          val loc = mkSL(sp1, sp2)
-          @@(visit(exp1, unsafe), visit(exp2, unsafe)) map {
-            case (e1, e2) => WeededAst.Expression.Statement(e1, e2, loc)
-          }
-
         case ParsedAst.Expression.Wild(sp1, sp2) => IllegalWildcard(mkSL(sp1, sp2)).toFailure
 
         case ParsedAst.Expression.SName(sp1, ident, sp2) =>

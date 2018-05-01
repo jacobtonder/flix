@@ -412,14 +412,6 @@ object ParsedAst {
   object Expression {
 
     /**
-      * Statement Expression.
-      * @param exp1 the first expression.
-      * @param exp2 the last expression.
-      * @param sp   the position of the last character in the expression.
-      */
-    case class Statement(exp1: Expression, exp2: Expression, sp: SourcePosition) extends ParsedAst.Expression
-
-    /**
       * Wildcard Expression.
       *
       * Illegal in proper expressions, but allowed in predicates.
@@ -548,6 +540,14 @@ object ParsedAst {
       * @param sp2  the position of the last character in the expression.
       */
     case class IfThenElse(sp1: SourcePosition, exp1: ParsedAst.Expression, exp2: ParsedAst.Expression, exp3: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
+
+    /**
+      * Statement Expression.
+      * @param exp1 the first expression.
+      * @param exp2 the last expression.
+      * @param sp   the position of the last character in the expression.
+      */
+    case class Statement(exp1: Expression, exp2: Expression, sp: SourcePosition) extends ParsedAst.Expression
 
     /**
       * LetMatch Expression (let-binding with pattern match).
