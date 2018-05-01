@@ -18,6 +18,7 @@ package ca.uwaterloo.flix.runtime.interpreter
 
 import java.lang.reflect.Modifier
 import java.util.concurrent.{LinkedBlockingQueue, SynchronousQueue}
+
 import ca.uwaterloo.flix.api._
 import ca.uwaterloo.flix.language.ast.ExecutableAst._
 import ca.uwaterloo.flix.language.ast._
@@ -230,11 +231,6 @@ object Interpreter {
       val c = cast2channel(eval(exp1, env0, henv0, lenv0, root))
       c.queue.put(v)
       c
-
-    /*case Expression.SelectChannel(rules, tpe, loc) =>
-      val lock = new ReentrantLock()
-      lock.lock()
-      lock.lock()*/
 
     //
     // Spawn expressions.
