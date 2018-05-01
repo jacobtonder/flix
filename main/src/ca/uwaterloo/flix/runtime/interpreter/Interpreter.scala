@@ -17,6 +17,7 @@
 package ca.uwaterloo.flix.runtime.interpreter
 
 import java.lang.reflect.Modifier
+import java.util.concurrent.{LinkedBlockingQueue, SynchronousQueue}
 
 import ca.uwaterloo.flix.api._
 import ca.uwaterloo.flix.language.ast.ExecutableAst._
@@ -210,14 +211,17 @@ object Interpreter {
     //
     case Expression.NewChannel(len, tpe, loc) =>
       val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
-      Value.Channel(l, tpe)
+      if (l == 0)
+        Value.Channel(new SynchronousQueue[AnyRef]())
+      else
+        Value.Channel(new LinkedBlockingQueue[AnyRef](l))
 
     //
     // GetChannel expressions.
     //
     case Expression.GetChannel(exp, tpe, loc) =>
       val c = cast2channel(eval(exp, env0, henv0, lenv0, root))
-      c.get()
+      c.queue.take()
 
     //
     // PutChannel expressions.
@@ -225,7 +229,8 @@ object Interpreter {
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
       val v = eval(exp2, env0, henv0, lenv0, root)
       val c = cast2channel(eval(exp1, env0, henv0, lenv0, root))
-      c.put(v)
+      c.queue.put(v)
+      c
 
     //
     // Spawn expressions.
