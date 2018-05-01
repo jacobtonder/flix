@@ -661,6 +661,7 @@ object ParsedAst {
     /**
       * GetChannel Expression.
       *
+      * @param sp1 the position of the first character in the expression.
       * @param exp1 the expression to get from.
       * @param sp2 the position of the last character in the expression.
       */

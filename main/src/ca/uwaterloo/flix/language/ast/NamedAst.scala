@@ -185,6 +185,7 @@ object NamedAst {
     case class NativeMethod(method: Method, args: List[NamedAst.Expression], tpe: ast.Type.Var, loc: SourceLocation) extends NamedAst.Expression
 
     case class UserError(tvar: ast.Type.Var, loc: SourceLocation) extends NamedAst.Expression
+
   }
 
   sealed trait Pattern extends NamedAst {
