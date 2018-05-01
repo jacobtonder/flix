@@ -468,18 +468,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
       def visitExp(e0: ResolvedAst.Expression): InferMonad[Type] = e0 match {
 
         /*
-         * Statement expression.
-         */
-        case ResolvedAst.Expression.Statement(exp1, exp2, tvar, loc) =>
-          // exp1 : t1    exp2 : t2
-          // ----------------------
-          // exp1 ;; epx2 : t2
-          for (
-            texp2 <- visitExp(exp2);
-            resultType <- unifyM(tvar, texp2, loc)
-          ) yield resultType
-
-        /*
          * Wildcard expression.
          */
         case ResolvedAst.Expression.Wild(tpe, loc) => liftM(tpe)
@@ -1069,14 +1057,6 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
         * Applies the given substitution `subst0` to the given expression `exp0`.
         */
       def visitExp(exp0: ResolvedAst.Expression, subst0: Substitution): TypedAst.Expression = exp0 match {
-        /*
-         * Statement expression.
-         */
-        case ResolvedAst.Expression.Statement(exp1, exp2, tvar, loc) =>
-          val e1 = visitExp(exp1, subst0)
-          val e2 = visitExp(exp2, subst0)
-          TypedAst.Expression.Statement(e1, e2, subst0(tvar), Eff.Bot, loc)
-
         /*
          * Wildcard expression.
          */
