@@ -63,7 +63,7 @@ def putChannelI806(): Int8 =
     let _ = spmI8(ch, 1i8, 1i8);
     let _ = sgI8(ch);
     <- ch
-/*
+
 @test
 def putChannelI1601(): Int16 =
     let ch = channel Int16;
@@ -325,13 +325,12 @@ def putChannelBool04(): Bool =
     let _ = spgBool(ch3, ch2);
     let _ = spgBool(ch3, ch2);
     <- ch3
-*/
-/*
+
 @test
 def putChannel02(): Channel[Int8] =
     let ch = channel Int8;
-    let _ = sp(ch, 2i8);
-    <- ch
+    let _ = spI8(ch, 2i8);
+    ch
 
 
 @test
@@ -415,7 +414,6 @@ def putChannel20(): Unit =
     let _ = ch1 <- ch2 <- ch3;
     ()
 
-/*
 
 
 @test
@@ -431,7 +429,6 @@ def putChannel22(): Unit =
     let _ = ch1 <- <- ch2;
     ()
 
-*/
 
 // Int8
 def spI8(to: Channel[Int8], v: Int8): Unit =
