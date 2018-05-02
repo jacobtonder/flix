@@ -20,6 +20,7 @@ import scala.collection.JavaConverters._
 import java.lang.reflect.Modifier
 import java.util.concurrent.locks.{Condition, Lock, ReentrantLock}
 import java.util
+import scala.collection.mutable.ListBuffer
 
 import ca.uwaterloo.flix.api._
 import ca.uwaterloo.flix.language.ast.ExecutableAst._
