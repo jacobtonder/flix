@@ -678,7 +678,7 @@ object GenExpression {
 
     case Expression.ArrayStore(base, index, value, tpe, loc) => ??? // TODO: Ramin: Array
 
-    case Expression.NewChannel(exp, tpe, loc) =>
+    case Expression.NewChannel(exp, ctpe, tpe, loc) =>
       // Adding source line number for debugging
       addSourceLine(visitor, loc)
       // We get the JvmType of the class for the channel
