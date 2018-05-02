@@ -813,6 +813,8 @@ object JvmOps {
 
       case Expression.NewChannel(exp, ctpe, tpe, loc) =>
         visitExp(exp)
+      case Expression.PutChannel(exp1, exp2, tpe, loc) =>
+        visitExp(exp1) ++ visitExp(exp2)
       case Expression.GetChannel(exp, tpe, loc) =>
         visitExp(exp)
 
@@ -1029,7 +1031,12 @@ object JvmOps {
       case Expression.ArrayLoad(base, index, tpe, loc) => visitExp(base) ++ visitExp(index) + tpe
       case Expression.ArrayStore(base, index, value, tpe, loc) => visitExp(base) ++ visitExp(index) ++ visitExp(value) + tpe
 
+<<<<<<< HEAD
       case Expression.NewChannel(exp, ctpe, tpe, loc) => visitExp(exp) + ctpe + tpe
+=======
+      case Expression.NewChannel(exp, tpe, loc) => visitExp(exp) + tpe
+      case Expression.PutChannel(exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2) + tpe
+>>>>>>> develop
       case Expression.GetChannel(exp, tpe, loc) => visitExp(exp) + tpe
 
       case Expression.Ref(exp, tpe, loc) => visitExp(exp) + tpe
