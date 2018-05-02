@@ -16,10 +16,14 @@
 
 package ca.uwaterloo.flix.runtime.interpreter
 
+import java.util.concurrent.locks.Lock
+
 import ca.uwaterloo.flix.api
 import ca.uwaterloo.flix.language.ast.{Symbol, Type}
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import java.util.concurrent.BlockingQueue
+
+import scala.collection.mutable.ListBuffer
 
 sealed trait Value
 
@@ -163,7 +167,7 @@ object Value {
     final override def toString: String = throw InternalRuntimeException(s"Value.Tuple does not support `toString`.")
   }
 
-  case class Channel(queue: BlockingQueue[AnyRef]) extends  Value {
+  case class Channel(queue: BlockingQueue[AnyRef], locks: ListBuffer[Lock]) extends  Value {
 
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 

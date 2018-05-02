@@ -17,12 +17,16 @@
 package ca.uwaterloo.flix.runtime.interpreter
 
 import java.lang.reflect.Modifier
+import java.util.concurrent.locks.Lock
 import java.util.concurrent.{LinkedBlockingQueue, SynchronousQueue}
+
 import ca.uwaterloo.flix.api._
 import ca.uwaterloo.flix.language.ast.ExecutableAst._
 import ca.uwaterloo.flix.language.ast._
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import ca.uwaterloo.flix.util.tc.Show._
+
+import scala.collection.mutable.ListBuffer
 
 object Interpreter {
 
@@ -211,9 +215,9 @@ object Interpreter {
     case Expression.NewChannel(len, tpe, loc) =>
       val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
       if (l == 0)
-        Value.Channel(new SynchronousQueue[AnyRef]())
+        Value.Channel(new SynchronousQueue[AnyRef](), ListBuffer[Lock]())
       else
-        Value.Channel(new LinkedBlockingQueue[AnyRef](l))
+        Value.Channel(new LinkedBlockingQueue[AnyRef](l), ListBuffer[Lock]())
 
     //
     // GetChannel expressions.
@@ -228,6 +232,8 @@ object Interpreter {
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
       val v = eval(exp2, env0, henv0, lenv0, root)
       val c = cast2channel(eval(exp1, env0, henv0, lenv0, root))
+      c.locks.foreach(_.unlock())
+      c.locks.clear()
       c.queue.put(v)
       c
 
