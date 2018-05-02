@@ -781,6 +781,10 @@ object JvmOps {
       case Expression.ArrayStore(base, index, value, tpe, loc) =>
         visitExp(base) ++ visitExp(index) ++ visitExp(value)
 
+      case Expression.NewChannel(exp, tpe, loc) =>
+        visitExp(exp)
+      case Expression.PutChannel(exp1, exp2, tpe, loc) =>
+        visitExp(exp1) ++ visitExp(exp2)
       case Expression.GetChannel(exp, tpe, loc) =>
         visitExp(exp)
 
@@ -999,6 +1003,10 @@ object JvmOps {
       }
       case Expression.ArrayLoad(base, index, tpe, loc) => visitExp(base) ++ visitExp(index) + tpe
       case Expression.ArrayStore(base, index, value, tpe, loc) => visitExp(base) ++ visitExp(index) ++ visitExp(value) + tpe
+
+      case Expression.NewChannel(exp, tpe, loc) => visitExp(exp) + tpe
+      case Expression.PutChannel(exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2) + tpe
+      case Expression.GetChannel(exp, tpe, loc) => visitExp(exp) + tpe
 
       case Expression.Ref(exp, tpe, loc) => visitExp(exp) + tpe
       case Expression.Deref(exp, tpe, loc) => visitExp(exp) + tpe
