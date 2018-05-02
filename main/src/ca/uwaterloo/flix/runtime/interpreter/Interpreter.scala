@@ -20,13 +20,13 @@ import java.lang.reflect.Modifier
 import java.util.concurrent.locks.Lock
 import java.util.concurrent.{LinkedBlockingQueue, SynchronousQueue}
 
+import scala.collection.mutable.ListBuffer
+
 import ca.uwaterloo.flix.api._
 import ca.uwaterloo.flix.language.ast.ExecutableAst._
 import ca.uwaterloo.flix.language.ast._
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import ca.uwaterloo.flix.util.tc.Show._
-
-import scala.collection.mutable.ListBuffer
 
 object Interpreter {
 
@@ -236,11 +236,6 @@ object Interpreter {
       c.locks.clear()
       c.queue.put(v)
       c
-
-    /*case Expression.SelectChannel(rules, tpe, loc) =>
-      val lock = new ReentrantLock()
-      lock.lock()
-      lock.lock()*/
 
     //
     // Spawn expressions.

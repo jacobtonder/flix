@@ -17,13 +17,13 @@
 package ca.uwaterloo.flix.runtime.interpreter
 
 import java.util.concurrent.locks.Lock
+import java.util.concurrent.BlockingQueue
+
+import scala.collection.mutable.ListBuffer
 
 import ca.uwaterloo.flix.api
 import ca.uwaterloo.flix.language.ast.{Symbol, Type}
 import ca.uwaterloo.flix.util.InternalRuntimeException
-import java.util.concurrent.BlockingQueue
-
-import scala.collection.mutable.ListBuffer
 
 sealed trait Value
 
@@ -168,7 +168,6 @@ object Value {
   }
 
   case class Channel(queue: BlockingQueue[AnyRef], locks: ListBuffer[Lock]) extends  Value {
-
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
     final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
