@@ -209,7 +209,7 @@ object Interpreter {
         throw InternalRuntimeException(s"Array index out of bounds: $i. Array length: ${b.elms.length}.")
       }
 
-    ///
+    //
     // NewChannel expressions.
     //
     case Expression.NewChannel(len, tpe, loc) =>
