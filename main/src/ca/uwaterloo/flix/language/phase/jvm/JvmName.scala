@@ -124,6 +124,11 @@ object JvmName {
   val String: JvmName = JvmName(List("java", "lang"), "String")
 
   /**
+    * The `java.lang.Runnable` name.
+    */
+  val Runnable: JvmName = JvmName(List("java", "lang"), "Runnable")
+
+  /**
     * The `ca.uwaterloo.flix.api.Tuple` name
     */
   // TODO: Magnus: Get rid of tuple interface.

@@ -704,6 +704,20 @@ object GenExpression {
       // Call the constructor
       visitor.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "getValue", methodDescriptor, false)
 */
+
+    case Expression.Spawn(exp, tpe, loc) =>
+      // Adding source line number for debugging
+      addSourceLine(visitor, loc)
+      // Class visitor
+      val classVisitor = AsmOps.mkClassWriter()
+      // Class header.
+      classVisitor.visit(AsmOps.JavaVersion, ACC_PUBLIC + ACC_FINAL, JvmName.Context.toInternalName, null,
+        JvmName.Object.toInternalName, Array(JvmName.Runnable.toInternalName))
+
+      classVisitor.visitSource(JvmName.Context.name, null)
+
+      val i = 1
+
     case Expression.Ref(exp, tpe, loc) =>
       // Adding source line number for debugging
       addSourceLine(visitor, loc)
