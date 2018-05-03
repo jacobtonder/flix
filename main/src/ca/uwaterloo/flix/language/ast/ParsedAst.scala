@@ -112,10 +112,10 @@ object ParsedAst {
       * @param tparams    the type parameters.
       * @param fparamsOpt the formal parameters.
       * @param tpe        the declared type.
-      * @param exp        the expression.
+      * @param stmt       the statement.
       * @param sp2        the position of the last character in the declaration.
       */
-    case class Def(doc: ParsedAst.Doc, ann: Seq[ParsedAst.AnnotationOrProperty], mod: Seq[ParsedAst.Modifier], sp1: SourcePosition, ident: Name.Ident, tparams: Seq[ParsedAst.ContextBound], fparamsOpt: Seq[ParsedAst.FormalParam], tpe: ParsedAst.Type, eff: Option[ParsedAst.Effect], exp: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Declaration
+    case class Def(doc: ParsedAst.Doc, ann: Seq[ParsedAst.AnnotationOrProperty], mod: Seq[ParsedAst.Modifier], sp1: SourcePosition, ident: Name.Ident, tparams: Seq[ParsedAst.ContextBound], fparamsOpt: Seq[ParsedAst.FormalParam], tpe: ParsedAst.Type, eff: Option[ParsedAst.Effect], stmt: ParsedAst.Statement, sp2: SourcePosition) extends ParsedAst.Declaration
 
     /**
       * Effect Declaration.
@@ -278,6 +278,33 @@ object ParsedAst {
       */
     case class Disallow(doc: ParsedAst.Doc, sp1: SourcePosition, ic: ParsedAst.DisallowConstraint, sp2: SourcePosition) extends ParsedAst.Declaration
 
+  }
+
+  /**
+    * Statements.
+    */
+  sealed trait Statement
+
+  object Statement {
+
+    /**
+      * Basic Sequential Statement.
+      *
+      * @param sp1  the position of the first character in the statement.
+      * @param exp  the expression.
+      * @param stmt the statement.
+      * @param sp2  the position of the last character in the statement.
+      */
+    case class BasicStatement(sp1: SourcePosition, exp: Expression, stmt: Statement, sp2: SourcePosition) extends ParsedAst.Statement
+
+    /**
+      * Single Statement.
+      *
+      * @param sp1  the position of the first character in the statement.
+      * @param exp  the expression.
+      * @param sp2  the position of the last character in the statement.
+      */
+    case class SingleStatement(sp1: SourcePosition, exp: Expression, sp2: SourcePosition) extends ParsedAst.Statement
   }
 
   /**
@@ -540,14 +567,6 @@ object ParsedAst {
       * @param sp2  the position of the last character in the expression.
       */
     case class IfThenElse(sp1: SourcePosition, exp1: ParsedAst.Expression, exp2: ParsedAst.Expression, exp3: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
-
-    /**
-      * Statement Expression.
-      * @param exp1 the first expression.
-      * @param exp2 the last expression.
-      * @param sp   the position of the last character in the expression.
-      */
-    case class Statement(exp1: Expression, exp2: Expression, sp: SourcePosition) extends ParsedAst.Expression
 
     /**
       * LetMatch Expression (let-binding with pattern match).
