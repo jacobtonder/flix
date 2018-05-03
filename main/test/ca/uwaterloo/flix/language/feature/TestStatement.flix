@@ -129,29 +129,29 @@ def f16(): List[Int] =
 //@test
 //def testStatement16(): Bool = f16() `assertEq!` 1 :: 2 :: 3 :: 4 :: Nil
 
-def f17(): Channel[Int] =
-    channel Int;
-    channel Int
-
-//@test
-//def testStatement17(): Bool = f17() `assertEq!` channel Int
-
-def f18(): Channel[Int] =
-    channel Int;
-    channel Int;
-    channel Int
-
-//@test
-//def testStatement18(): Bool = f18() `assertEq!` channel Int
-
-def f19(): Channel[Int] =
-    channel Int;
-    channel Int;
-    channel Int;
-    channel Int
-
-//@test
-//def testStatement19(): Bool = f19() `assertEq!` channel Int
+//def f17(): Channel[Int] =
+//    channel Int;
+//    channel Int
+//
+////@test
+////def testStatement17(): Bool = f17() `assertEq!` channel Int
+//
+//def f18(): Channel[Int] =
+//    channel Int;
+//    channel Int;
+//    channel Int
+//
+////@test
+////def testStatement18(): Bool = f18() `assertEq!` channel Int
+//
+//def f19(): Channel[Int] =
+//    channel Int;
+//    channel Int;
+//    channel Int;
+//    channel Int
+//
+////@test
+////def testStatement19(): Bool = f19() `assertEq!` channel Int
 
 def f20(): Int =
     () -> 2;
