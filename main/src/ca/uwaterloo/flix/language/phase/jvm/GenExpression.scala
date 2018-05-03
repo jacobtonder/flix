@@ -678,6 +678,16 @@ object GenExpression {
 
     case Expression.ArrayStore(base, index, value, tpe, loc) => ??? // TODO: Ramin: Array
 
+    case Expression.NewChannel(exp, ctpe, tpe, loc) =>
+      // Adding source line number for debugging
+      addSourceLine(visitor, loc)
+      // We get the JvmType of the class for the channel
+      val classType = JvmOps.getChannelClassType(tpe)
+      // Evaluating the exp to specify the buffersize of the channel
+      compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
+      // Instantiating a new object of channel
+      visitor.visitTypeInsn(NEW, classType.name.toInternalName)
+
     case Expression.Ref(exp, tpe, loc) =>
       // Adding source line number for debugging
       addSourceLine(visitor, loc)

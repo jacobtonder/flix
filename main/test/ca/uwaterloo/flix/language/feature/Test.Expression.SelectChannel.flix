@@ -60,10 +60,10 @@ def testSelectChannel08(): Bool = testSelectChannelInt(100) `assertEq!` 100
 
 // @test
 // def testSelectChannel09(): Bool = testSelectChannelFloat32(0f32) `assertEq!` 0f32
-// 
+//
 // @test
 // def testSelectChannel10(): Bool = testSelectChannelFloat32(-1.1f32) `assertEq!` -1.1f32
-// 
+//
 // @test
 // def testSelectChannel11(): Bool = testSelectChannelFloat32(1.1f32) `assertEq!` 1.1f32
 

@@ -252,7 +252,7 @@ object ExecutableAst {
 
     case class ArrayStore(base: ExecutableAst.Expression, index: ExecutableAst.Expression, value: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
 
-    case class NewChannel(exp: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
+    case class NewChannel(exp: ExecutableAst.Expression, ctpe: Type, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
 
     case class GetChannel(exp: ExecutableAst.Expression, tpe: Type, loc: SourceLocation) extends ExecutableAst.Expression
 

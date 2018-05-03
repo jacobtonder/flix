@@ -63,6 +63,7 @@ object JvmOps {
       case Type.Int64 => JvmType.PrimLong
       case Type.BigInt => JvmType.BigInteger
       case Type.Str => JvmType.String
+      case Type.Channel => JvmType.Channel
       case Type.Native => JvmType.Object
       case Type.Ref => getCellClassType(tpe)
       case Type.Arrow(l) => getFunctionInterfaceType(tpe)
@@ -338,6 +339,35 @@ object JvmOps {
 
     // The JVM name is of the form TupleArity$Arg0$Arg1$Arg2
     val name = "Tuple" + arity + "$" + args.mkString("$")
+
+    // The type resides in the root package.
+    JvmType.Reference(JvmName(RootPackage, name))
+  }
+
+  /**
+    * Returns the tuple class type `TupleX$Y$Z` for the given type `tpe`.
+    *
+    * For example,
+    *
+    * Channel[Bool]           =>    Channel$Bool
+    * Channel[List[Int]]      =>    Channel$Obj
+    *
+    * NB: The given type `tpe` must be a tuple type.
+    */
+  def getChannelClassType(tpe: Type)(implicit root: Root, flix: Flix): JvmType.Reference = {
+    // Check that the given type is an Channel type.
+    if (!tpe.typeConstructor.isChannel)
+      throw InternalCompilerException(s"Unexpected type: '$tpe'")
+
+    // Check that the given type has one type argument.
+    if (tpe.typeArguments.length != 1)
+      throw InternalCompilerException(s"Unexpected type: '$tpe'")
+
+    // Compute the stringified erased type the type argument.
+    val arg = stringify(getErasedJvmType(tpe.typeArguments.head))
+
+    // The JVM name is of the form Channel$Arg0
+    val name = "Channel" + "$" + arg
 
     // The type resides in the root package.
     JvmType.Reference(JvmName(RootPackage, name))
@@ -781,7 +811,7 @@ object JvmOps {
       case Expression.ArrayStore(base, index, value, tpe, loc) =>
         visitExp(base) ++ visitExp(index) ++ visitExp(value)
 
-      case Expression.NewChannel(exp, tpe, loc) =>
+      case Expression.NewChannel(exp, ctpe, tpe, loc) =>
         visitExp(exp)
       case Expression.PutChannel(exp1, exp2, tpe, loc) =>
         visitExp(exp1) ++ visitExp(exp2)
@@ -977,9 +1007,6 @@ object JvmOps {
       case Expression.IfThenElse(exp1, exp2, exp3, tpe, loc) =>
         visitExp(exp1) ++ visitExp(exp2) ++ visitExp(exp3)
 
-      case Expression.GetChannel(exp, tpe, loc) =>
-        visitExp(exp)
-
       case Expression.Branch(exp, branches, tpe, loc) => branches.foldLeft(visitExp(exp)) {
         case (sacc, (_, e)) => sacc ++ visitExp(e)
       }
@@ -1004,7 +1031,7 @@ object JvmOps {
       case Expression.ArrayLoad(base, index, tpe, loc) => visitExp(base) ++ visitExp(index) + tpe
       case Expression.ArrayStore(base, index, value, tpe, loc) => visitExp(base) ++ visitExp(index) ++ visitExp(value) + tpe
 
-      case Expression.NewChannel(exp, tpe, loc) => visitExp(exp) + tpe
+      case Expression.NewChannel(exp, ctpe, tpe, loc) => visitExp(exp) + ctpe + tpe
       case Expression.PutChannel(exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2) + tpe
       case Expression.GetChannel(exp, tpe, loc) => visitExp(exp) + tpe
 

@@ -208,7 +208,7 @@ object Interpreter {
     //
     // NewChannel expressions.
     //
-    case Expression.NewChannel(len, tpe, loc) =>
+    case Expression.NewChannel(len, ctpe, tpe, loc) =>
       val l: Int = cast2int32(eval(len, env0, henv0, lenv0, root))
       if (l == 0)
         Value.Channel(new SynchronousQueue[AnyRef](), ListBuffer[Lock]())
@@ -244,7 +244,6 @@ object Interpreter {
       }
       t.start()
       Value.Unit
-
     //
     // Reference expressions.
     //
