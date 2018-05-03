@@ -71,12 +71,12 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
           case ds => List(WeededAst.Declaration.Namespace(name, ds.flatten, mkSL(sp1, sp2)))
         }
 
-      case ParsedAst.Declaration.Def(doc0, ann, mods, sp1, ident, tparams0, fparams0, tpe, effOpt, exp, sp2) =>
+      case ParsedAst.Declaration.Def(doc0, ann, mods, sp1, ident, tparams0, fparams0, tpe, effOpt, stmt, sp2) =>
         val loc = mkSL(ident.sp1, ident.sp2)
         val doc = visitDoc(doc0)
         val annVal = Annotations.weed(ann)
         val modVal = visitModifiers(mods, legalModifiers = Set(Ast.Modifier.Inline, Ast.Modifier.Public))
-        val expVal = Expressions.weed(exp)
+        val expVal = Statements.weed(stmt)
         val tparams = tparams0.toList.map(_.ident)
         val effVal = Effects.weed(effOpt)
 
@@ -313,6 +313,25 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
 
   }
 
+  object Statements {
+
+    def weed(stmt: ParsedAst.Statement)(implicit flix: Flix) = {
+
+      def visit(stmt: ParsedAst.Statement): Validation[WeededAst.Expression, WeederError] = stmt match {
+        case ParsedAst.Statement.BasicStatement(sp1, exp1, stmt, sp2) =>
+          @@(Expressions.weed(exp1), visit(stmt)) map {
+            case (e1, e2) => WeededAst.Expression.Let(Name.Ident(sp1, "_", sp2), e1, e2, mkSL(sp1, sp2))
+          }
+
+        case ParsedAst.Statement.SingleStatement(sp1, exp, sp2) =>
+          Expressions.weed(exp)
+      }
+
+      visit(stmt)
+    }
+
+  }
+
   object Expressions {
 
     /**
@@ -381,13 +400,6 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
         * @param unsafe `true` if we are inside an unsafe scope.
         */
       def visit(e0: ParsedAst.Expression, unsafe: Boolean): Validation[WeededAst.Expression, WeederError] = e0 match {
-        case ParsedAst.Expression.Statement(exp1, exp2, sp2) =>
-          val sp1 = leftMostSourcePosition(exp1)
-          val loc = mkSL(sp1, sp2)
-          @@(visit(exp1, unsafe), visit(exp2, unsafe)) map {
-            case (e1, e2) => WeededAst.Expression.Statement(e1, e2, loc)
-          }
-
         case ParsedAst.Expression.Wild(sp1, sp2) => IllegalWildcard(mkSL(sp1, sp2)).toFailure
 
         case ParsedAst.Expression.SName(sp1, ident, sp2) =>
@@ -1495,7 +1507,6 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
     * Returns the left most source position in the sub-tree of the expression `e`.
     */
   private def leftMostSourcePosition(e: ParsedAst.Expression): SourcePosition = e match {
-    case ParsedAst.Expression.Statement(e1, _, _) => leftMostSourcePosition(e1)
     case ParsedAst.Expression.Wild(sp1, _) => sp1
     case ParsedAst.Expression.SName(sp1, _, _) => sp1
     case ParsedAst.Expression.QName(sp1, _, _) => sp1
