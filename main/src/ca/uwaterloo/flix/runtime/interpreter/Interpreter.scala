@@ -242,6 +242,7 @@ object Interpreter {
       val t = new Thread() {
         override def run() = invokeClo(clo, List(ExecutableAst.Expression.Unit), env0, henv0, lenv0, root)
       }
+      t.setName("Spawn Thread (ID: " + t.getId() + ")")
       t.start()
       Value.Unit
 
