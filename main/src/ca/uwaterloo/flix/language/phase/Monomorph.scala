@@ -316,8 +316,8 @@ object Monomorph extends Phase[TypedAst.Root, TypedAst.Root] {
           Expression.PutChannel(e1, e2, subst0(tpe), eff, loc)
 
         case Expression.Spawn(exp, tpe, eff, loc) =>
-          val e1 = visitExp(exp, env0)
-          Expression.Spawn(e1, subst0(tpe), eff, loc)
+          val e = visitExp(exp, env0)
+          Expression.Spawn(e, subst0(tpe), eff, loc)
 
         case Expression.SelectChannel(rules, tpe, eff, loc) =>
           val rs = rules map {
