@@ -395,7 +395,7 @@ object Type {
   }
 
   /**
-    * Constructs the Channel type [a] where `a` is the given type - Channel[a].
+    * Returns the type `Channel[a]` where `a` is the given type.
     */
   def mkChannel(a: Type): Type = Apply(Channel, a)
 
