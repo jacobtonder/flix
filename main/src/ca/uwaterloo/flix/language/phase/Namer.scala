@@ -680,7 +680,7 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
 
       case WeededAst.Expression.GetChannel(exp,loc) =>
         namer(exp,env0,tenv0) map {
-          case (e) => NamedAst.Expression.GetChannel(e, Type.freshTypeVar(), loc)
+          case e => NamedAst.Expression.GetChannel(e, Type.freshTypeVar(), loc)
         }
 
       case WeededAst.Expression.PutChannel(exp1, exp2, loc) =>
@@ -690,7 +690,7 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
 
       case WeededAst.Expression.Spawn(exp, loc) =>
         namer(exp, env0, tenv0) map {
-          case (e) => NamedAst.Expression.Spawn(e, Type.freshTypeVar(), loc)
+          case e => NamedAst.Expression.Spawn(e, Type.freshTypeVar(), loc)
         }
 
       case WeededAst.Expression.SelectChannel(rules, loc) =>
