@@ -646,7 +646,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
               // Case 2: NewChannel takes an expression that states the buffer size
               exp match {
                 case ParsedAst.Expression.Lit(_, ParsedAst.Literal.Int32(_, sign, _, _), _) if sign =>
-                    IllegalBufferSize(mkSL(sp1, sp2)).toFailure
+                    IllegalChannelSize(mkSL(sp1, sp2)).toFailure
                 case _ =>
                   visit(exp, unsafe) map {
                     case e => WeededAst.Expression.NewChannel(e, Types.weed(tpe), mkSL(sp1, sp2))
