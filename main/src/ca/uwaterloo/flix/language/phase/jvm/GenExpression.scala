@@ -687,42 +687,11 @@ object GenExpression {
       visitor.visitInsn(DUP)
       // Evaluate the underlying expression
       compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
-     // visitor.visitMethodInsn(INVOKESPECIAL, classType.name.toInternalName, "<Init>", "()V", false)
-
-      //val valueErasedType = JvmOps.getErasedJvmType()
       // Constructor descriptor
       val constructorDescriptor = AsmOps.getMethodDescriptor(List(JvmType.PrimInt), JvmType.Void)
       // Call the constructor
       visitor.visitMethodInsn(INVOKESPECIAL, classType.name.toInternalName, "<init>", constructorDescriptor, false)
-      /*// We get the JvmType of the class for the channel
-      val jvmType = JvmOps.getErasedJvmType(tpe)
-      // Evaluating the exp to specify the buffersize of the channel
-      val classType = JvmOps.getChannelClassType(tpe)
-      compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
-*/
 
-   /*   val condZero = new Label()
-      val condElse = new Label()
-      visitor.visitInsn(DUP)
-      visitor.visitJumpInsn(IFNE, condZero)
-      visitor.visitTypeInsn(NEW, "java/util/concurrent/SynchronousQueue")
-      visitor.visitInsn(DUP)
-      visitor.visitMethodInsn(INVOKESPECIAL, )
-
-      visitor.visitJumpInsn(GOTO, condElse)
-      visitor.visitLabel(condZero)
-      visitor.visitTypeInsn(NEW, "java/util/concurrent/LinkedBlockingQueue")
-      visitor.visitLabel(condElse)*/
-
-
-
-
-      /*val classType = JvmOps.getChannelClassType(tpe)
-      // Evaluating the exp to specify the buffersize of the channel
-      compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
-      // Instantiating a new object of channel
-      visitor.visitTypeInsn(NEW, classType.name.toInternalName)
-*/
     case Expression.Ref(exp, tpe, loc) =>
       // Adding source line number for debugging
       addSourceLine(visitor, loc)

@@ -78,8 +78,6 @@ object GenChannelClasses {
     initMethod.visitInsn(DUP)
     initMethod.visitVarInsn(ILOAD, 1)
     initMethod.visitMethodInsn(INVOKESPECIAL, "java/util/concurrent/LinkedBlockingQueue", "<init>", "(I)V", false)
-    //initMethod.visitVarInsn(iLoad, 1)
-    //initMethod.visitVarInsn(ASTORE, 0)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "queue", JvmType.BlockingQueue.toDescriptor)
     initMethod.visitLabel(condEnd)
     initMethod.visitInsn(RETURN)
