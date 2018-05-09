@@ -56,7 +56,6 @@ object GenChannelClasses {
   }
 
   def genConstructor(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val iLoad = AsmOps.getLoadInstruction(channelType)
     val initMethod = visitor.visitMethod(ACC_PUBLIC, "<init>", AsmOps.getMethodDescriptor(List(JvmType.PrimInt), JvmType.Void), null, null)
     val condElse = new Label()
     val condEnd = new Label()
@@ -64,7 +63,7 @@ object GenChannelClasses {
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitInsn(DUP)
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmName.Object.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    initMethod.visitVarInsn(iLoad, 1)
+    initMethod.visitVarInsn(ILOAD, 1)
     initMethod.visitJumpInsn(IFNE, condElse)
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitTypeInsn(NEW, "java/util/concurrent/SynchronousQueue")
