@@ -370,7 +370,7 @@ object JvmOps {
     val name = "Channel" + "$" + arg
 
     // The type resides in the root package.
-    JvmType.Reference(JvmName(RootPackage, name))
+    JvmType.Reference(JvmName(List("ca", "uwaterloo", "flix"), name))
   }
 
   /**
@@ -1121,6 +1121,13 @@ object JvmOps {
       return b1 == 0xCA && b2 == 0xFE && b3 == 0xBA && b4 == 0xBE
     }
     false
+  }
+
+  def getChannelkInnerType(tpe: Type): Type = {
+    val x = tpe match {
+      case Type.Apply(Type.Channel, t) => t
+    }
+    x
   }
 
   /**

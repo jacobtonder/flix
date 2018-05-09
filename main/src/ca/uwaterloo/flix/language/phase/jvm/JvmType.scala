@@ -37,6 +37,7 @@ sealed trait JvmType {
     case JvmType.PrimDouble => "D"
     case JvmType.Reference(name) => name.toDescriptor
   }
+
 }
 
 object JvmType {
@@ -45,6 +46,8 @@ object JvmType {
     * The Flix Context class.
     */
   val Context: JvmType.Reference = Reference(JvmName.Context)
+
+  val BlockingQueue: JvmType.Reference = Reference(JvmName.BlockingQueue)
 
   /**
     * The `ca.uwaterloo.flix.api.Unit` type
