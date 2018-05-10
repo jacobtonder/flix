@@ -62,7 +62,6 @@ object GenChannelClasses {
   }
 
   def genConstructor(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val iLoad = AsmOps.getLoadInstruction(channelType)
     val initMethod = visitor.visitMethod(ACC_PUBLIC, "<init>", AsmOps.getMethodDescriptor(List(JvmType.PrimInt), JvmType.Void), null, null)
     val condElse = new Label()
     val condEnd = new Label()
