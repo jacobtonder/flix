@@ -20,13 +20,11 @@ import java.lang.reflect.Modifier
 import java.util.concurrent.locks.{Condition, Lock, ReentrantLock}
 import java.util
 
-import scala.collection.mutable.ListBuffer
 import ca.uwaterloo.flix.api._
 import ca.uwaterloo.flix.language.ast.ExecutableAst._
 import ca.uwaterloo.flix.language.ast._
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import ca.uwaterloo.flix.util.tc.Show._
-import jdk.incubator.http.internal.common.Queue
 
 object Interpreter {
 
