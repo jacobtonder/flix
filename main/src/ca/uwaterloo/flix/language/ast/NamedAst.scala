@@ -149,7 +149,7 @@ object NamedAst {
 
     case class ArrayStore(base: NamedAst.Expression, index: NamedAst.Expression, value: NamedAst.Expression, tvar: ast.Type.Var, loc: SourceLocation) extends NamedAst.Expression
 
-    case class NewChannel(exp: NamedAst.Expression, tpe: NamedAst.Type, loc: SourceLocation) extends NamedAst.Expression
+    case class NewChannel(exp: NamedAst.Expression, ctpe: NamedAst.Type, tvar: ast.Type.Var, loc: SourceLocation) extends NamedAst.Expression
 
     case class GetChannel(exp: NamedAst.Expression, tvar: ast.Type.Var, loc: SourceLocation) extends NamedAst.Expression
 

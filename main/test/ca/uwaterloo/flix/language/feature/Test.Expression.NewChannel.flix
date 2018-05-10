@@ -16,22 +16,22 @@ def testNewChannel01(): Unit =
   ()
 
 @test
-def testNewChannel02(): Channel[Int] = channel Int
+def testNewChannel02(): Channel[Int] = channel Int 5
 
 @test
-def testNewChannel03(): Channel[Bool] = channel Bool
+def testNewChannel03(): Channel[Bool] = channel Bool 6
 
 @test
-def testNewChannel04(): Channel[Char] = channel Char
+def testNewChannel04(): Channel[Char] = channel Char 6
 
 @test
-def testNewChannel05(): Channel[Int8] = channel Int8
+def testNewChannel05(): Channel[Int8] = channel Int8 6
 
 @test
-def testNewChannel06(): Channel[Int16] = channel Int16
+def testNewChannel06(): Channel[Int16] = channel Int16 5
 
 @test
-def testNewChannel07(): Channel[Int32] = channel Int32
+def testNewChannel07(): Channel[Int32] = channel Int32 5
 
 @test
 def testNewChannel08(): Channel[Int64] = channel Int64
@@ -54,8 +54,8 @@ def testNewChannel13(): Channel[(Int, Int)] = channel (Int, Int)
 //@test
 //def testNewChannel14(): Channel[Opt[Int]] = channel Opt[Int]
 
-@test
-def testNewChannel15(): Channel[List[Int]] = channel List[Int]
+//@test
+//def testNewChannel15(): Channel[List[Int]] = channel List[Int]
 
 //@test
 //def testNewChannel16(): Channel[Vec[Int]] = channel Vec[Int]

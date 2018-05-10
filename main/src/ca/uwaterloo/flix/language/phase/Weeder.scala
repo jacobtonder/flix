@@ -318,8 +318,8 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
     def weed(stmt: ParsedAst.Statement)(implicit flix: Flix) = {
 
       def visit(stmt: ParsedAst.Statement): Validation[WeededAst.Expression, WeederError] = stmt match {
-        case ParsedAst.Statement.BasicStatement(sp1, exp1, stmt, sp2) =>
-          @@(Expressions.weed(exp1), visit(stmt)) map {
+        case ParsedAst.Statement.BasicStatement(sp1, exp, stmt, sp2) =>
+          @@(Expressions.weed(exp), visit(stmt)) map {
             case (e1, e2) => WeededAst.Expression.Let(Name.Ident(sp1, "_", sp2), e1, e2, mkSL(sp1, sp2))
           }
 
@@ -636,12 +636,12 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
             case (b, i, v) => WeededAst.Expression.ArrayStore(b, i, v, mkSL(sp1, sp2))
           }
 
-        case ParsedAst.Expression.NewChannel(sp1, tpe, expOpt, sp2) =>
+        case ParsedAst.Expression.NewChannel(sp1, ctpe, expOpt, sp2) =>
           expOpt match {
             case None =>
               // Case 1: NewChannel takes no expression that states the buffer size
               val bufferSize = WeededAst.Expression.Int32(lit = 0, mkSL(sp2, sp2))
-              WeededAst.Expression.NewChannel(bufferSize, Types.weed(tpe), mkSL(sp1, sp2)).toSuccess
+              WeededAst.Expression.NewChannel(bufferSize, Types.weed(ctpe), mkSL(sp1, sp2)).toSuccess
             case Some(exp) =>
               // Case 2: NewChannel takes an expression that states the buffer size
               exp match {
@@ -649,7 +649,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
                     IllegalBufferSize(mkSL(sp1, sp2)).toFailure
                 case _ =>
                   visit(exp, unsafe) map {
-                    case e => WeededAst.Expression.NewChannel(e, Types.weed(tpe), mkSL(sp1, sp2))
+                    case e => WeededAst.Expression.NewChannel(e, Types.weed(ctpe), mkSL(sp1, sp2))
                   }
               }
           }
@@ -658,7 +658,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
           visit(exp,unsafe) map {
             case e => WeededAst.Expression.GetChannel(e, mkSL(sp1, sp2))
           }
-        
+
         case ParsedAst.Expression.PutChannel(exp1, exp2, sp2) =>
           val sp1 = leftMostSourcePosition(exp1)
           val loc = mkSL(sp1, sp2)
