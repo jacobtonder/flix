@@ -9,47 +9,47 @@ enum Color {
     case Green,
     case Blue
 }
-/*
+
 @test
 def testNewChannel01(): Unit =
   let x = channel Int;
   ()
 
 @test
-def testNewChannel02(): Channel[Int] = channel Int
+def testNewChannel02(): Channel[Int] = channel Int 5
 
 @test
-def testNewChannel03(): Channel[Bool] = channel Bool
+def testNewChannel03(): Channel[Bool] = channel Bool 6
 
 @test
-def testNewChannel04(): Channel[Char] = channel Char
+def testNewChannel04(): Channel[Char] = channel Char 6
 
 @test
-def testNewChannel05(): Channel[Int8] = channel Int8
+def testNewChannel05(): Channel[Int8] = channel Int8 6
 
 @test
-def testNewChannel06(): Channel[Int16] = channel Int16
+def testNewChannel06(): Channel[Int16] = channel Int16 5
 
 @test
-def testNewChannel07(): Channel[Int32] = channel Int32
-*/
-//@test
-//def testNewChannel08(): Channel[Int64] = channel Int64
+def testNewChannel07(): Channel[Int32] = channel Int32 5
 
-//@test
-//def testNewChannel09(): Channel[BigInt] = channel BigInt
+@test
+def testNewChannel08(): Channel[Int64] = channel Int64
 
-//@test
-//def testNewChannel10(): Channel[Float32] = channel Float32
+@test
+def testNewChannel09(): Channel[BigInt] = channel BigInt
 
-//@test
-//def testNewChannel11(): Channel[Float64] = channel Float64
+@test
+def testNewChannel10(): Channel[Float32] = channel Float32
+
+@test
+def testNewChannel11(): Channel[Float64] = channel Float64
 
 @test
 def testNewChannel12(): Channel[Str] = channel Str
 
-//@test
-//def testNewChannel13(): Channel[(Int, Int)] = channel (Int, Int)
+@test
+def testNewChannel13(): Channel[(Int, Int)] = channel (Int, Int)
 
 //@test
 //def testNewChannel14(): Channel[Opt[Int]] = channel Opt[Int]
@@ -59,7 +59,7 @@ def testNewChannel12(): Channel[Str] = channel Str
 
 //@test
 //def testNewChannel16(): Channel[Vec[Int]] = channel Vec[Int]
-/*
+
 @test
 def testNewChannel17(): Channel[Set[Int]] = channel Set[Int]
 
@@ -312,9 +312,9 @@ def testNewChannel99(): Channel[Channel[Channel[Channel[Unit]]]] = channel Chann
 @test
 def testNewChannel100(): Channel[Channel[Channel[Channel[(Unit, Unit)]]]] = channel Channel[Channel[Channel[(Unit, Unit)]]]
 
-*/
+
 /************ Channels with specified buffersize ***********/
-/*
+
 @test
 def testNewChannel101(): Unit =
   let x = channel Int 2;
@@ -681,5 +681,3 @@ def bs13(): Int = 2
 
 @test
 def testNewChannel213(): Channel[Unit] = channel Unit bs13()
-
-*/

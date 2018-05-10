@@ -38,6 +38,12 @@ object GenChannelClasses {
     // Generate the constructor
     genConstructor(classType, channelType, visitor)
 
+    // Generate `getValue` method
+    genGetValue(classType, channelType, visitor)
+
+    // Generate `putValue` method
+    //genPutValue(classType, channelType, visitor)
+
     // Generate the `toString` method.
     AsmOps.compileExceptionThrowerMethod(visitor, ACC_PUBLIC + ACC_FINAL, "toString", AsmOps.getMethodDescriptor(Nil, JvmType.String),
       "toString method shouldn't be called")
@@ -64,7 +70,7 @@ object GenChannelClasses {
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitInsn(DUP)
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmName.Object.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    initMethod.visitVarInsn(iLoad, 1)
+    initMethod.visitVarInsn(ILOAD, 1)
     initMethod.visitJumpInsn(IFNE, condElse)
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitTypeInsn(NEW, "java/util/concurrent/SynchronousQueue")
@@ -83,5 +89,28 @@ object GenChannelClasses {
     initMethod.visitInsn(RETURN)
     initMethod.visitMaxs(2, 2)
     initMethod.visitEnd()
+  }
+
+  def genGetValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val iLoad = AsmOps.getLoadInstruction(channelType)
+    val iRet = AsmOps.getReturnInstruction(channelType)
+    val getValue = visitor.visitMethod(ACC_PUBLIC, "getValue", AsmOps.getMethodDescriptor(Nil, channelType), null, null)
+    getValue.visitCode()
+
+    getValue.visitVarInsn(ALOAD, 0)
+    getValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.BlockingQueue.toDescriptor)
+    getValue.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/BlockingQueue", "take", AsmOps.getMethodDescriptor(Nil, channelType), true)
+    getValue.visitInsn(iRet)
+    getValue.visitMaxs(1, 1)
+    getValue.visitEnd()
+  }
+
+  def genPutValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val putValue = visitor.visitMethod(ACC_PUBLIC, "putValue", AsmOps.getMethodDescriptor(List(channelType), classType), null, null)
+    putValue.visitCode()
+
+    putValue.visitVarInsn(ALOAD, 0)
+    putValue.visitInsn(ARETURN)
+    putValue.visitEnd()
   }
 }
