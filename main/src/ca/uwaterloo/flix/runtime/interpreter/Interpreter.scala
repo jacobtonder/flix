@@ -236,7 +236,7 @@ object Interpreter {
       val clo = eval(exp, env0, henv0, lenv0, root)
 
       val t = new Thread("Spawn Process") {
-        override def run = invokeClo(clo, List(ExecutableAst.Expression.Unit), env0, henv0, lenv0, root)
+        override def run() = invokeClo(clo, List(ExecutableAst.Expression.Unit), env0, henv0, lenv0, root)
       }
       t.start()
       Value.Unit
