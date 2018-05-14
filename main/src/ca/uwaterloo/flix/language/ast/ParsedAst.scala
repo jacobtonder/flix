@@ -675,7 +675,7 @@ object ParsedAst {
       * @param exp the optional buffer expression of the channel (Default is 0)
       * @param sp2 the position of the last character in the expressions
       */
-    case class NewChannel(sp1: SourcePosition, tpe: ParsedAst.Type, exp: Option[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
+    case class NewChannel(sp1: SourcePosition, ctpe: ParsedAst.Type, exp: Option[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
       * GetChannel Expression.

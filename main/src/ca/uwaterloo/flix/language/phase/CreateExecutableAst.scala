@@ -242,8 +242,8 @@ object CreateExecutableAst extends Phase[SimplifiedAst.Root, ExecutableAst.Root]
         val i = toExecutable(index)
         val v = toExecutable(value)
         ExecutableAst.Expression.ArrayStore(b, i, v, tpe, loc)
-      case SimplifiedAst.Expression.NewChannel(exp, tpe, loc) =>
-        ExecutableAst.Expression.NewChannel(toExecutable(exp), tpe, loc)
+      case SimplifiedAst.Expression.NewChannel(exp, ctpe, tpe, loc) =>
+        ExecutableAst.Expression.NewChannel(toExecutable(exp), ctpe, tpe, loc)
       case SimplifiedAst.Expression.GetChannel(exp, tpe, loc) =>
         ExecutableAst.Expression.GetChannel(toExecutable(exp), tpe, loc)
       case SimplifiedAst.Expression.PutChannel(exp1, exp2, tpe, loc) =>

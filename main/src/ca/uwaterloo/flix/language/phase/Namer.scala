@@ -673,9 +673,9 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
           case (b, i, v) => NamedAst.Expression.ArrayStore(b, i, v, Type.freshTypeVar(), loc)
         }
 
-      case WeededAst.Expression.NewChannel(exp, tpe, loc) =>
+      case WeededAst.Expression.NewChannel(exp, ctpe, loc) =>
         namer(exp, env0, tenv0) map {
-          case e => NamedAst.Expression.NewChannel(e, Types.namer(tpe, tenv0), loc)
+          case e => NamedAst.Expression.NewChannel(e, Types.namer(ctpe, tenv0), Type.freshTypeVar(), loc)
         }
 
       case WeededAst.Expression.GetChannel(exp,loc) =>
