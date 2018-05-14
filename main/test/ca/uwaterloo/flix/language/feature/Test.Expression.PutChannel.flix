@@ -2,384 +2,96 @@
 // Put channel expressions                                                 //
 /////////////////////////////////////////////////////////////////////////////
 
-//Int8
-@test
-def putChannelI801(): Int8 =
-    let ch = channel Int8;
-    let _ = spI8(ch, 1i8);
-    <- ch
-
-@test
-def putChannelI802(): Int8 =
-    let ch1 = channel Int8;
-    let ch2 = channel Int8;
-    let _ = spI8(ch1, 1i8);
-    let _ = spgI8(ch2, ch1);
-    <- ch2
-
-@test
-def putChannelI803(): Int8 =
-    let ch1 = channel Int8;
-    let ch2 = channel Int8;
-    let ch3 = channel Int8;
-    let _ = spI8(ch1, 1i8);
-    let _ = spI8(ch1, 1i8);
-    let _ = spgI8(ch2, ch1);
-    let _ = spgI8(ch2, ch1);
-    let _ = spgI8(ch3, ch2);
-    let _ = sgI8(ch2);
-    <- ch3
-
-@test
-def putChannelI804(): Int8 =
-    let ch1 = channel Int8 1;
-    let ch2 = channel Int8 1;
-    let ch3 = channel Int8 1;
-    let _ = spI8(ch1, 1i8);
-    let _ = spI8(ch1, 1i8);
-    let _ = spI8(ch1, 1i8);
-    let _ = spI8(ch1, 1i8);
-    let _ = spgI8(ch2, ch1);
-    let _ = spgI8(ch2, ch1);
-    let _ = spgI8(ch2, ch1);
-    let _ = spgI8(ch3, ch2);
-    let _ = spgI8(ch3, ch2);
-    <- ch3
-
-@test
-def putChannelI805(): Int8 =
-    let ch1 = channel Int8 0;
-    let ch2 = channel Int8 1;
-    let ch3 = channel Int8 0;
-    let _ = spI8(ch1, 1i8);
-    let _ = spI8(ch1, 1i8);
-    let _ = sptgI8(ch3, ch2, ch1);
-    let _ = sptgI8(ch3, ch2, ch1);
-    let _ = sgI8(ch3);
-    <- ch3
-
-@test
-def putChannelI806(): Int8 =
-    let ch = channel Int8;
-    let _ = spmI8(ch, 1i8, 1i8);
-    let _ = sgI8(ch);
-    <- ch
-
-
-//Int16
-@test
-def putChannelI1601(): Int16 =
-    let ch = channel Int16;
-    let _ = spI16(ch, 1i16);
-    <- ch
-
-@test
-def putChannelI1602(): Int16 =
-    let ch1 = channel Int16;
-    let ch2 = channel Int16;
-    let _ = spI16(ch1, 1i16);
-    let _ = spgI16(ch2, ch1);
-    <- ch2
-
-@test
-def putChannelI1603(): Int16 =
-    let ch1 = channel Int16;
-    let ch2 = channel Int16;
-    let ch3 = channel Int16;
-    let _ = spI16(ch1, 1i16);
-    let _ = spI16(ch1, 1i16);
-    let _ = spgI16(ch2, ch1);
-    let _ = spgI16(ch2, ch1);
-    let _ = spgI16(ch3, ch2);
-    let _ = sgI16(ch2);
-    <- ch3
-
-@test
-def putChannelI1604(): Int16 =
-    let ch1 = channel Int16 1;
-    let ch2 = channel Int16 1;
-    let ch3 = channel Int16 1;
-    let _ = spI16(ch1, 1i16);
-    let _ = spI16(ch1, 1i16);
-    let _ = spI16(ch1, 1i16);
-    let _ = spI16(ch1, 1i16);
-    let _ = spgI16(ch2, ch1);
-    let _ = spgI16(ch2, ch1);
-    let _ = spgI16(ch2, ch1);
-    let _ = spgI16(ch3, ch2);
-    let _ = spgI16(ch3, ch2);
-    <- ch3
-
-@test
-def putChannelI1605(): Int16 =
-    let ch1 = channel Int16 0;
-    let ch2 = channel Int16 1;
-    let ch3 = channel Int16 0;
-    let _ = spI16(ch1, 1i16);
-    let _ = spI16(ch1, 1i16);
-    let _ = sptgI16(ch3, ch2, ch1);
-    let _ = sptgI16(ch3, ch2, ch1);
-    let _ = sgI16(ch3);
-    <- ch3
-
-@test
-def putChannelI1606(): Int16 =
-    let ch = channel Int16;
-    let _ = spmI16(ch, 1i16, 1i16);
-    let _ = sgI16(ch);
-    <- ch
-
-
-@test
-def putChannelI3201(): Int32 =
-    let ch = channel Int32;
-    let _ = spI32(ch, 1i32);
-    <- ch
-
-@test
-def putChannelI3202(): Int32 =
-    let ch1 = channel Int32;
-    let ch2 = channel Int32;
-    let _ = spI32(ch1, 1i32);
-    let _ = spgI32(ch2, ch1);
-    <- ch2
-
-@test
-def putChannelI3203(): Int32 =
-    let ch1 = channel Int32;
-    let ch2 = channel Int32;
-    let ch3 = channel Int32;
-    let _ = spI32(ch1, 1i32);
-    let _ = spI32(ch1, 1i32);
-    let _ = spgI32(ch2, ch1);
-    let _ = spgI32(ch2, ch1);
-    let _ = spgI32(ch3, ch2);
-    let _ = sgI32(ch2);
-    <- ch3
-
-@test
-def putChannelI3204(): Int32 =
-    let ch1 = channel Int32 1;
-    let ch2 = channel Int32 1;
-    let ch3 = channel Int32 1;
-    let _ = spI32(ch1, 1i32);
-    let _ = spI32(ch1, 1i32);
-    let _ = spI32(ch1, 1i32);
-    let _ = spI32(ch1, 1i32);
-    let _ = spgI32(ch2, ch1);
-    let _ = spgI32(ch2, ch1);
-    let _ = spgI32(ch2, ch1);
-    let _ = spgI32(ch3, ch2);
-    let _ = spgI32(ch3, ch2);
-    <- ch3
-
-@test
-def putChannelI3205(): Int32 =
-    let ch1 = channel Int32 0;
-    let ch2 = channel Int32 1;
-    let ch3 = channel Int32 0;
-    let _ = spI32(ch1, 1i32);
-    let _ = spI32(ch1, 1i32);
-    let _ = sptgI32(ch3, ch2, ch1);
-    let _ = sptgI32(ch3, ch2, ch1);
-    let _ = sgI32(ch3);
-    <- ch3
-
-@test
-def putChannelI3206(): Int32 =
-    let ch = channel Int32;
-    let _ = spmI32(ch, 1i32, 1i32);
-    let _ = sgI32(ch);
-    <- ch
-
-
-//Int64
-@test
-def putChannelI6401(): Int64 =
-    let ch = channel Int64;
-    let _ = spI64(ch, 1i64);
-    <- ch
-
-@test
-def putChannelI6402(): Int64 =
-    let ch1 = channel Int64;
-    let ch2 = channel Int64;
-    let _ = spI64(ch1, 1i64);
-    let _ = spgI64(ch2, ch1);
-    <- ch2
-
-@test
-def putChannelI6403(): Int64 =
-    let ch1 = channel Int64;
-    let ch2 = channel Int64;
-    let ch3 = channel Int64;
-    let _ = spI64(ch1, 1i64);
-    let _ = spI64(ch1, 1i64);
-    let _ = spgI64(ch2, ch1);
-    let _ = spgI64(ch2, ch1);
-    let _ = spgI64(ch3, ch2);
-    let _ = sgI64(ch2);
-    <- ch3
-
-@test
-def putChannelI6404(): Int64 =
-    let ch1 = channel Int64 1;
-    let ch2 = channel Int64 1;
-    let ch3 = channel Int64 1;
-    let _ = spI64(ch1, 1i64);
-    let _ = spI64(ch1, 1i64);
-    let _ = spI64(ch1, 1i64);
-    let _ = spI64(ch1, 1i64);
-    let _ = spgI64(ch2, ch1);
-    let _ = spgI64(ch2, ch1);
-    let _ = spgI64(ch2, ch1);
-    let _ = spgI64(ch3, ch2);
-    let _ = spgI64(ch3, ch2);
-    <- ch3
-
-@test
-def putChannelI6405(): Int64 =
-    let ch1 = channel Int64 0;
-    let ch2 = channel Int64 1;
-    let ch3 = channel Int64 0;
-    let _ = spI64(ch1, 1i64);
-    let _ = spI64(ch1, 1i64);
-    let _ = sptgI64(ch3, ch2, ch1);
-    let _ = sptgI64(ch3, ch2, ch1);
-    let _ = sgI64(ch3);
-    <- ch3
-
-@test
-def putChannelI6406(): Int64 =
-    let ch = channel Int64;
-    let _ = spmI64(ch, 1i64, 1i64);
-    let _ = sgI64(ch);
-    <- ch
-
-
-//BigInt
-@test
-def putChannelBI01(): BigInt =
-    let ch = channel BigInt;
-    let _ = spBI(ch, 1ii);
-    <- ch
-
-@test
-def putChannelBI02(): BigInt =
-    let ch1 = channel BigInt;
-    let ch2 = channel BigInt;
-    let _ = spBI(ch1, 1ii);
-    let _ = spgBI(ch2, ch1);
-    <- ch2
-
-@test
-def putChannelBI03(): BigInt =
-    let ch1 = channel BigInt;
-    let ch2 = channel BigInt;
-    let ch3 = channel BigInt;
-    let _ = spBI(ch1, 1ii);
-    let _ = spBI(ch1, 1ii);
-    let _ = spgBI(ch2, ch1);
-    let _ = spgBI(ch2, ch1);
-    let _ = spgBI(ch3, ch2);
-    let _ = sgBI(ch2);
-    <- ch3
-
-@test
-def putChannelBI04(): BigInt =
-    let ch1 = channel BigInt 1;
-    let ch2 = channel BigInt 1;
-    let ch3 = channel BigInt 1;
-    let _ = spBI(ch1, 1ii);
-    let _ = spBI(ch1, 1ii);
-    let _ = spBI(ch1, 1ii);
-    let _ = spBI(ch1, 1ii);
-    let _ = spgBI(ch2, ch1);
-    let _ = spgBI(ch2, ch1);
-    let _ = spgBI(ch2, ch1);
-    let _ = spgBI(ch3, ch2);
-    let _ = spgBI(ch3, ch2);
-    <- ch3
-
-@test
-def putChannelBI05(): BigInt =
-    let ch1 = channel BigInt 0;
-    let ch2 = channel BigInt 1;
-    let ch3 = channel BigInt 0;
-    let _ = spBI(ch1, 1ii);
-    let _ = spBI(ch1, 1ii);
-    let _ = sptgBI(ch3, ch2, ch1);
-    let _ = sptgBI(ch3, ch2, ch1);
-    let _ = sgBI(ch3);
-    <- ch3
-
-@test
-def putChannelBI06(): BigInt =
-    let ch = channel BigInt;
-    let _ = spmBI(ch, 1ii, 1ii);
-    let _ = sgBI(ch);
-    <- ch
-
 
 //Unit
-@test
-def putChannelUnit01(): Unit =
-    let ch = channel Unit;
-    let _ = spUnit(ch, ());
+def f011(ch: Channel[Unit]): Channel[Unit] =
+    ch <- ()
+
+def putChannel01(): Unit =
+    let ch = channel Unit 1;
+    let _ = spawn f011(ch);
     <- ch
 
 @test
-def putChannelUnit02(): Unit =
-    let ch1 = channel Unit;
-    let ch2 = channel Unit;
-    let _ = spUnit(ch1, ());
-    let _ = spgUnit(ch2, ch1);
+def testPutChannel01(): Bool = putChannel01() `assertEq!` ()
+
+def f021(ch: Channel[Unit]): Channel[Unit] =
+    ch <- ()
+
+def f022(ch1: Channel[Unit], ch2: Channel[Unit]): Channel[Unit] =
+    ch1 <- <- ch2
+
+def putChannel02(): Unit =
+    let ch1 = channel Unit 1;
+    let ch2 = channel Unit 1;
+    let _ = spawn f021(ch1);
+    let _ = spawn f022(ch1, ch2);
     <- ch2
 
 @test
-def putChannelUnit03(): Unit =
-    let ch1 = channel Unit;
-    let ch2 = channel Unit;
-    let ch3 = channel Unit;
-    let _ = spUnit(ch1, ());
-    let _ = spUnit(ch1, ());
-    let _ = spgUnit(ch2, ch1);
-    let _ = spgUnit(ch2, ch1);
-    let _ = spgUnit(ch3, ch2);
-    let _ = sgUnit(ch2);
-    <- ch3
+def testPutChannel02(): Bool = putChannel01() `assertEq!` ()
 
-@test
-def putChannelUnit04(): Unit =
+def f031(ch: Channel[Unit]): Channel[Unit] =
+    ch <- ()
+
+def f032(ch1: Channel[Unit], ch2: Channel[Unit]): Channel[Unit] =
+    ch1 <- <- ch2
+
+def putChannel03(): Unit =
     let ch1 = channel Unit 1;
     let ch2 = channel Unit 1;
     let ch3 = channel Unit 1;
-    let _ = spUnit(ch1, ());
-    let _ = spUnit(ch1, ());
-    let _ = spUnit(ch1, ());
-    let _ = spUnit(ch1, ());
-    let _ = spgUnit(ch2, ch1);
-    let _ = spgUnit(ch2, ch1);
-    let _ = spgUnit(ch2, ch1);
-    let _ = spgUnit(ch3, ch2);
-    let _ = spgUnit(ch3, ch2);
+    let _ = spawn f031(ch1);
+    let _ = spawn f031(ch1);
+    let _ = spawn f032(ch2, ch1);
+    let _ = spawn f032(ch2, ch1);
+    let _ = spawn f032(ch3, ch2);
+    let _ = <- ch2;
     <- ch3
 
 @test
-def putChannelUnit05(): Unit =
-    let ch1 = channel Unit 0;
+def testPutChannel03(): Bool = putChannel01() `assertEq!` ()
+
+def f041(ch: Channel[Unit]): Channel[Unit] =
+    ch <- ()
+
+def f042(ch1: Channel[Unit], ch2: Channel[Unit], ch3: Channel[Unit]): Channel[Unit] =
+    ch1 <- <- ch2 <- <- ch3
+
+@test
+def testputChannel04(): Unit =
+    let ch1 = channel Unit 1;
     let ch2 = channel Unit 1;
-    let ch3 = channel Unit 0;
-    let _ = spUnit(ch1, ());
-    let _ = spUnit(ch1, ());
-    let _ = sptgUnit(ch3, ch2, ch1);
-    let _ = sptgUnit(ch3, ch2, ch1);
-    let _ = sgUnit(ch3);
+    let ch3 = channel Unit 1;
+    let _ = spawn f041(ch1);
+    let _ = spawn f041(ch1);
+    let _ = spawn f042(ch3, ch2, ch1);
+    let _ = spawn f042(ch3, ch2, ch1);
+    let _ = <- ch3;
     <- ch3
 
 @test
-def putChannelUnit06(): Unit =
-    let ch = channel Unit;
+def testPutChannel04(): Bool = putChannel01() `assertEq!` ()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+def putChannel06(): Unit =
+    let ch = channel Unit 1;
     let _ = spmUnit(ch, (), ());
     let _ = sgUnit(ch);
     <- ch
@@ -388,23 +100,23 @@ def putChannelUnit06(): Unit =
 //Bool
 @test
 def putChannelBool01(): Bool =
-    let ch = channel Bool;
+    let ch = channel Bool 1;
     let _ = spBool(ch, true);
     <- ch
 
 @test
 def putChannelBool02(): Bool =
-    let ch1 = channel Bool;
-    let ch2 = channel Bool;
+    let ch1 = channel Bool 1;
+    let ch2 = channel Bool 1;
     let _ = spBool(ch1, true);
     let _ = spgBool(ch2, ch1);
     <- ch2
 
 @test
 def putChannelBool03(): Bool =
-    let ch1 = channel Bool;
-    let ch2 = channel Bool;
-    let ch3 = channel Bool;
+    let ch1 = channel Bool 1;
+    let ch2 = channel Bool 1;
+    let ch3 = channel Bool 1;
     let _ = spBool(ch1, true);
     let _ = spBool(ch1, true);
     let _ = spgBool(ch2, ch1);
@@ -431,9 +143,9 @@ def putChannelBool04(): Bool =
 
 @test
 def putChannelBool05(): Bool =
-    let ch1 = channel Bool 0;
+    let ch1 = channel Bool 1;
     let ch2 = channel Bool 1;
-    let ch3 = channel Bool 0;
+    let ch3 = channel Bool 1;
     let _ = spBool(ch1, true);
     let _ = spBool(ch1, true);
     let _ = sptgBool(ch3, ch2, ch1);
@@ -443,32 +155,349 @@ def putChannelBool05(): Bool =
 
 @test
 def putChannelBool06(): Bool =
-    let ch = channel Bool;
+    let ch = channel Bool 1;
     let _ = spmBool(ch, true, true);
     let _ = sgBool(ch);
     <- ch
 
+//Int8
+@test
+def putChannel01(): Int8 =
+    let ch = channel Int8 1;
+    let _ = spI8(ch, 1i8);
+    <- ch
+
+@test
+def putChannelI802(): Int8 =
+    let ch1 = channel Int8 1;
+    let ch2 = channel Int8 1;
+    let _ = spI8(ch1, 1i8);
+    let _ = spgI8(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelI803(): Int8 =
+    let ch1 = channel Int8 1;
+    let ch2 = channel Int8 1;
+    let ch3 = channel Int8 1;
+    let _ = spI8(ch1, 1i8);
+    let _ = spI8(ch1, 1i8);
+    let _ = spgI8(ch2, ch1);
+    let _ = spgI8(ch2, ch1);
+    let _ = spgI8(ch3, ch2);
+    let _ = sgI8(ch2);
+    <- ch3
+
+@test
+def putChannelI804(): Int8 =
+    let ch1 = channel Int8 1;
+    let ch2 = channel Int8 1;
+    let ch3 = channel Int8 1;
+    let _ = spI8(ch1, 1i8);
+    let _ = spI8(ch1, 1i8);
+    let _ = spI8(ch1, 1i8);
+    let _ = spI8(ch1, 1i8);
+    let _ = spgI8(ch2, ch1);
+    let _ = spgI8(ch2, ch1);
+    let _ = spgI8(ch2, ch1);
+    let _ = spgI8(ch3, ch2);
+    let _ = spgI8(ch3, ch2);
+    <- ch3
+
+@test
+def putChannelI805(): Int8 =
+    let ch1 = channel Int8 1;
+    let ch2 = channel Int8 1;
+    let ch3 = channel Int8 1;
+    let _ = spI8(ch1, 1i8);
+    let _ = spI8(ch1, 1i8);
+    let _ = sptgI8(ch3, ch2, ch1);
+    let _ = sptgI8(ch3, ch2, ch1);
+    let _ = sgI8(ch3);
+    <- ch3
+
+@test
+def putChannelI806(): Int8 =
+    let ch = channel Int8 1;
+    let _ = spmI8(ch, 1i8, 1i8);
+    let _ = sgI8(ch);
+    <- ch
+
+
+//Int16
+@test
+def putChannelI1601(): Int16 =
+    let ch = channel Int16 1;
+    let _ = spI16(ch, 1i16);
+    <- ch
+
+@test
+def putChannelI1602(): Int16 =
+    let ch1 = channel Int16 1;
+    let ch2 = channel Int16 1;
+    let _ = spI16(ch1, 1i16);
+    let _ = spgI16(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelI1603(): Int16 =
+    let ch1 = channel Int16 1;
+    let ch2 = channel Int16 1;
+    let ch3 = channel Int16 1;
+    let _ = spI16(ch1, 1i16);
+    let _ = spI16(ch1, 1i16);
+    let _ = spgI16(ch2, ch1);
+    let _ = spgI16(ch2, ch1);
+    let _ = spgI16(ch3, ch2);
+    let _ = sgI16(ch2);
+    <- ch3
+
+@test
+def putChannelI1604(): Int16 =
+    let ch1 = channel Int16 1;
+    let ch2 = channel Int16 1;
+    let ch3 = channel Int16 1;
+    let _ = spI16(ch1, 1i16);
+    let _ = spI16(ch1, 1i16);
+    let _ = spI16(ch1, 1i16);
+    let _ = spI16(ch1, 1i16);
+    let _ = spgI16(ch2, ch1);
+    let _ = spgI16(ch2, ch1);
+    let _ = spgI16(ch2, ch1);
+    let _ = spgI16(ch3, ch2);
+    let _ = spgI16(ch3, ch2);
+    <- ch3
+
+@test
+def putChannelI1605(): Int16 =
+    let ch1 = channel Int16 1;
+    let ch2 = channel Int16 1;
+    let ch3 = channel Int16 1;
+    let _ = spI16(ch1, 1i16);
+    let _ = spI16(ch1, 1i16);
+    let _ = sptgI16(ch3, ch2, ch1);
+    let _ = sptgI16(ch3, ch2, ch1);
+    let _ = sgI16(ch3);
+    <- ch3
+
+@test
+def putChannelI1606(): Int16 =
+    let ch = channel Int16 1;
+    let _ = spmI16(ch, 1i16, 1i16);
+    let _ = sgI16(ch);
+    <- ch
+
+
+@test
+def putChannelI3201(): Int32 =
+    let ch = channel Int32 1;
+    let _ = spI32(ch, 1i32);
+    <- ch
+
+@test
+def putChannelI3202(): Int32 =
+    let ch1 = channel Int32 1;
+    let ch2 = channel Int32 1;
+    let _ = spI32(ch1, 1i32);
+    let _ = spgI32(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelI3203(): Int32 =
+    let ch1 = channel Int32 1;
+    let ch2 = channel Int32 1;
+    let ch3 = channel Int32 1;
+    let _ = spI32(ch1, 1i32);
+    let _ = spI32(ch1, 1i32);
+    let _ = spgI32(ch2, ch1);
+    let _ = spgI32(ch2, ch1);
+    let _ = spgI32(ch3, ch2);
+    let _ = sgI32(ch2);
+    <- ch3
+
+@test
+def putChannelI3204(): Int32 =
+    let ch1 = channel Int32 1;
+    let ch2 = channel Int32 1;
+    let ch3 = channel Int32 1;
+    let _ = spI32(ch1, 1i32);
+    let _ = spI32(ch1, 1i32);
+    let _ = spI32(ch1, 1i32);
+    let _ = spI32(ch1, 1i32);
+    let _ = spgI32(ch2, ch1);
+    let _ = spgI32(ch2, ch1);
+    let _ = spgI32(ch2, ch1);
+    let _ = spgI32(ch3, ch2);
+    let _ = spgI32(ch3, ch2);
+    <- ch3
+
+@test
+def putChannelI3205(): Int32 =
+    let ch1 = channel Int32 1;
+    let ch2 = channel Int32 1;
+    let ch3 = channel Int32 1;
+    let _ = spI32(ch1, 1i32);
+    let _ = spI32(ch1, 1i32);
+    let _ = sptgI32(ch3, ch2, ch1);
+    let _ = sptgI32(ch3, ch2, ch1);
+    let _ = sgI32(ch3);
+    <- ch3
+
+@test
+def putChannelI3206(): Int32 =
+    let ch = channel Int32 1;
+    let _ = spmI32(ch, 1i32, 1i32);
+    let _ = sgI32(ch);
+    <- ch
+
+
+//Int64
+@test
+def putChannelI6401(): Int64 =
+    let ch = channel Int64 1;
+    let _ = spI64(ch, 1i64);
+    <- ch
+
+@test
+def putChannelI6402(): Int64 =
+    let ch1 = channel Int64 1;
+    let ch2 = channel Int64 1;
+    let _ = spI64(ch1, 1i64);
+    let _ = spgI64(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelI6403(): Int64 =
+    let ch1 = channel Int64 1;
+    let ch2 = channel Int64 1;
+    let ch3 = channel Int64 1;
+    let _ = spI64(ch1, 1i64);
+    let _ = spI64(ch1, 1i64);
+    let _ = spgI64(ch2, ch1);
+    let _ = spgI64(ch2, ch1);
+    let _ = spgI64(ch3, ch2);
+    let _ = sgI64(ch2);
+    <- ch3
+
+@test
+def putChannelI6404(): Int64 =
+    let ch1 = channel Int64 1;
+    let ch2 = channel Int64 1;
+    let ch3 = channel Int64 1;
+    let _ = spI64(ch1, 1i64);
+    let _ = spI64(ch1, 1i64);
+    let _ = spI64(ch1, 1i64);
+    let _ = spI64(ch1, 1i64);
+    let _ = spgI64(ch2, ch1);
+    let _ = spgI64(ch2, ch1);
+    let _ = spgI64(ch2, ch1);
+    let _ = spgI64(ch3, ch2);
+    let _ = spgI64(ch3, ch2);
+    <- ch3
+
+@test
+def putChannelI6405(): Int64 =
+    let ch1 = channel Int64 1;
+    let ch2 = channel Int64 1;
+    let ch3 = channel Int64 1;
+    let _ = spI64(ch1, 1i64);
+    let _ = spI64(ch1, 1i64);
+    let _ = sptgI64(ch3, ch2, ch1);
+    let _ = sptgI64(ch3, ch2, ch1);
+    let _ = sgI64(ch3);
+    <- ch3
+
+@test
+def putChannelI6406(): Int64 =
+    let ch = channel Int64 1;
+    let _ = spmI64(ch, 1i64, 1i64);
+    let _ = sgI64(ch);
+    <- ch
+
+
+//BigInt
+@test
+def putChannelBI01(): BigInt =
+    let ch = channel BigInt 1;
+    let _ = spBI(ch, 1ii);
+    <- ch
+
+@test
+def putChannelBI02(): BigInt =
+    let ch1 = channel BigInt 1;
+    let ch2 = channel BigInt 1;
+    let _ = spBI(ch1, 1ii);
+    let _ = spgBI(ch2, ch1);
+    <- ch2
+
+@test
+def putChannelBI03(): BigInt =
+    let ch1 = channel BigInt 1;
+    let ch2 = channel BigInt 1;
+    let ch3 = channel BigInt 1;
+    let _ = spBI(ch1, 1ii);
+    let _ = spBI(ch1, 1ii);
+    let _ = spgBI(ch2, ch1);
+    let _ = spgBI(ch2, ch1);
+    let _ = spgBI(ch3, ch2);
+    let _ = sgBI(ch2);
+    <- ch3
+
+@test
+def putChannelBI04(): BigInt =
+    let ch1 = channel BigInt 1;
+    let ch2 = channel BigInt 1;
+    let ch3 = channel BigInt 1;
+    let _ = spBI(ch1, 1ii);
+    let _ = spBI(ch1, 1ii);
+    let _ = spBI(ch1, 1ii);
+    let _ = spBI(ch1, 1ii);
+    let _ = spgBI(ch2, ch1);
+    let _ = spgBI(ch2, ch1);
+    let _ = spgBI(ch2, ch1);
+    let _ = spgBI(ch3, ch2);
+    let _ = spgBI(ch3, ch2);
+    <- ch3
+
+@test
+def putChannelBI05(): BigInt =
+    let ch1 = channel BigInt 1;
+    let ch2 = channel BigInt 1;
+    let ch3 = channel BigInt 1;
+    let _ = spBI(ch1, 1ii);
+    let _ = spBI(ch1, 1ii);
+    let _ = sptgBI(ch3, ch2, ch1);
+    let _ = sptgBI(ch3, ch2, ch1);
+    let _ = sgBI(ch3);
+    <- ch3
+
+@test
+def putChannelBI06(): BigInt =
+    let ch = channel BigInt 1;
+    let _ = spmBI(ch, 1ii, 1ii);
+    let _ = sgBI(ch);
+    <- ch
 
 //Char
 @test
 def putChannelChar01(): Char =
-    let ch = channel Char;
+    let ch = channel Char 1;
     let _ = spChar(ch, 'a');
     <- ch
 
 @test
 def putChannelChar02(): Char =
-    let ch1 = channel Char;
-    let ch2 = channel Char;
+    let ch1 = channel Char 1;
+    let ch2 = channel Char 1;
     let _ = spChar(ch1, 'a');
     let _ = spgChar(ch2, ch1);
     <- ch2
 
 @test
 def putChannelChar03(): Char =
-    let ch1 = channel Char;
-    let ch2 = channel Char;
-    let ch3 = channel Char;
+    let ch1 = channel Char 1;
+    let ch2 = channel Char 1;
+    let ch3 = channel Char 1;
     let _ = spChar(ch1, 'a');
     let _ = spChar(ch1, 'a');
     let _ = spgChar(ch2, ch1);
@@ -495,9 +524,9 @@ def putChannelChar04(): Char =
 
 @test
 def putChannelChar05(): Char =
-    let ch1 = channel Char 0;
+    let ch1 = channel Char 1;
     let ch2 = channel Char 1;
-    let ch3 = channel Char 0;
+    let ch3 = channel Char 1;
     let _ = spChar(ch1, 'a');
     let _ = spChar(ch1, 'a');
     let _ = sptgChar(ch3, ch2, ch1);
@@ -507,7 +536,7 @@ def putChannelChar05(): Char =
 
 @test
 def putChannelChar06(): Char =
-    let ch = channel Char;
+    let ch = channel Char 1;
     let _ = spmChar(ch, 'a', 'a');
     let _ = sgChar(ch);
     <- ch
@@ -516,23 +545,23 @@ def putChannelChar06(): Char =
 //Float32
 @test
 def putChannelF3201(): Float32 =
-    let ch = channel Float32;
+    let ch = channel Float32 1;
     let _ = spF32(ch, 1.0f32);
     <- ch
 
 @test
 def putChannelF3202(): Float32 =
-    let ch1 = channel Float32;
-    let ch2 = channel Float32;
+    let ch1 = channel Float32 1;
+    let ch2 = channel Float32 1;
     let _ = spF32(ch1, 1.0f32);
     let _ = spgF32(ch2, ch1);
     <- ch2
 
 @test
 def putChannelF3203(): Float32 =
-    let ch1 = channel Float32;
-    let ch2 = channel Float32;
-    let ch3 = channel Float32;
+    let ch1 = channel Float32 1;
+    let ch2 = channel Float32 1;
+    let ch3 = channel Float32 1;
     let _ = spF32(ch1, 1.0f32);
     let _ = spF32(ch1, 1.0f32);
     let _ = spgF32(ch2, ch1);
@@ -559,9 +588,9 @@ def putChannelF3204(): Float32 =
 
 @test
 def putChannelF3205(): Float32 =
-    let ch1 = channel Float32 0;
+    let ch1 = channel Float32 1;
     let ch2 = channel Float32 1;
-    let ch3 = channel Float32 0;
+    let ch3 = channel Float32 1;
     let _ = spF32(ch1, 1.0f32);
     let _ = spF32(ch1, 1.0f32);
     let _ = sptgF32(ch3, ch2, ch1);
@@ -571,7 +600,7 @@ def putChannelF3205(): Float32 =
 
 @test
 def putChannelF3206(): Float32 =
-    let ch = channel Float32;
+    let ch = channel Float32 1;
     let _ = spmF32(ch, 1.0f32, 1.0f32);
     let _ = sgF32(ch);
     <- ch
@@ -580,23 +609,23 @@ def putChannelF3206(): Float32 =
 //Float64
 @test
 def putChannelF6401(): Float64 =
-    let ch = channel Float64;
+    let ch = channel Float64 1;
     let _ = spF64(ch, 1.0f64);
     <- ch
 
 @test
 def putChannelF6402(): Float64 =
-    let ch1 = channel Float64;
-    let ch2 = channel Float64;
+    let ch1 = channel Float64 1;
+    let ch2 = channel Float64 1;
     let _ = spF64(ch1, 1.0f64);
     let _ = spgF64(ch2, ch1);
     <- ch2
 
 @test
 def putChannelF6403(): Float64 =
-    let ch1 = channel Float64;
-    let ch2 = channel Float64;
-    let ch3 = channel Float64;
+    let ch1 = channel Float64 1;
+    let ch2 = channel Float64 1;
+    let ch3 = channel Float64 1;
     let _ = spF64(ch1, 1.0f64);
     let _ = spF64(ch1, 1.0f64);
     let _ = spgF64(ch2, ch1);
@@ -623,9 +652,9 @@ def putChannelF6404(): Float64 =
 
 @test
 def putChannelF6405(): Float64 =
-    let ch1 = channel Float64 0;
+    let ch1 = channel Float64 1;
     let ch2 = channel Float64 1;
-    let ch3 = channel Float64 0;
+    let ch3 = channel Float64 1;
     let _ = spF64(ch1, 1.0f64);
     let _ = spF64(ch1, 1.0f64);
     let _ = sptgF64(ch3, ch2, ch1);
@@ -635,7 +664,7 @@ def putChannelF6405(): Float64 =
 
 @test
 def putChannelF6406(): Float64 =
-    let ch = channel Float64;
+    let ch = channel Float64 1;
     let _ = spmF64(ch, 1.0f64, 1.0f64);
     let _ = sgF64(ch);
     <- ch
@@ -644,23 +673,23 @@ def putChannelF6406(): Float64 =
 //Str
 @test
 def putChannelStr01(): Str =
-    let ch = channel Str;
+    let ch = channel Str 1;
     let _ = spStr(ch, "a");
     <- ch
 
 @test
 def putChannelStr02(): Str =
-    let ch1 = channel Str;
-    let ch2 = channel Str;
+    let ch1 = channel Str 1;
+    let ch2 = channel Str 1;
     let _ = spStr(ch1, "a");
     let _ = spgStr(ch2, ch1);
     <- ch2
 
 @test
 def putChannelStr03(): Str =
-    let ch1 = channel Str;
-    let ch2 = channel Str;
-    let ch3 = channel Str;
+    let ch1 = channel Str 1;
+    let ch2 = channel Str 1;
+    let ch3 = channel Str 1;
     let _ = spStr(ch1, "a");
     let _ = spStr(ch1, "a");
     let _ = spgStr(ch2, ch1);
@@ -687,9 +716,9 @@ def putChannelStr04(): Str =
 
 @test
 def putChannelStr05(): Str =
-    let ch1 = channel Str 0;
+    let ch1 = channel Str 1;
     let ch2 = channel Str 1;
-    let ch3 = channel Str 0;
+    let ch3 = channel Str 1;
     let _ = spStr(ch1, "a");
     let _ = spStr(ch1, "a");
     let _ = sptgStr(ch3, ch2, ch1);
@@ -699,7 +728,7 @@ def putChannelStr05(): Str =
 
 @test
 def putChannelStr06(): Str =
-    let ch = channel Str;
+    let ch = channel Str 1;
     let _ = spmStr(ch, "a", "a");
     let _ = sgStr(ch);
     <- ch
@@ -708,27 +737,27 @@ def putChannelStr06(): Str =
 //Channel Int
 @test
 def putChannelChInt01(): Channel[Int] =
-    let ch1 = channel Channel[Int];
-    let ch2 = channel Int;
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Int 1;
     let _ = spChInt(ch1, ch2);
     <- ch1
 
 @test
 def putChannelChInt02(): Channel[Int] =
-    let ch1 = channel Channel[Int];
-    let ch2 = channel Channel[Int];
-    let ch3 = channel Int;
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Channel[Int] 1;
+    let ch3 = channel Int 1;
     let _ = spChInt(ch1, ch3);
     let _ = spgChInt(ch2, ch1);
     <- ch2
 
 @test
 def putChannelChInt03(): Channel[Int] =
-    let ch1 = channel Channel[Int];
-    let ch2 = channel Channel[Int];
-    let ch3 = channel Channel[Int];
-    let ch4 = channel Int;
-    let ch5 = channel Int;
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Channel[Int] 1;
+    let ch3 = channel Channel[Int] 1;
+    let ch4 = channel Int 1;
+    let ch5 = channel Int 1;
     let _ = spChInt(ch1, ch4);
     let _ = spChInt(ch1, ch5);
     let _ = spgChInt(ch2, ch1);
@@ -742,10 +771,10 @@ def putChannelChInt04(): Channel[Int] =
     let ch1 = channel Channel[Int] 1;
     let ch2 = channel Channel[Int] 1;
     let ch3 = channel Channel[Int] 1;
-    let ch4 = channel Int;
-    let ch5 = channel Int;
-    let ch6 = channel Int;
-    let ch7 = channel Int;
+    let ch4 = channel Int 1;
+    let ch5 = channel Int 1;
+    let ch6 = channel Int 1;
+    let ch7 = channel Int 1;
     let _ = spChInt(ch1, ch4);
     let _ = spChInt(ch1, ch5);
     let _ = spChInt(ch1, ch6);
@@ -759,11 +788,11 @@ def putChannelChInt04(): Channel[Int] =
 
 @test
 def putChannelChInt05(): Channel[Int] =
-    let ch1 = channel Channel[Int] 0;
+    let ch1 = channel Channel[Int] 1;
     let ch2 = channel Channel[Int] 1;
-    let ch3 = channel Channel[Int] 0;
-    let ch4 = channel Int;
-    let ch5 = channel Int;
+    let ch3 = channel Channel[Int] 1;
+    let ch4 = channel Int 1;
+    let ch5 = channel Int 1;
     let _ = spChInt(ch1, ch4);
     let _ = spChInt(ch1, ch5);
     let _ = sptgChInt(ch3, ch2, ch1);
@@ -773,34 +802,34 @@ def putChannelChInt05(): Channel[Int] =
 
 @test
 def putChannelChInt06(): Channel[Int] =
-    let ch1 = channel Channel[Int];
-    let ch2 = channel Int;
-    let ch3 = channel Int;
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Int 1;
+    let ch3 = channel Int 1;
     let _ = spmChInt(ch1, ch2, ch3);
     let _ = sgChInt(ch1);
     <- ch1
 
-/*
+
 //List
 @test
 def putChannelList01(): List[Int] =
-    let ch = channel List[Int];
+    let ch = channel List[Int] 1;
     let _ = spList(ch, 1 :: Nil);
     <- ch
 
 @test
 def putChannelList02(): List[Int] =
-    let ch1 = channel List[Int];
-    let ch2 = channel List[Int];
+    let ch1 = channel List[Int] 1;
+    let ch2 = channel List[Int] 1;
     let _ = spList(ch1, 1 :: Nil);
     let _ = spgList(ch2, ch1);
     <- ch2
 
 @test
 def putChannelList03(): List[Int] =
-    let ch1 = channel List[Int];
-    let ch2 = channel List[Int];
-    let ch3 = channel List[Int];
+    let ch1 = channel List[Int] 1;
+    let ch2 = channel List[Int] 1;
+    let ch3 = channel List[Int] 1;
     let _ = spList(ch1, 1 :: Nil);
     let _ = spList(ch1, 1 :: Nil);
     let _ = spgList(ch2, ch1);
@@ -827,9 +856,9 @@ def putChannelList04(): List[Int] =
 
 @test
 def putChannelList05(): List[Int] =
-    let ch1 = channel List[Int] 0;
+    let ch1 = channel List[Int] 1;
     let ch2 = channel List[Int] 1;
-    let ch3 = channel List[Int] 0;
+    let ch3 = channel List[Int] 1;
     let _ = spList(ch1, 1 :: Nil);
     let _ = spList(ch1, 1 :: Nil);
     let _ = sptgList(ch3, ch2, ch1);
@@ -839,115 +868,117 @@ def putChannelList05(): List[Int] =
 
 @test
 def putChannelList06(): List[Int] =
-    let ch = channel List[Int];
+    let ch = channel List[Int] 1;
     let _ = spmList(ch, 1 :: Nil, 1 :: Nil);
     let _ = sgList(ch);
     <- ch
-*/
-/*
+
 @test
 def putChannel02(): Channel[Int8] =
-    let ch = channel Int8;
+    let ch = channel Int8 1;
     let _ = sp(ch, 2i8);
     <- ch
 
 
 @test
 def putChannel03(): Channel[Int16] =
-    let ch = channel Int16;
+    let ch = channel Int16 1;
     let _ = ch <- 2i16;
     ch
 
 @test
-def putChannel04(): Channel[Int64] = let ch = channel Int64; let _ = ch <- 2i64; ch
+def putChannel04(): Channel[Int64] = let ch = channel Int64 1; let _ = ch <- 2i64; ch
 
 @test
-def putChannel05(): Channel[BigInt] = let ch = channel BigInt; let _ = ch <- 2ii; ch
+def putChannel05(): Channel[BigInt] = let ch = channel BigInt 1; let _ = ch <- 2ii; ch
 
 @test
-def putChannel06(): Channel[Float32] = let ch = channel Float32; let _ = ch <- 2.0f32; ch
+def putChannel06(): Channel[Float32] = let ch = channel Float32 1; let _ = ch <- 2.0f32; ch
 
 @test
-def putChannel07(): Channel[Float64] = let ch = channel Float64; let _ = ch <- 2.0f64; ch
+def putChannel07(): Channel[Float64] = let ch = channel Float64 1; let _ = ch <- 2.0f64; ch
 
 @test
-def putChannel08(): Channel[Str] = let ch = channel Str; let _ = ch <- "asdf"; ch
+def putChannel08(): Channel[Str] = let ch = channel Str 1; let _ = ch <- "asdf"; ch
 
 @test
-def putChannel09(): Channel[Char] = let ch = channel Char; let _ = ch <- 'c'; ch
+def putChannel09(): Channel[Char] = let ch = channel Char 1; let _ = ch <- 'c'; ch
 
 @test
-def putChannel10(): Channel[Bool] = let ch = channel Bool; let _ = ch <- true; ch
+def putChannel10(): Channel[Bool] = let ch = channel Bool 1; let _ = ch <- true; ch
 
 @test
-def putChannel11(): Channel[Unit] = let ch = channel Unit; let _ = ch <- (); ch
+def putChannel11(): Channel[Unit] = let ch = channel Unit 1; let _ = ch <- (); ch
 
 @test
-def putChannel12(): Channel[Int] = let ch = channel Int 1; let _ = ch <- 2; let _ = ch <- 3; let _ = ch <- 3; let _ = ch <- 5; ch
+def putChannel12(): Channel[Int] = let ch =
+    channel Int 1;
+    let _ = ch <- 2;
+    let _ = ch <- 3;
+    let _ = ch <- 3;
+    let _ = ch <- 5; ch
 
 @test
 def putChannel13(): Channel[Int] =
-    let ch = channel Int;
+    let ch = channel Int 1;
     ch <- 1 <- 2 <- 3
 
 @test
 def putChannel14(): Unit =
-    let ch = channel Int;
+    let ch = channel Int 1;
     let _ = ch <- 1 <- 2 <- 3;
     ()
 
 @test
 def putChannel15(): Channel[Str] =
-    let ch = channel Str;
+    let ch = channel Str 1;
     ch <- "a" <- "b" <- "c"
 
 @test
 def putChannel16(): Unit =
-    let ch = channel Str;
+    let ch = channel Str 1;
     let _ = ch <- "a" <- "b" <- "c";
     ()
 
 @test
 def putChannel17(): Channel[Unit] =
-    let ch = channel Unit;
+    let ch = channel Unit 1;
     ch <- () <- () <- ()
 
 @test
 def putChannel18(): Unit =
-    let ch = channel Unit;
+    let ch = channel Unit 1;
     let _ = ch <- () <- () <- ();
     ()
 
 @test
 def putChannel19(): Channel[Channel[Int]] =
-    let ch1 = channel Channel[Int];
-    let ch2 = channel Int;
-    let ch3 = channel Int;
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Int 1;
+    let ch3 = channel Int 1;
     ch1 <- ch2 <- ch3
 
 @test
 def putChannel20(): Unit =
-    let ch1 = channel Channel[Int];
-    let ch2 = channel Int;
-    let ch3 = channel Int;
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Int 1;
+    let ch3 = channel Int 1;
     let _ = ch1 <- ch2 <- ch3;
     ()
 /*
 
 @test
 def putChannel21(): Channel[Int] =
-    let ch1 = channel Int;
-    let ch2 = channel Int;
+    let ch1 = channel Int 1;
+    let ch2 = channel Int 1;
     ch1 <- <- ch2
 
 @test
 def putChannel22(): Unit =
-    let ch1 = channel Int;
-    let ch2 = channel Int;
+    let ch1 = channel Int 1;
+    let ch2 = channel Int 1;
     let _ = ch1 <- <- ch2;
     ()
-
-*/
 
 // Int8
 def spI8(to: Channel[Int8], v: Int8): Unit =
@@ -1382,3 +1413,4 @@ def putThroughGetList(to: Channel[List[Int]], through: Channel[List[Int]], from:
 
 def putMultipleList(to: Channel[List[Int]], v1: List[Int], v2: List[Int]): Channel[List[Int]] =
     to <- v1 <- v2
+*/

@@ -210,11 +210,8 @@ object Interpreter {
     //
     case Expression.NewChannel(len, ctpe, tpe, loc) =>
       val capacity = cast2int32(eval(len, env0, henv0, lenv0, root))
-      val queue = new util.LinkedList[AnyRef]
-      val aLock = new ReentrantLock
-      val bufferNotFull = aLock.newCondition
-      val bufferNotEmpty = aLock.newCondition
-      Value.Channel(queue, capacity, aLock, bufferNotFull, bufferNotEmpty, ListBuffer.empty)
+      val cLock = new ReentrantLock
+      Value.Channel(new util.LinkedList[AnyRef](), capacity, cLock, cLock.newCondition(), cLock.newCondition(), ListBuffer.empty)
 
     //
     // GetChannel expressions.
@@ -248,57 +245,13 @@ object Interpreter {
     // SelectChannel expressions.
     //
     case Expression.SelectChannel(rules, tpe, loc) =>
-      val channels = rules map {
+      val rs = rules map {
         case SelectRule(sym, cexp, bexp) =>
           val chan = cast2channel(eval(cexp, env0, henv0, lenv0, root))
           ((sym, chan, bexp))
       }
 
-      val myLock = new ReentrantLock
-      val myCondition = myLock.newCondition
-
-      var result: (Symbol.VarSym, AnyRef, Expression) = null
-
-      myLock.lock()
-      try {
-        while (result == null) {
-          for ((_, chan, _) <- channels) {
-            chan.aLock.lock()
-          }
-          try {
-            for ((sym, chan, body) <- channels) {
-              if (!chan.queue.isEmpty() && result == null) {
-                result = (sym, chan.queue.poll(), body)
-
-                chan.bufferNotFull.signalAll()
-              }
-            }
-
-            if (result == null) {
-              for ((_, chan, _) <- channels)
-                chan.conditions += ((myLock, myCondition))
-
-              for ((_, chan, _) <- channels)
-                chan.aLock.unlock()
-
-              myCondition.await()
-              for ((_, chan, _) <- channels)
-                chan.aLock.lock()
-            }
-          }
-          finally {
-            for ((_, chan, _) <- channels) {
-              chan.aLock.unlock()
-            }
-          }
-
-        }
-      }
-      finally {
-        myLock.unlock()
-      }
-
-      result match {
+      getSelect(rs) match {
         case (sym, res, body) =>
           val newEnv = env0 + (sym.toString -> res)
           eval(body, newEnv, henv0, lenv0, root)
@@ -390,18 +343,20 @@ object Interpreter {
   private def getChannel(chan: Value.Channel): AnyRef = {
     var value: AnyRef = null
 
-    chan.aLock.lock()
+    chan.cLock.lock()
     try {
       while (chan.queue.isEmpty)
         chan.bufferNotFull.await()
 
-      value = chan.queue.poll
+      assert(!chan.queue.isEmpty)
+
+      value = chan.queue.poll()
       if (value != null)
         chan.bufferNotEmpty.signalAll()
     }
-    finally {
-      chan.aLock.unlock()
-    }
+    finally
+      chan.cLock.unlock()
+
     value
   }
 
@@ -409,9 +364,9 @@ object Interpreter {
   // Put value to channel.
   //
   private def putChannel(chan: Value.Channel, value: AnyRef): AnyRef = {
-    chan.aLock.lock()
+    chan.cLock.lock()
     try {
-      while (chan.queue.size == chan.capacity)
+      while (chan.queue.size() == chan.capacity)
         chan.bufferNotEmpty.await()
 
       assert(chan.queue.size() != chan.capacity)
@@ -419,73 +374,75 @@ object Interpreter {
       chan.queue.add(value)
       chan.bufferNotFull.signalAll()
 
-      for ((lock, cond) <- chan.conditions) {
-        lock.lock()
-        try {
-          cond.signalAll()
-        }
-        finally {
-          lock.unlock()
-        }
-      }
+      signalConditions(chan.conditions)
       chan.conditions.clear()
     }
-    finally {
-      chan.aLock.unlock()
-    }
+    finally
+      chan.cLock.unlock()
+
     chan
   }
 
-  private def getSelect(channels: List[Value.Channel]) : AnyRef = {
-    var value: AnyRef = null
-    val lock = new ReentrantLock
-    val bufferNotEmpty = lock.newCondition
-    val bufferNotFull = lock.newCondition
-    val queue = new util.LinkedList[AnyRef]
+  private def getSelect(rules: List[(Symbol.VarSym, Value.Channel, Expression)]): (Symbol.VarSym, AnyRef, Expression) = {
+    val sLock = new ReentrantLock
+    val sCondition = sLock.newCondition
+    val channels = rules.map(_._2)
 
-    val threads = channels.map(createSelectThread(_, lock, bufferNotEmpty, bufferNotFull, queue))
+    var result: (Symbol.VarSym, AnyRef, Expression) = null
 
-    lock.lock
+    sLock.lock()
+    lockChannels(channels)
     try {
-      threads.foreach(_.start)
+      while (result == null) {
+        result = pollChannels(rules)
 
-      while (queue.isEmpty)
-        bufferNotFull.await
-
-      threads.foreach(_.interrupt)
-
-      value = queue.poll
-      if (value != null)
-        bufferNotEmpty.signalAll
-    }
-    finally {
-      lock.unlock
-    }
-    value
-  }
-
-  //
-  // create Thread for select case.
-  //
-  private def createSelectThread(chan: Value.Channel, lock: Lock, bufferNotEmpty: Condition, bufferNotFull: Condition, queue: util.Queue[AnyRef]): Thread = {
-    new Thread("Select Channel Process") {
-      override def run = {
-        lock.lock
-        try {
-          val capacity = 1
-          val value = getChannel(chan)
-
-          while (queue.size == capacity)
-            bufferNotEmpty.await
-
-          val isAdded = queue.offer(value)
-          if (isAdded)
-            bufferNotFull.signalAll
-        }
-        finally {
-          lock.unlock
+        if (result == null) {
+          addConditions(channels, sLock, sCondition)
+          unlockChannels(channels)
+          sCondition.await()
+          lockChannels(channels)
         }
       }
+    }
+    finally {
+      sLock.unlock()
+      unlockChannels(channels)
+    }
+
+    result
+  }
+
+  private def lockChannels(channels: List[Value.Channel]) =
+    channels.foreach(_.cLock.lock())
+
+  private def unlockChannels(channels: List[Value.Channel]) =
+    channels.foreach(_.cLock.unlock())
+
+  private def addConditions(channels: List[Value.Channel], lock: Lock, condition: Condition) =
+    channels.foreach(_.conditions += ((lock, condition)))
+
+  private def pollChannels(rules: List[(Symbol.VarSym, Value.Channel, Expression)]): (Symbol.VarSym, AnyRef, Expression) = {
+    var result: (Symbol.VarSym, AnyRef, Expression) = null
+
+    for ((sym, chan, body) <- rules)
+      if (!chan.queue.isEmpty && result == null) {
+        val value = chan.queue.poll()
+        result = (sym, value, body)
+
+        chan.bufferNotFull.signalAll()
+      }
+
+    result
+  }
+
+  private def signalConditions(conditions: ListBuffer[(Lock, Condition)]) = {
+    for ((sLock, sCond) <- conditions) {
+      sLock.lock()
+      try {
+        sCond.signalAll()
+      }
+      finally
+        sLock.unlock()
     }
   }
 
