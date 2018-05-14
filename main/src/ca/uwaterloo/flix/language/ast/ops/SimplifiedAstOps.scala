@@ -344,7 +344,7 @@ object SimplifiedAstOps {
       // SelectChannel Expressions.
       //
       case Expression.SelectChannel(rules, tpe, loc) =>
-        val _ = rules map {
+        rules map {
           case SimplifiedAst.SelectRule(sym, chan, body) =>
             checkExp(chan, env0, ienv0)
             checkExp(body, env0, ienv0)

@@ -680,7 +680,7 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
 
       case WeededAst.Expression.GetChannel(exp,loc) =>
         namer(exp,env0,tenv0) map {
-          case (e) => NamedAst.Expression.GetChannel(e, Type.freshTypeVar(), loc)
+          case e => NamedAst.Expression.GetChannel(e, Type.freshTypeVar(), loc)
         }
 
       case WeededAst.Expression.PutChannel(exp1, exp2, loc) =>
@@ -690,7 +690,7 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
 
       case WeededAst.Expression.Spawn(exp, loc) =>
         namer(exp, env0, tenv0) map {
-          case (e) => NamedAst.Expression.Spawn(e, Type.freshTypeVar(), loc)
+          case e => NamedAst.Expression.Spawn(e, Type.freshTypeVar(), loc)
         }
 
       case WeededAst.Expression.SelectChannel(rules, loc) =>
@@ -1079,8 +1079,6 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
       case WeededAst.Expression.Ascribe(_, tpe, _, _) =>
         // The argument is ascribed. Try to determine its type.
         lookupNativeType(tpe)
-      case WeededAst.Expression.NewChannel(_, tpe, _) =>
-        lookupNativeType(tpe)
       case _ =>
         // The argument is not ascribed. We do not know its type.
         None
@@ -1131,8 +1129,6 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
     val argumentTypes = args map {
       case WeededAst.Expression.Ascribe(_, tpe, _, _) =>
         // The argument is ascribed. Try to determine its type.
-        lookupNativeType(tpe)
-      case WeededAst.Expression.NewChannel(_, tpe,_) =>
         lookupNativeType(tpe)
       case _ =>
         // The argument is not ascribed. We do not know its type.
