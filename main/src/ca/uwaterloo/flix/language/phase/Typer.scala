@@ -835,7 +835,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           //
           for {
             channelSize <- visitExp(exp)
-            _ <- unifyM(texp, Type.Int32, loc)
+            _ <- unifyM(channelSize, Type.Int32, loc)
             contentType <- liftM(Type.mkChannel(ctpe))
             resultType <- unifyM(tvar, contentType, loc)
           } yield resultType
