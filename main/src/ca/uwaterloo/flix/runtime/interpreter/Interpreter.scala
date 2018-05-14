@@ -26,6 +26,8 @@ import ca.uwaterloo.flix.language.ast._
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import ca.uwaterloo.flix.util.tc.Show._
 
+import scala.collection.mutable.ListBuffer
+
 object Interpreter {
 
   /**
@@ -212,7 +214,7 @@ object Interpreter {
       val aLock = new ReentrantLock
       val bufferNotFull = aLock.newCondition
       val bufferNotEmpty = aLock.newCondition
-      Value.Channel(queue, capacity, aLock, bufferNotFull, bufferNotEmpty)
+      Value.Channel(queue, capacity, aLock, bufferNotFull, bufferNotEmpty, ListBuffer.empty)
 
     //
     // GetChannel expressions.
@@ -239,28 +241,68 @@ object Interpreter {
       val t = new Thread("Spawn Process") {
         override def run = invokeClo(clo, List(ExecutableAst.Expression.Unit), env0, henv0, lenv0, root)
       }
-      println("Start Spawn Process")
-      t.start
+      t.start()
       Value.Unit
-    //
-    // SelectChannel expressions.
-    //
-    case Expression.SelectChannel(rules, tpe, loc) =>
-      val channels = rules map {
-        case SelectRule(_, chan, _) => cast2channel(eval(chan, env0, henv0, lenv0, root))
-      }
-
-      getSelect(channels)
 
     //
     // SelectChannel expressions.
     //
     case Expression.SelectChannel(rules, tpe, loc) =>
       val channels = rules map {
-        case SelectRule(_, chan, _) => cast2channel(eval(chan, env0, henv0, lenv0, root))
+        case SelectRule(sym, cexp, bexp) =>
+          val chan = cast2channel(eval(cexp, env0, henv0, lenv0, root))
+          ((sym, chan, bexp))
       }
 
-      getSelect(channels)
+      val myLock = new ReentrantLock
+      val myCondition = myLock.newCondition
+
+      var result: (Symbol.VarSym, AnyRef, Expression) = null
+
+      myLock.lock()
+      try {
+        while (result == null) {
+          for ((_, chan, _) <- channels) {
+            chan.aLock.lock()
+          }
+          try {
+            for ((sym, chan, body) <- channels) {
+              if (!chan.queue.isEmpty() && result == null) {
+                result = (sym, chan.queue.poll(), body)
+
+                chan.bufferNotFull.signalAll()
+              }
+            }
+
+            if (result == null) {
+              for ((_, chan, _) <- channels)
+                chan.conditions += ((myLock, myCondition))
+
+              for ((_, chan, _) <- channels)
+                chan.aLock.unlock()
+
+              myCondition.await()
+              for ((_, chan, _) <- channels)
+                chan.aLock.lock()
+            }
+          }
+          finally {
+            for ((_, chan, _) <- channels) {
+              chan.aLock.unlock()
+            }
+          }
+
+        }
+      }
+      finally {
+        myLock.unlock()
+      }
+
+      result match {
+        case (sym, res, body) =>
+          val newEnv = env0 + (sym.toString -> res)
+          eval(body, newEnv, henv0, lenv0, root)
+      }
 
     //
     // Reference expressions.
@@ -348,17 +390,17 @@ object Interpreter {
   private def getChannel(chan: Value.Channel): AnyRef = {
     var value: AnyRef = null
 
-    chan.aLock.lock
+    chan.aLock.lock()
     try {
       while (chan.queue.isEmpty)
-        chan.bufferNotFull.await
+        chan.bufferNotFull.await()
 
       value = chan.queue.poll
       if (value != null)
-        chan.bufferNotEmpty.signalAll
+        chan.bufferNotEmpty.signalAll()
     }
     finally {
-      chan.aLock.unlock
+      chan.aLock.unlock()
     }
     value
   }
@@ -367,22 +409,29 @@ object Interpreter {
   // Put value to channel.
   //
   private def putChannel(chan: Value.Channel, value: AnyRef): AnyRef = {
-    chan.aLock.lock
+    chan.aLock.lock()
     try {
-      val capacity = chan.capacity match {
-        case 0 => 1
-        case _ => chan.capacity
+      while (chan.queue.size == chan.capacity)
+        chan.bufferNotEmpty.await()
+
+      assert(chan.queue.size() != chan.capacity)
+
+      chan.queue.add(value)
+      chan.bufferNotFull.signalAll()
+
+      for ((lock, cond) <- chan.conditions) {
+        lock.lock()
+        try {
+          cond.signalAll()
+        }
+        finally {
+          lock.unlock()
+        }
       }
-
-      while (chan.queue.size == capacity)
-        chan.bufferNotEmpty.await
-
-      val isAdded = chan.queue.offer(value)
-      if (isAdded)
-        chan.bufferNotFull.signalAll
+      chan.conditions.clear()
     }
     finally {
-      chan.aLock.unlock
+      chan.aLock.unlock()
     }
     chan
   }
