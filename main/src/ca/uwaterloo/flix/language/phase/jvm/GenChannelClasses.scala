@@ -57,7 +57,7 @@ object GenChannelClasses {
     //genGetValue(classType, channelType, visitor)
 
     // Generate `getValue` method
-    genGetChannel(classType, channelType, visitor)
+    //genGetChannel(classType, channelType, visitor)
 
     // Generate `isEmpty`method
     genIsEmpty(classType, channelType, visitor)
