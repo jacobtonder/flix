@@ -2,6 +2,7 @@ package ca.uwaterloo.flix.language.phase.jvm
 
 import ca.uwaterloo.flix.api.Flix
 import ca.uwaterloo.flix.language.ast.ExecutableAst.Root
+import javax.lang.model.element.ModuleElement.DirectiveVisitor
 import org.objectweb.asm.Label
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes._
@@ -156,6 +157,13 @@ object GenChannelClasses {
     isEmpty.visitInsn(IRETURN)
     isEmpty.visitMaxs(1, 1)
     isEmpty.visitEnd()
+  }
+
+  def genPutChannel(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val putChannel = visitor.visitMethod(ACC_PUBLIC, "putChannel", AsmOps.getMethodDescriptor(List(channelType), classType), null, null)
+    putChannel.visitCode()
+
+    putChannel.visitEnd()
   }
 
   def genPutValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
