@@ -109,6 +109,9 @@ object GenChannelClasses {
     visitor.toByteArray
   }
 
+  /**
+    * Generates the constructor of the channel `classType`
+    */
   def genConstructor(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val initMethod = visitor.visitMethod(ACC_PUBLIC, "<init>", AsmOps.getMethodDescriptor(List(JvmType.PrimInt), JvmType.Void), null, null)
     initMethod.visitCode()
@@ -162,6 +165,9 @@ object GenChannelClasses {
     initMethod.visitEnd()
   }
 
+  /**
+    * Generates the `getValue()` method of the `classType`
+    */
   def genGetValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val iLoad = AsmOps.getLoadInstruction(channelType)
     val iRet = AsmOps.getReturnInstruction(channelType)
@@ -176,6 +182,9 @@ object GenChannelClasses {
     getValue.visitEnd()
   }
 
+  /**
+    * Generates the `poll()` method of the `classType`
+    */
   def genPoll(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val iRet = AsmOps.getReturnInstruction(channelType)
     val poll = visitor.visitMethod(ACC_PUBLIC, "poll", AsmOps.getMethodDescriptor(Nil, channelType), null, null)
@@ -188,6 +197,9 @@ object GenChannelClasses {
     poll.visitEnd()
   }
 
+  /**
+    * Generates the `offer()` method of the `classType` with value of type `channelType`
+    */
   def genOffer(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val iLoad = AsmOps.getLoadInstruction(channelType)
     val offer = visitor.visitMethod(ACC_PUBLIC, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), null, null)
@@ -201,6 +213,9 @@ object GenChannelClasses {
     offer.visitEnd()
   }
 
+  /**
+    * Generates the `isEmpty()` method of the `classType`
+    */
   def genIsEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val isEmpty = visitor.visitMethod(ACC_PUBLIC, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
     isEmpty.visitCode()
@@ -212,6 +227,9 @@ object GenChannelClasses {
     isEmpty.visitEnd()
   }
 
+  /**
+    * Generates the `isFull()` method of the `classType`
+    */
   def genIsFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val isFull = visitor.visitMethod(ACC_PUBLIC, "isFull", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
     val labelElse = new Label()
@@ -246,6 +264,9 @@ object GenChannelClasses {
     isFull.visitEnd()
   }
 
+  /**
+    * Generates the `size()` method of the `classType`
+    */
   def genSize(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val size = visitor.visitMethod(ACC_PUBLIC, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), null, null)
     size.visitCode()
@@ -257,6 +278,9 @@ object GenChannelClasses {
     size.visitEnd()
   }
 
+  /**
+    * Generates the `lock()` method of the `classType`
+    */
   def genLock(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val lock = visitor.visitMethod(ACC_PUBLIC, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
     lock.visitCode()
@@ -268,6 +292,9 @@ object GenChannelClasses {
     lock.visitEnd()
   }
 
+  /**
+    * Generates the `unlock()` method of the `classType`
+    */
   def genUnlock(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val unlock = visitor.visitMethod(ACC_PUBLIC, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
     unlock.visitCode()
@@ -279,6 +306,9 @@ object GenChannelClasses {
     unlock.visitEnd()
   }
 
+  /**
+    * Generates the `signalNotFull()` method of the `classType`
+    */
   def genSignalNotFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val signalNotFull = visitor.visitMethod(ACC_PUBLIC, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
     signalNotFull.visitCode()
@@ -290,6 +320,9 @@ object GenChannelClasses {
     signalNotFull.visitEnd()
   }
 
+  /**
+    * Generates the `signalNotEmpty()` method of the `classType`
+    */
   def genSignalNotEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val signalNotEmpty = visitor.visitMethod(ACC_PUBLIC, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
     signalNotEmpty.visitCode()
@@ -301,6 +334,9 @@ object GenChannelClasses {
     signalNotEmpty.visitEnd()
   }
 
+  /**
+    * Generates the `clearSelects()` method of the `classType`
+    */
   def genClearSelects(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val clearSelects = visitor.visitMethod(ACC_PUBLIC, "clearSelects", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
     clearSelects.visitCode()
@@ -312,6 +348,9 @@ object GenChannelClasses {
     clearSelects.visitEnd()
   }
 
+  /**
+    * Generates the `putValue()` method of the `classType` with value of type `channelType`
+    */
   def genPutValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val putValue = visitor.visitMethod(ACC_PUBLIC, "putValue", AsmOps.getMethodDescriptor(List(channelType), classType), null, null)
     putValue.visitCode()
