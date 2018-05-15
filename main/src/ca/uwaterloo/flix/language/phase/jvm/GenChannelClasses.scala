@@ -94,7 +94,7 @@ object GenChannelClasses {
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitTypeInsn(NEW, "java/util/LinkedList")
     initMethod.visitInsn(DUP)
-    initMethod.visitMethodInsn(INVOKESPECIAL, "java/util/LinkedList", "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.LinkedList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
 
     // Init `channelLock` field
