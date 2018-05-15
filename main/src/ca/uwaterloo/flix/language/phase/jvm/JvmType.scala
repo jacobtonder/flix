@@ -48,9 +48,9 @@ object JvmType {
   val Context: JvmType.Reference = Reference(JvmName.Context)
 
   /**
-    *  The `java.util.LinkedList` type.
+    *  The `java.util.Queue` type.
     */
-  val LinkedList: JvmType.Reference = Reference(JvmName.LinkedList)
+  val Queue: JvmType.Reference = Reference(JvmName.Queue)
 
   /**
     *  The `java.util.List` type.
@@ -61,6 +61,11 @@ object JvmType {
     *  The `java.util.ArrayList` type.
     */
   val ArrayList: JvmType.Reference = Reference(JvmName.ArrayList)
+
+  /**
+    *  The `java.util.LinkedList` type.
+    */
+  val LinkedList: JvmType.Reference = Reference(JvmName.LinkedList)
 
   /**
     *  The `java.util.concurrent.locks.Lock` type.

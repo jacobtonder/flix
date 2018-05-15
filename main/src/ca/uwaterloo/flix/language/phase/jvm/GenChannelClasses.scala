@@ -33,7 +33,7 @@ object GenChannelClasses {
       JvmName.Object.toInternalName, null)
 
     // Generate the `queue` field
-    AsmOps.compileField(visitor, "queue", JvmType.LinkedList, isStatic = false, isPrivate = true)
+    AsmOps.compileField(visitor, "queue", JvmType.Queue, isStatic = false, isPrivate = true)
 
     // Generate the `lock` field
     AsmOps.compileField(visitor, "lock", JvmType.Lock, isStatic = false, isPrivate = true)
@@ -115,7 +115,7 @@ object GenChannelClasses {
     initMethod.visitTypeInsn(NEW, JvmType.LinkedList.name.toInternalName)
     initMethod.visitInsn(DUP)
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.LinkedList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "queue", JvmType.Queue.toDescriptor)
 
     // Init the `lock` field
     initMethod.visitVarInsn(ALOAD, 0)
