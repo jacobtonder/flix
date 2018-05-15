@@ -41,14 +41,14 @@ object GenChannelClasses {
     // Generate the capacity field
     AsmOps.compileField(visitor, "capacity", JvmType.PrimInt, isStatic = false, isPrivate = true)
 
-    // Generate the bufferNotFull field
-    AsmOps.compileField(visitor, "bufferNotFull", JvmType.Condition, isStatic = false, isPrivate = true)
+    // Generate the channelNotFull field
+    AsmOps.compileField(visitor, "channelNotFull", JvmType.Condition, isStatic = false, isPrivate = true)
 
-    // Generate the bufferNotEmpty field
-    AsmOps.compileField(visitor, "bufferNotEmpty", JvmType.Condition, isStatic = false, isPrivate = true)
+    // Generate the channelNotEmpty field
+    AsmOps.compileField(visitor, "channelNotEmpty", JvmType.Condition, isStatic = false, isPrivate = true)
 
-    // Generate the conditions field
-    AsmOps.compileField(visitor, "conditions", JvmType.JavaList, isStatic = false, isPrivate = true)
+    // Generate the selects field
+    AsmOps.compileField(visitor, "selects", JvmType.JavaList, isStatic = false, isPrivate = true)
 
     // Generate the constructor
     genConstructor(classType, channelType, visitor)
@@ -79,6 +79,9 @@ object GenChannelClasses {
 
     // Generate `signalNotEmpty` method
     genSignalNotEmpty(classType, channelType, visitor)
+
+    // Generate `clearSelects` method
+    genClearSelects(classType, channelType, visitor)
 
     // Generate `putValue` method
     //genPutValue(classType, channelType, visitor)
@@ -121,32 +124,32 @@ object GenChannelClasses {
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.ReentrantLock.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
 
-    // Init the `conditions` field
+    // Init the `selects` field
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitTypeInsn(NEW, JvmType.ArrayList.name.toInternalName)
     initMethod.visitInsn(DUP)
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.ArrayList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "conditions", JvmType.JavaList.toDescriptor)
+    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "selects", JvmType.JavaList.toDescriptor)
 
     // Init `capacity` field
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitVarInsn(ILOAD, 1)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
 
-    // Init the `bufferNotFull` field
+    // Init the `channelNotFull` field
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
     initMethod.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "bufferNotFull", JvmType.Condition.toDescriptor)
+    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
 
-    // Init the `bufferNotEmpty` field
+    // Init the `channelNotEmpty` field
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
     initMethod.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
     // ??? To Magnus: Why are the next two lines needed?
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitInsn(SWAP)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "bufferNotEmpty", JvmType.Condition.toDescriptor)
+    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
 
     initMethod.visitInsn(RETURN)
     initMethod.visitMaxs(0, 2)
@@ -234,7 +237,7 @@ object GenChannelClasses {
     val signalNotFull = visitor.visitMethod(ACC_PUBLIC, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
     signalNotFull.visitCode()
     signalNotFull.visitVarInsn(ALOAD, 0)
-    signalNotFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "bufferNotFull", JvmType.Condition.toDescriptor)
+    signalNotFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
     signalNotFull.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "signalAll", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
     signalNotFull.visitInsn(RETURN)
     signalNotFull.visitMaxs(1, 1)
@@ -245,11 +248,22 @@ object GenChannelClasses {
     val signalNotEmpty = visitor.visitMethod(ACC_PUBLIC, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
     signalNotEmpty.visitCode()
     signalNotEmpty.visitVarInsn(ALOAD, 0)
-    signalNotEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "bufferNotEmpty", JvmType.Condition.toDescriptor)
+    signalNotEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
     signalNotEmpty.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "signalAll", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
     signalNotEmpty.visitInsn(RETURN)
     signalNotEmpty.visitMaxs(1, 1)
     signalNotEmpty.visitEnd()
+  }
+
+  def genClearSelects(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val clearSelects = visitor.visitMethod(ACC_PUBLIC, "clearSelects", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    clearSelects.visitCode()
+    clearSelects.visitVarInsn(ALOAD, 0)
+    clearSelects.visitFieldInsn(GETFIELD, classType.name.toInternalName, "selects", JvmType.JavaList.toDescriptor)
+    clearSelects.visitMethodInsn(INVOKEINTERFACE, JvmType.JavaList.name.toInternalName, "clear", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    clearSelects.visitInsn(RETURN)
+    clearSelects.visitMaxs(1, 1)
+    clearSelects.visitEnd()
   }
 
   def genPutValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
