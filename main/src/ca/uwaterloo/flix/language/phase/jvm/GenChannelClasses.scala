@@ -32,22 +32,22 @@ object GenChannelClasses {
     visitor.visit(AsmOps.JavaVersion, ACC_PUBLIC + ACC_FINAL, classType.name.toInternalName, null,
       JvmName.Object.toInternalName, null)
 
-    // Generate the instance field
+    // Generate the `queue` field
     AsmOps.compileField(visitor, "queue", JvmType.LinkedList, isStatic = false, isPrivate = true)
 
-    // Generate the lock field
+    // Generate the `lock` field
     AsmOps.compileField(visitor, "lock", JvmType.Lock, isStatic = false, isPrivate = true)
 
-    // Generate the capacity field
+    // Generate the `capacity` field
     AsmOps.compileField(visitor, "capacity", JvmType.PrimInt, isStatic = false, isPrivate = true)
 
-    // Generate the channelNotFull field
+    // Generate the `channelNotFull` field
     AsmOps.compileField(visitor, "channelNotFull", JvmType.Condition, isStatic = false, isPrivate = true)
 
-    // Generate the channelNotEmpty field
+    // Generate the `channelNotEmpty` field
     AsmOps.compileField(visitor, "channelNotEmpty", JvmType.Condition, isStatic = false, isPrivate = true)
 
-    // Generate the selects field
+    // Generate the `selects` field
     AsmOps.compileField(visitor, "selects", JvmType.JavaList, isStatic = false, isPrivate = true)
 
     // Generate the constructor
