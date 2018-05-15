@@ -62,6 +62,7 @@ object GenChannelClasses {
     // Generate `isEmpty`method
     genIsEmpty(classType, channelType, visitor)
 
+    // Generate `size` method
     genSize(classType, channelType, visitor)
 
     // Generate `putValue` method
