@@ -58,9 +58,19 @@ object JvmType {
   val JavaList: JvmType.Reference = Reference(JvmName.JavaList)
 
   /**
+    *  The `java.util.ArrayList` type.
+    */
+  val ArrayList: JvmType.Reference = Reference(JvmName.ArrayList)
+
+  /**
     *  The `java.util.concurrent.locks.Lock` type.
     */
   val Lock: JvmType.Reference = Reference(JvmName.Lock)
+
+  /**
+    *  The `java.util.concurrent.locks.ReentrantLock` type.
+    */
+  val ReentrantLock: JvmType.Reference = Reference(JvmName.ReentrantLock)
 
   /**
     *  The `java.util.concurrent.locks.Condition` type.

@@ -39,9 +39,19 @@ object JvmName {
   val JavaList: JvmName = JvmName(List("java", "util"), "List")
 
   /**
+    *  The `java.util.ArrayList` name.
+    */
+  val ArrayList: JvmName = JvmName(List("java", "util"), "ArrayList")
+
+  /**
     *  The `java.util.concurrent.locks.Lock` name.
     */
   val Lock: JvmName = JvmName(List("java", "util", "concurrent", "locks"), "Lock")
+
+  /**
+    *  The `java.util.concurrent.locks.ReentrantLock` name.
+    */
+  val ReentrantLock: JvmName = JvmName(List("java", "util", "concurrent", "locks"), "ReentrantLock")
 
   /**
     *  The `java.util.concurrent.locks.Lock` name.

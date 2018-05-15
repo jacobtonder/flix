@@ -8,14 +8,14 @@ import org.objectweb.asm.Opcodes._
 
 object GenChannelClasses {
   /**
-    * Returns the bytecode for the cell classes built-in to the Flix language.
+    * Returns the bytecode for the channel classes built-in to the Flix language.
     */
   def gen()(implicit root: Root, flix: Flix): Map[JvmName, JvmClass] = {
 
-    // Type that we need a cell class for
+    // Type that we need a channel class for
     val types = List(JvmType.PrimBool, JvmType.PrimChar, JvmType.PrimFloat, JvmType.PrimDouble,
-      JvmType.PrimByte, JvmType.PrimShort, JvmType.PrimInt, JvmType.Tuple, JvmType.Unit,
-      JvmType.PrimLong, JvmType.Object)
+      JvmType.PrimByte, JvmType.PrimShort, JvmType.PrimInt, JvmType.PrimLong, JvmType.Tuple,
+      JvmType.Unit, JvmType.Object)
 
     // Generating each channel class
     types.map{ tpe =>
@@ -59,10 +59,10 @@ object GenChannelClasses {
     // Generate `getValue` method
     //genGetChannel(classType, channelType, visitor)
 
-    // Generate `isEmpty`method
+    // Generate `isEmpty` method
     genIsEmpty(classType, channelType, visitor)
 
-    // Generate `nonEmpty`method
+    // Generate `nonEmpty` method
     genNonEmpty(classType, channelType, visitor)
 
     // Generate `size` method
@@ -94,24 +94,26 @@ object GenChannelClasses {
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitInsn(DUP)
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmName.Object.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+
+    // Init the `queue` field
     initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitTypeInsn(NEW, "java/util/LinkedList")
+    initMethod.visitTypeInsn(NEW, JvmType.LinkedList.name.toInternalName)
     initMethod.visitInsn(DUP)
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.LinkedList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
 
-    // Init `channelLock` field
+    // Init the `channelLock` field
     initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitTypeInsn(NEW, "java/util/concurrent/locks/ReentrantLock")
+    initMethod.visitTypeInsn(NEW, JvmType.ReentrantLock.name.toInternalName)
     initMethod.visitInsn(DUP)
-    initMethod.visitMethodInsn(INVOKESPECIAL, "java/util/concurrent/locks/ReentrantLock", "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.ReentrantLock.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelLock", JvmType.Lock.toDescriptor)
 
-    // Init `channelLock` field
+    // Init the `channelLock` field
     initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitTypeInsn(NEW, "java/util/ArrayList")
+    initMethod.visitTypeInsn(NEW, JvmType.ArrayList.name.toInternalName)
     initMethod.visitInsn(DUP)
-    initMethod.visitMethodInsn(INVOKESPECIAL, "java/util/ArrayList", "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.ArrayList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "conditions", JvmType.JavaList.toDescriptor)
 
     // Init `capacity` field
@@ -119,16 +121,16 @@ object GenChannelClasses {
     initMethod.visitVarInsn(ILOAD, 1)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
 
-    // Init `bufferNotFull` field
+    // Init the `bufferNotFull` field
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelLock", JvmType.Lock.toDescriptor)
-    initMethod.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/locks/Lock", "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
+    initMethod.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "bufferNotFull", JvmType.Condition.toDescriptor)
 
-    // Init `bufferNotEmpty` field
+    // Init the `bufferNotEmpty` field
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelLock", JvmType.Lock.toDescriptor)
-    initMethod.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/locks/Lock", "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
+    initMethod.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
     // ??? To Magnus: Why are the next two lines needed?
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitInsn(SWAP)
@@ -158,7 +160,7 @@ object GenChannelClasses {
     isEmpty.visitCode()
     isEmpty.visitVarInsn(ALOAD, 0)
     isEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    isEmpty.visitMethodInsn(INVOKEINTERFACE, "java/util/LinkedList", "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
+    isEmpty.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
     isEmpty.visitInsn(IRETURN)
     isEmpty.visitMaxs(1, 1)
     isEmpty.visitEnd()
@@ -171,7 +173,7 @@ object GenChannelClasses {
     nonEmpty.visitCode()
     nonEmpty.visitVarInsn(ALOAD, 0)
     nonEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    nonEmpty.visitMethodInsn(INVOKEINTERFACE, "java/util/LinkedList", "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
+    nonEmpty.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
     nonEmpty.visitJumpInsn(IFNE, l0)
     nonEmpty.visitInsn(ICONST_1)
     nonEmpty.visitJumpInsn(GOTO, l1)
