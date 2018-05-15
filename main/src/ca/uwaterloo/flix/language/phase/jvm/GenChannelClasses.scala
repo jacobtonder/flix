@@ -62,6 +62,9 @@ object GenChannelClasses {
     // Generate `poll` method
     genPoll(classType, visitor)
 
+    // Generate `offer` method
+    genOffer(classType, channelType, visitor)
+
     // Generate `isEmpty` method
     genIsEmpty(classType, visitor)
 
@@ -182,6 +185,19 @@ object GenChannelClasses {
     poll.visitInsn(ARETURN)
     poll.visitMaxs(1, 1)
     poll.visitEnd()
+  }
+
+  def genOffer(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val iLoad = AsmOps.getLoadInstruction(channelType)
+    val offer = visitor.visitMethod(ACC_PUBLIC, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), null, null)
+    offer.visitCode()
+    offer.visitVarInsn(ALOAD, 0)
+    offer.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    offer.visitVarInsn(iLoad, 1)
+    offer.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), false)
+    offer.visitInsn(IRETURN)
+    offer.visitMaxs(1, 1)
+    offer.visitEnd()
   }
 
   def genIsEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
