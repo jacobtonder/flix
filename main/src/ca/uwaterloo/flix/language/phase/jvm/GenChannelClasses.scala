@@ -59,6 +59,9 @@ object GenChannelClasses {
     // Generate `getValue` method
     //genGetChannel(classType, channelType, visitor)
 
+    // Generate `poll` method
+    genPoll(classType, channelType, visitor)
+
     // Generate `isEmpty` method
     genIsEmpty(classType, channelType, visitor)
 
@@ -168,6 +171,17 @@ object GenChannelClasses {
     getValue.visitInsn(iRet)
     getValue.visitMaxs(1, 1)
     getValue.visitEnd()
+  }
+
+  def genPoll(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val poll = visitor.visitMethod(ACC_PUBLIC, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), null, null)
+    poll.visitCode()
+    poll.visitVarInsn(ALOAD, 0)
+    poll.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    poll.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), false)
+    poll.visitInsn(ARETURN)
+    poll.visitMaxs(1, 1)
+    poll.visitEnd()
   }
 
   def genIsEmpty(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
