@@ -62,8 +62,11 @@ object GenChannelClasses {
     // Generate `isEmpty`method
     genIsEmpty(classType, channelType, visitor)
 
-    // Generate `size` method
+    // Generate `size`method
     genSize(classType, channelType, visitor)
+
+    // Generate `isFull`method
+    genIsFull(classType, channelType, visitor)
 
     // Generate `putValue` method
     //genPutValue(classType, channelType, visitor)
@@ -170,6 +173,19 @@ object GenChannelClasses {
     size.visitInsn(IRETURN)
     size.visitMaxs(1, 1)
     size.visitEnd()
+  }
+
+  def genIsFull(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val isFull = visitor.visitMethod(ACC_PUBLIC, "isFull", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
+    isFull.visitCode()
+    isFull.visitVarInsn(ALOAD, 0)
+    isFull.visitMethodInsn(INVOKEVIRTUAL, channelType.toDescriptor, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
+    isFull.visitVarInsn(ALOAD, 0)
+    isFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
+    isFull.visitMethodInsn(INVOKEVIRTUAL, JvmType.PrimInt., "equals", AsmOps.getMethodDescriptor(List(JvmType.PrimInt), JvmType.PrimBool), true)
+    isFull.visitInsn(IRETURN)
+    isFull.visitMaxs(1, 1)
+    isFull.visitEnd()
   }
 
   def genPutValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
