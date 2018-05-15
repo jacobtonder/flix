@@ -54,7 +54,7 @@ object GenChannelClasses {
     genConstructor(classType, channelType, visitor)
 
     // Generate `getValue` method
-    //genGetValue(classType, channelType, visitor)
+    genGetValue(classType, channelType, visitor)
 
     // Generate `putValue` method
     //genPutValue(classType, channelType, visitor)
