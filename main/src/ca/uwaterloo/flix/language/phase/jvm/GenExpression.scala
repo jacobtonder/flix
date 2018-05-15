@@ -692,7 +692,7 @@ object GenExpression {
       val constructorDescriptor = AsmOps.getMethodDescriptor(List(JvmType.PrimInt), JvmType.Void)
       // Call the constructor
       visitor.visitMethodInsn(INVOKESPECIAL, classType.name.toInternalName, "<init>", constructorDescriptor, false)
-
+/*
     case Expression.GetChannel(exp, tpe, loc) =>
       val classType = JvmOps.getChannelClassType(exp.tpe)
       // Adding source line number for debugging
@@ -703,7 +703,7 @@ object GenExpression {
       val methodDescriptor = AsmOps.getMethodDescriptor(Nil, JvmOps.getErasedJvmType(tpe))
       // Call the constructor
       visitor.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "getValue", methodDescriptor, false)
-
+*/
     case Expression.Ref(exp, tpe, loc) =>
       // Adding source line number for debugging
       addSourceLine(visitor, loc)
