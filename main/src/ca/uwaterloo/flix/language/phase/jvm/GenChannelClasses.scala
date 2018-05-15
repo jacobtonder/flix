@@ -60,7 +60,7 @@ object GenChannelClasses {
     //genGetChannel(classType, channelType, visitor)
 
     // Generate `poll` method
-    genPoll(classType, visitor)
+    genPoll(classType, channelType, visitor)
 
     // Generate `offer` method
     genOffer(classType, channelType, visitor)
@@ -176,13 +176,14 @@ object GenChannelClasses {
     getValue.visitEnd()
   }
 
-  def genPoll(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val poll = visitor.visitMethod(ACC_PUBLIC, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), null, null)
+  def genPoll(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val iRet = AsmOps.getReturnInstruction(channelType)
+    val poll = visitor.visitMethod(ACC_PUBLIC, "poll", AsmOps.getMethodDescriptor(Nil, channelType), null, null)
     poll.visitCode()
     poll.visitVarInsn(ALOAD, 0)
     poll.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    poll.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), false)
-    poll.visitInsn(ARETURN)
+    poll.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, channelType), false)
+    poll.visitInsn(iRet)
     poll.visitMaxs(1, 1)
     poll.visitEnd()
   }
