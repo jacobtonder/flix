@@ -35,17 +35,17 @@ object GenChannelClasses {
     // Generate the instance field
     AsmOps.compileField(visitor, "queue", JvmType.LinkedList, isStatic = false, isPrivate = true)
 
-    // Generate the channelLock field
-    AsmOps.compileField(visitor, "channelLock", JvmType.Lock, isStatic = false, isPrivate = true)
-
     // Generate the capacity field
     AsmOps.compileField(visitor, "capacity", JvmType.PrimInt, isStatic = false, isPrivate = true)
 
-    // Generate the bufferNotFull field
-    AsmOps.compileField(visitor, "bufferNotFull", JvmType.Condition, isStatic = false, isPrivate = true)
+    // Generate the channelLock field
+    AsmOps.compileField(visitor, "channelLock", JvmType.Lock, isStatic = false, isPrivate = true)
 
-    // Generate the bufferNotEmpty field
-    AsmOps.compileField(visitor, "bufferNotEmpty", JvmType.Condition, isStatic = false, isPrivate = true)
+    // Generate the channelNotFull field
+    AsmOps.compileField(visitor, "channelNotFull", JvmType.Condition, isStatic = false, isPrivate = true)
+
+    // Generate the channelNotEmpty field
+    AsmOps.compileField(visitor, "channelNotEmpty", JvmType.Condition, isStatic = false, isPrivate = true)
 
     // Generate the conditions field
     AsmOps.compileField(visitor, "conditions", JvmType.JavaList, isStatic = false, isPrivate = true)
@@ -119,20 +119,20 @@ object GenChannelClasses {
     initMethod.visitVarInsn(ILOAD, 1)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
 
-    // Init `bufferNotFull` field
+    // Init `channelNotFull` field
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelLock", JvmType.Lock.toDescriptor)
     initMethod.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/locks/Lock", "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "bufferNotFull", JvmType.Condition.toDescriptor)
+    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
 
-    // Init `bufferNotEmpty` field
+    // Init `channelNotEmpty` field
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelLock", JvmType.Lock.toDescriptor)
     initMethod.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/locks/Lock", "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
     // ??? To Magnus: Why are the next two lines needed?
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitInsn(SWAP)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "bufferNotEmpty", JvmType.Condition.toDescriptor)
+    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
 
     initMethod.visitInsn(RETURN)
     initMethod.visitMaxs(0, 2)
@@ -179,12 +179,12 @@ object GenChannelClasses {
     val isFull = visitor.visitMethod(ACC_PUBLIC, "isFull", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
     isFull.visitCode()
     isFull.visitVarInsn(ALOAD, 0)
-    isFull.visitMethodInsn(INVOKEVIRTUAL, channelType.toDescriptor, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
+    isFull.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
     isFull.visitVarInsn(ALOAD, 0)
     isFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
-    isFull.visitMethodInsn(INVOKEVIRTUAL, JvmType.PrimInt., "equals", AsmOps.getMethodDescriptor(List(JvmType.PrimInt), JvmType.PrimBool), true)
+    isFull.visitMethodInsn(INVOKEVIRTUAL, JvmType.Object.name.toInternalName, "equals", AsmOps.getMethodDescriptor(List(JvmType.Object), JvmType.PrimBool), true)
     isFull.visitInsn(IRETURN)
-    isFull.visitMaxs(1, 1)
+    isFull.visitMaxs(2, 1)
     isFull.visitEnd()
   }
 
