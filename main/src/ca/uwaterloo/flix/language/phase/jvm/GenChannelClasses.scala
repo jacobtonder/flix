@@ -68,6 +68,18 @@ object GenChannelClasses {
     // Generate `size` method
     genSize(classType, channelType, visitor)
 
+    // Generate `lock` method
+    genLock(classType, channelType, visitor)
+
+    // Generate `unlock` method
+    genUnlock(classType, channelType, visitor)
+
+    // Generate `signalNotFull` method
+    genSignalNotFull(classType, channelType, visitor)
+
+    // Generate `signalNotEmpty` method
+    genSignalNotEmpty(classType, channelType, visitor)
+
     // Generate `putValue` method
     //genPutValue(classType, channelType, visitor)
 
@@ -194,6 +206,50 @@ object GenChannelClasses {
     size.visitInsn(IRETURN)
     size.visitMaxs(1, 1)
     size.visitEnd()
+  }
+
+  def genLock(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val lock = visitor.visitMethod(ACC_PUBLIC, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    lock.visitCode()
+    lock.visitVarInsn(ALOAD, 0)
+    lock.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    lock.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    lock.visitInsn(RETURN)
+    lock.visitMaxs(1, 1)
+    lock.visitEnd()
+  }
+
+  def genUnlock(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val unlock = visitor.visitMethod(ACC_PUBLIC, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    unlock.visitCode()
+    unlock.visitVarInsn(ALOAD, 0)
+    unlock.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    unlock.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    unlock.visitInsn(RETURN)
+    unlock.visitMaxs(1, 1)
+    unlock.visitEnd()
+  }
+
+  def genSignalNotFull(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val signalNotFull = visitor.visitMethod(ACC_PUBLIC, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    signalNotFull.visitCode()
+    signalNotFull.visitVarInsn(ALOAD, 0)
+    signalNotFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "bufferNotFull", JvmType.Condition.toDescriptor)
+    signalNotFull.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "signalAll", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    signalNotFull.visitInsn(RETURN)
+    signalNotFull.visitMaxs(1, 1)
+    signalNotFull.visitEnd()
+  }
+
+  def genSignalNotEmpty(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val signalNotEmpty = visitor.visitMethod(ACC_PUBLIC, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    signalNotEmpty.visitCode()
+    signalNotEmpty.visitVarInsn(ALOAD, 0)
+    signalNotEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "bufferNotEmpty", JvmType.Condition.toDescriptor)
+    signalNotEmpty.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "signalAll", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    signalNotEmpty.visitInsn(RETURN)
+    signalNotEmpty.visitMaxs(1, 1)
+    signalNotEmpty.visitEnd()
   }
 
   def genPutValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
