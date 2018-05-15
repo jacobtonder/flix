@@ -35,8 +35,8 @@ object GenChannelClasses {
     // Generate the instance field
     AsmOps.compileField(visitor, "queue", JvmType.LinkedList, isStatic = false, isPrivate = true)
 
-    // Generate the channelLock field
-    AsmOps.compileField(visitor, "channelLock", JvmType.Lock, isStatic = false, isPrivate = true)
+    // Generate the lock field
+    AsmOps.compileField(visitor, "lock", JvmType.Lock, isStatic = false, isPrivate = true)
 
     // Generate the capacity field
     AsmOps.compileField(visitor, "capacity", JvmType.PrimInt, isStatic = false, isPrivate = true)
@@ -102,14 +102,14 @@ object GenChannelClasses {
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.LinkedList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
 
-    // Init the `channelLock` field
+    // Init the `lock` field
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitTypeInsn(NEW, JvmType.ReentrantLock.name.toInternalName)
     initMethod.visitInsn(DUP)
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.ReentrantLock.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelLock", JvmType.Lock.toDescriptor)
+    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
 
-    // Init the `channelLock` field
+    // Init the `conditions` field
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitTypeInsn(NEW, JvmType.ArrayList.name.toInternalName)
     initMethod.visitInsn(DUP)
@@ -123,13 +123,13 @@ object GenChannelClasses {
 
     // Init the `bufferNotFull` field
     initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelLock", JvmType.Lock.toDescriptor)
+    initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
     initMethod.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
     initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "bufferNotFull", JvmType.Condition.toDescriptor)
 
     // Init the `bufferNotEmpty` field
     initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelLock", JvmType.Lock.toDescriptor)
+    initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
     initMethod.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
     // ??? To Magnus: Why are the next two lines needed?
     initMethod.visitVarInsn(ALOAD, 0)
