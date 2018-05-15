@@ -62,6 +62,9 @@ object GenChannelClasses {
     // Generate `isEmpty`method
     genIsEmpty(classType, channelType, visitor)
 
+    // Generate `nonEmpty`method
+    genNonEmpty(classType, channelType, visitor)
+
     // Generate `putValue` method
     //genPutValue(classType, channelType, visitor)
 
@@ -156,6 +159,25 @@ object GenChannelClasses {
     isEmpty.visitInsn(IRETURN)
     isEmpty.visitMaxs(1, 1)
     isEmpty.visitEnd()
+  }
+
+  def genNonEmpty(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val nonEmpty = visitor.visitMethod(ACC_PUBLIC, "nonEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
+    val l0 = new Label()
+    val l1 = new Label()
+    nonEmpty.visitCode()
+    nonEmpty.visitVarInsn(ALOAD, 0)
+    nonEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    nonEmpty.visitMethodInsn(INVOKEINTERFACE, "java/util/LinkedList", "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
+    nonEmpty.visitJumpInsn(IFNE, l0)
+    nonEmpty.visitInsn(ICONST_1)
+    nonEmpty.visitJumpInsn(GOTO, l1)
+    nonEmpty.visitLabel(l0)
+    nonEmpty.visitInsn(ICONST_0)
+    nonEmpty.visitLabel(l1)
+    nonEmpty.visitInsn(IRETURN)
+    nonEmpty.visitMaxs(1, 1)
+    nonEmpty.visitEnd()
   }
 
   def genPutValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
