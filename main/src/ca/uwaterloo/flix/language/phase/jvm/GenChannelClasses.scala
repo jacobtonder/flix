@@ -62,6 +62,9 @@ object GenChannelClasses {
     // Generate `isEmpty`method
     genIsEmpty(classType, channelType, visitor)
 
+    // Generate `size` method
+    genSize(classType, channelType, visitor)
+
     // Generate `putValue` method
     //genPutValue(classType, channelType, visitor)
 
@@ -156,6 +159,17 @@ object GenChannelClasses {
     isEmpty.visitInsn(IRETURN)
     isEmpty.visitMaxs(1, 1)
     isEmpty.visitEnd()
+  }
+
+  def genSize(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val size = visitor.visitMethod(ACC_PUBLIC, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), null, null)
+    size.visitCode()
+    size.visitVarInsn(ALOAD, 0)
+    size.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    size.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), true)
+    size.visitInsn(IRETURN)
+    size.visitMaxs(1, 1)
+    size.visitEnd()
   }
 
   def genPutValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
