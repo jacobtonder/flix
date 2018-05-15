@@ -6,6 +6,9 @@ import org.objectweb.asm.Label
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes._
 
+/**
+  * Generates bytecode for the channel classes.
+  */
 object GenChannelClasses {
   /**
     * Returns the bytecode for the channel classes built-in to the Flix language.
@@ -24,6 +27,9 @@ object GenChannelClasses {
     }.toMap
   }
 
+  /**
+    * Generating class `classType` with value of type `channelType`
+    */
   def genChannelClass(classType: JvmType.Reference, channelType: JvmType)(implicit root: Root, flix: Flix): Array[Byte] = {
     // Class visitor
     val visitor = AsmOps.mkClassWriter()
