@@ -181,6 +181,7 @@ object GenChannelClasses {
     nonEmpty.visitInsn(IRETURN)
     nonEmpty.visitMaxs(1, 1)
     nonEmpty.visitEnd()
+  }
 
   def genSize(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val size = visitor.visitMethod(ACC_PUBLIC, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), null, null)
