@@ -62,6 +62,9 @@ object GenChannelClasses {
     // Generate `isEmpty` method
     genIsEmpty(classType, channelType, visitor)
 
+    // Generate `isFull` method
+    genIsFull(classType, channelType, visitor)
+
     // Generate `size` method
     genSize(classType, channelType, visitor)
 
@@ -176,6 +179,40 @@ object GenChannelClasses {
     isEmpty.visitInsn(IRETURN)
     isEmpty.visitMaxs(1, 1)
     isEmpty.visitEnd()
+  }
+
+  def genIsFull(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val isFull = visitor.visitMethod(ACC_PUBLIC, "isFull", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
+    val labelElse = new Label()
+    val labelEnd = new Label()
+    isFull.visitCode()
+
+    // Get the `queue` field
+    isFull.visitVarInsn(ALOAD, 0)
+    isFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+
+    // Get the size of the queue
+    isFull.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), true)
+
+    // Get the `capacity` field
+    isFull.visitVarInsn(ALOAD, 0)
+    isFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
+
+    // Compare the size of the queue with the capacity
+    isFull.visitJumpInsn(IF_ICMPNE, labelElse)
+
+    // The size of the queue and the capacity are equal
+    isFull.visitInsn(ICONST_1)
+    isFull.visitJumpInsn(GOTO, labelEnd)
+
+    // The size of the queue and the capacity are not equal
+    isFull.visitLabel(labelElse)
+    isFull.visitInsn(ICONST_0)
+
+    isFull.visitLabel(labelEnd)
+    isFull.visitInsn(IRETURN)
+    isFull.visitMaxs(2, 2)
+    isFull.visitEnd()
   }
 
   def genSize(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
