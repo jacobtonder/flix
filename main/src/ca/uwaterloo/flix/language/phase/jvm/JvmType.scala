@@ -47,7 +47,7 @@ object JvmType {
     */
   val Context: JvmType.Reference = Reference(JvmName.Context)
 
-  val BlockingQueue: JvmType.Reference = Reference(JvmName.BlockingQueue)
+  val LinkedQueue: JvmType.Reference = Reference(JvmName.BlockingQueue)
 
   /**
     * The `ca.uwaterloo.flix.api.Unit` type

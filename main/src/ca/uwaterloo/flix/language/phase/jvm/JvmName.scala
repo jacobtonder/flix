@@ -28,7 +28,7 @@ object JvmName {
     */
   val Context: JvmName = JvmName(Nil, "Context")
 
-  val BlockingQueue: JvmName = JvmName(List("java", "util", "concurrent"), "BlockingQueue")
+  val LinkedQueue: JvmName = JvmName(List("java", "util", "concurrent"), "BlockingQueue")
 
   /**
     * The `ca.uwaterloo.flix.api.Unit` name
