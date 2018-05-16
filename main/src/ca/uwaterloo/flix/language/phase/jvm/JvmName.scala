@@ -29,9 +29,9 @@ object JvmName {
   val Context: JvmName = JvmName(Nil, "Context")
 
   /**
-    *  The `java.util.LinkedList` name.
+    *  The `java.util.Queue` name.
     */
-  val LinkedList: JvmName = JvmName(List("java", "util"), "LinkedList")
+  val Queue: JvmName = JvmName(List("java", "util"), "Queue")
 
   /**
     *  The `java.util.List` name.
@@ -39,9 +39,24 @@ object JvmName {
   val JavaList: JvmName = JvmName(List("java", "util"), "List")
 
   /**
+    *  The `java.util.ArrayList` name.
+    */
+  val ArrayList: JvmName = JvmName(List("java", "util"), "ArrayList")
+
+  /**
+    *  The `java.util.LinkedList` name.
+    */
+  val LinkedList: JvmName = JvmName(List("java", "util"), "LinkedList")
+
+  /**
     *  The `java.util.concurrent.locks.Lock` name.
     */
   val Lock: JvmName = JvmName(List("java", "util", "concurrent", "locks"), "Lock")
+
+  /**
+    *  The `java.util.concurrent.locks.ReentrantLock` name.
+    */
+  val ReentrantLock: JvmName = JvmName(List("java", "util", "concurrent", "locks"), "ReentrantLock")
 
   /**
     *  The `java.util.concurrent.locks.Lock` name.
