@@ -74,6 +74,9 @@ object GenChannelClasses {
     // Generate `isEmpty` method
     genIsEmpty(classType, visitor)
 
+    // Generate `isNonempty` method
+    genIsNonempty(classType, visitor)
+
     // Generate `isFull` method
     genIsFull(classType, visitor)
 
@@ -231,6 +234,33 @@ object GenChannelClasses {
     isEmpty.visitInsn(IRETURN)
     isEmpty.visitMaxs(1, 1)
     isEmpty.visitEnd()
+  }
+
+  /**
+    * Generates the `isNonempty()` method of the `classType`
+    */
+  def genIsNonempty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val isNonempty = visitor.visitMethod(ACC_PUBLIC, "isNonempty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
+    val labelElse = new Label()
+    val labelEnd = new Label()
+    isNonempty.visitCode()
+    isNonempty.visitVarInsn(ALOAD, 0)
+    isNonempty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    isNonempty.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
+    isNonempty.visitJumpInsn(IFNE, labelElse)
+
+    // The queue is not empty
+    isNonempty.visitInsn(ICONST_1)
+    isNonempty.visitJumpInsn(GOTO, labelEnd)
+
+    // The queue is empty
+    isNonempty.visitLabel(labelElse)
+    isNonempty.visitInsn(ICONST_0)
+
+    isNonempty.visitLabel(labelEnd)
+    isNonempty.visitInsn(IRETURN)
+    isNonempty.visitMaxs(1, 1)
+    isNonempty.visitEnd()
   }
 
   /**
