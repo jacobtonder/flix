@@ -10,8 +10,13 @@ def emptyChannel(ch: Channel[Int], n: Int): Unit =
 def benchmark01(): Unit =
     let n = 120;
     let ch = channel Int n;
+<<<<<<< HEAD
     let _ = fillChannel(ch, 120);
     let _ = emptyChannel(ch, 60);
     let _ = fillChannel(ch, 60);
     let _ = emptyChannel(ch, 120);
+=======
+    let _ = fillChannel(ch, n);
+    let _ = emptyChannel(ch, n);
+>>>>>>> 01874c22a... Add channel benchmarks
     ()
