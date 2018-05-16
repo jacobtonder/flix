@@ -146,6 +146,11 @@ object JvmName {
   val Exception: JvmName = JvmName(List("java", "lang"), "Exception")
 
   /**
+    * The `java.lang.Exception` name
+    */
+  val InterruptedException: JvmName = JvmName(List("java", "lang"), "InterruptedException")
+
+  /**
     * The `ca.uwaterloo.flix.api.UserException$` name
     */
   val UserException: JvmName = JvmName(List("ca", "uwaterloo", "flix", "api"), "UserException")

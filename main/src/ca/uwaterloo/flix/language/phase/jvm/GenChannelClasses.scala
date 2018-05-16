@@ -98,6 +98,12 @@ object GenChannelClasses {
     // Generate `clearSelects` method
     genClearSelects(classType, visitor)
 
+    // Generate `awaitNotFull` method
+    genAwaitNotFull(classType, visitor)
+
+    // Generate `awaitNotEmpty` method
+    genAwaitNotEmpty(classType, visitor)
+
     // Generate `putValue` method
     //genPutValue(classType, channelType, visitor)
 
@@ -382,6 +388,34 @@ object GenChannelClasses {
     clearSelects.visitInsn(RETURN)
     clearSelects.visitMaxs(1, 1)
     clearSelects.visitEnd()
+  }
+
+  /**
+    * Generates the `awaitNotFull()` method of the `classType`
+    */
+  def genAwaitNotFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val awaitNotFull = visitor.visitMethod(ACC_PUBLIC, "awaitNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, Array(JvmName.InterruptedException.toInternalName))
+    awaitNotFull.visitCode()
+    awaitNotFull.visitVarInsn(ALOAD, 0)
+    awaitNotFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
+    awaitNotFull.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "await", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    awaitNotFull.visitInsn(RETURN)
+    awaitNotFull.visitMaxs(1, 1)
+    awaitNotFull.visitEnd()
+  }
+
+  /**
+    * Generates the `awaitNotEmpty()` method of the `classType`
+    */
+  def genAwaitNotEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val awaitNotEmpty = visitor.visitMethod(ACC_PUBLIC, "awaitNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, Array(JvmName.InterruptedException.toInternalName))
+    awaitNotEmpty.visitCode()
+    awaitNotEmpty.visitVarInsn(ALOAD, 0)
+    awaitNotEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
+    awaitNotEmpty.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "await", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    awaitNotEmpty.visitInsn(RETURN)
+    awaitNotEmpty.visitMaxs(1, 1)
+    awaitNotEmpty.visitEnd()
   }
 
   /**
