@@ -1036,6 +1036,7 @@ object JvmOps {
       case Expression.NewChannel(exp, ctpe, tpe, loc) => visitExp(exp) + ctpe + tpe
       case Expression.GetChannel(exp, tpe, loc) => visitExp(exp) + tpe
       case Expression.PutChannel(exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2) + tpe
+      case Expression.Spawn(exp, tpe, loc) => visitExp(exp) + tpe
 
       case Expression.Ref(exp, tpe, loc) => visitExp(exp) + tpe
       case Expression.Deref(exp, tpe, loc) => visitExp(exp) + tpe
