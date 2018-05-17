@@ -17,7 +17,6 @@
 package ca.uwaterloo.flix.runtime.interpreter
 
 import scala.collection.JavaConverters._
-
 import java.lang.reflect.Modifier
 import java.util.concurrent.locks.{Condition, Lock, ReentrantLock}
 import java.util
@@ -25,6 +24,7 @@ import java.util
 import ca.uwaterloo.flix.api._
 import ca.uwaterloo.flix.language.ast.ExecutableAst._
 import ca.uwaterloo.flix.language.ast._
+import ca.uwaterloo.flix.runtime.interpreter.Value.Channel
 import ca.uwaterloo.flix.util.InternalRuntimeException
 import ca.uwaterloo.flix.util.tc.Show._
 
@@ -339,11 +339,12 @@ object Interpreter {
   }
 
   private def newChannel(capacity: Int): Value.Channel = {
+    val id = Channel.counter.incrementAndGet()
     val channelLock = new ReentrantLock
     val bufferNotFull = channelLock.newCondition()
     val bufferNotEmpty = channelLock.newCondition()
     val queue = new util.LinkedList[AnyRef]()
-    Value.Channel(queue, capacity, channelLock, bufferNotFull, bufferNotEmpty, new util.ArrayList())
+    Value.Channel(id, queue, capacity, channelLock, bufferNotFull, bufferNotEmpty, new util.ArrayList())
   }
 
 
@@ -399,7 +400,7 @@ object Interpreter {
   private def selectChannel(rules: List[(Symbol.VarSym, Value.Channel, Expression)]): (Symbol.VarSym, AnyRef, Expression) = {
     val sLock = new ReentrantLock
     val sCondition = sLock.newCondition
-    val channels = rules.map(_._2)
+    val channels = rules.map(_._2).sorted
 
     var result: (Symbol.VarSym, AnyRef, Expression) = null
 
