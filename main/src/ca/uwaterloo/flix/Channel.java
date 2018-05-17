@@ -2,8 +2,12 @@ package ca.uwaterloo.flix;
 
 import java.util.*;
 import java.util.concurrent.locks.*;
+import java.util.concurrent.atomic.*;
 
-public class Channel {
+
+public class Channel implements Comparable<Channel> {
+    private static AtomicInteger counter;
+    private Integer id;
     private Queue<Object> queue;
     private Integer capacity;
     private Lock lock;
@@ -13,6 +17,7 @@ public class Channel {
 
     // New Channel
     public Channel(Integer capacity) {
+        this.id = counter.incrementAndGet();
         this.capacity = capacity;
         this.queue = new LinkedList<>();
         this.lock = new ReentrantLock();
@@ -117,6 +122,11 @@ public class Channel {
 
     public void addSelect(SelectChannel select) {
         selects.add(select);
+    }
+
+    @Override
+    public int compareTo(Channel o) {
+        return this.id.compareTo(o.id);
     }
 
     private void signalAllSelects() {

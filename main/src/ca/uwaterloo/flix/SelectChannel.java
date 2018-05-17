@@ -18,6 +18,8 @@ public class SelectChannel {
         for (SelectRule rule : rules) {
             this.channels.add(rule.getChannel());
         }
+
+        Collections.sort(this.channels);
     }
 
     public void select() throws InterruptedException {
