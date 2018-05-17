@@ -434,9 +434,14 @@ object GenChannelClasses {
     // Integer = Null
     getChannel.visitInsn(ACONST_NULL)
 
+    getChannel.visitTryCatchBlock(labelStart, labelEnd, labelHandler, null)
+
     // Lock()
     getChannel.visitVarInsn(ALOAD, 0)
     getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+
+    // Try
+    getChannel.visitLabel(labelStart)
 
     // Loop
     getChannel.visitLabel(loopStart)
@@ -464,7 +469,15 @@ object GenChannelClasses {
     // signalNotEmpty
     getChannel.visitVarInsn(ALOAD, 0)
     getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    getChannel.visitLabel(labelEnd)
+    getChannel.visitJumpInsn(GOTO, labelEndHandler)
 
+    // Catch
+    getChannel.visitLabel(labelHandler)
+    getChannel.visitInsn(ATHROW)
+
+    // Finally
+    getChannel.visitLabel(labelEndHandler)
     getChannel.visitLabel(ifNullFalse)
     getChannel.visitVarInsn(ALOAD, 0)
     getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
