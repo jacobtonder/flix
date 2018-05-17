@@ -63,7 +63,7 @@ object GenChannelClasses {
     //genGetValue(classType, channelType, visitor)
 
     // Generate `getValue` method
-    //genGetChannel(classType, channelType, visitor)
+    genGetChannel(classType, channelType, visitor)
 
     // Generate `poll` method
     genPoll(classType, channelType, visitor)
@@ -416,6 +416,89 @@ object GenChannelClasses {
     awaitNotEmpty.visitInsn(RETURN)
     awaitNotEmpty.visitMaxs(1, 1)
     awaitNotEmpty.visitEnd()
+  }
+
+  def genGetChannel(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val iRet = AsmOps.getReturnInstruction(channelType)
+    val getChannel = visitor.visitMethod(ACC_PUBLIC, "getChannel", AsmOps.getMethodDescriptor(Nil, channelType), null, null)
+    val tryStart = new Label()
+    val tryCatch = new Label()
+    val tryEnd = new Label()
+    val loopStart = new Label()
+    val loopEnd = new Label()
+    val ifNullTrue = new Label()
+    val ifNullFalse = new Label()
+
+
+    getChannel.visitCode()
+
+    // Integer = Null
+    getChannel.visitInsn(ACONST_NULL)
+    getChannel.visitVarInsn(ASTORE, 1)
+
+    // Lock()
+    getChannel.visitVarInsn(ALOAD, 0)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+
+    // Try
+    //getChannel.visitTryCatchBlock(tryStart, tryCatch, tryEnd, null)
+    getChannel.visitLabel(loopStart)
+    getChannel.visitVarInsn(ALOAD, 0)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
+
+    getChannel.visitJumpInsn(IFEQ, loopEnd)
+    getChannel.visitVarInsn(ALOAD, 0)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "awaitNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    getChannel.visitJumpInsn(GOTO, loopStart)
+    getChannel.visitLabel(loopEnd)
+
+    //Integer = java.lang.Integer.valueOf(poll())
+    getChannel.visitVarInsn(ALOAD, 0)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, classType), false)
+    getChannel.visitMethodInsn(INVOKESTATIC, classType.name.toInternalName, "valueOf", AsmOps.getMethodDescriptor(List(JvmType.Integer), JvmType.PrimInt), false)
+    getChannel.visitVarInsn(ASTORE, 1)
+
+    // if (Integer != null)
+    getChannel.visitVarInsn(ALOAD, 1)
+    getChannel.visitJumpInsn(IFNULL, ifNullFalse)
+
+    // signalNotEmpty
+    getChannel.visitVarInsn(ALOAD, 0)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+
+    getChannel.visitLabel(ifNullFalse)
+    getChannel.visitVarInsn(ALOAD, 0)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    getChannel.visitJumpInsn(GOTO, tryEnd)
+
+    // Catch
+    getChannel.visitVarInsn(ASTORE, 2)
+
+    // Unlock
+    getChannel.visitVarInsn(ALOAD, 0)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+
+    // break label
+    getChannel.visitJumpInsn(GOTO, tryEnd)
+
+     // Finally
+    getChannel.visitVarInsn(ASTORE, 3)
+
+    // unlock()
+    getChannel.visitVarInsn(ALOAD, 0)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+
+    // Throw exeception
+    getChannel.visitVarInsn(ALOAD, 3)
+    getChannel.visitInsn(ATHROW)
+
+    // Return the value
+    getChannel.visitLabel(tryEnd)
+    getChannel.visitVarInsn(ALOAD, 0)
+    getChannel.visitInsn(iRet)
+    getChannel.visitMaxs(4, 4)
+    getChannel.visitEnd()
   }
 
   /**

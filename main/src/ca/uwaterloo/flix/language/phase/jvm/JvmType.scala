@@ -93,6 +93,11 @@ object JvmType {
   val BigInteger: JvmType.Reference = Reference(JvmName.BigInteger)
 
   /**
+    * The `java.lang.Integer` type.
+    */
+  val Integer: JvmType.Reference = Reference(JvmName.Integer)
+
+  /**
     * The `java.lang.Object` type.
     */
   val Object: JvmType.Reference = Reference(JvmName.Object)
