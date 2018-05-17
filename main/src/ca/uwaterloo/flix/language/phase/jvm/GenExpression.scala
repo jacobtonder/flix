@@ -26,6 +26,7 @@ import ca.uwaterloo.flix.util.{InternalCompilerException, Optimization}
 import org.objectweb.asm
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
+import ca.uwaterloo.flix.language.ast.Type
 
 /**
   * Generate expression
@@ -706,17 +707,50 @@ object GenExpression {
 */
 
     case Expression.Spawn(exp, tpe, loc) =>
+      val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))
+
       // Adding source line number for debugging
       addSourceLine(visitor, loc)
-      // Class visitor
-      val classVisitor = AsmOps.mkClassWriter()
-      // Class header.
-      classVisitor.visit(AsmOps.JavaVersion, ACC_PUBLIC + ACC_FINAL, JvmName.Context.toInternalName, null,
-        JvmName.Object.toInternalName, Array(JvmName.Runnable.toInternalName))
 
-      classVisitor.visitSource(JvmName.Context.name, null)
+      // Instantiating a new object of RunnableSpawn
+      //#1  +3
+      visitor.visitTypeInsn(NEW, JvmName.RunnableSpawn.toInternalName)
 
-      val i = 1
+      // Duplicating the class
+      visitor.visitInsn(DUP)
+
+      // Evaluate the exp
+      //#6  +5
+      compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
+
+      //visitor.visitInsn(DUP)
+
+      // Invoking the constructor
+      //#2  +3
+      visitor.visitMethodInsn(INVOKESPECIAL, JvmName.RunnableSpawn.toInternalName, "<init>", AsmOps.getMethodDescriptor(List(functionType), JvmType.Void), false)
+
+
+      visitor.visitVarInsn(ASTORE, 1)
+
+      //#3  +3
+      visitor.visitTypeInsn(NEW, JvmName.Thread.toInternalName)
+
+      visitor.visitInsn(DUP)
+
+      visitor.visitVarInsn(ALOAD, 1)
+
+      //#4  +4
+      visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Thread.toInternalName, "<init>", AsmOps.getMethodDescriptor(List(JvmType.Runnable), JvmType.Void), false)
+
+      //visitor.visitVarInsn(ASTORE, 2)
+
+      //visitor.visitVarInsn(ALOAD, 2)
+
+      //#5  +4
+      visitor.visitMethodInsn(INVOKEVIRTUAL, JvmName.Thread.toInternalName, "start", "()V", false)
+
+      visitor.visitInsn(RETURN)
+
 
     case Expression.Ref(exp, tpe, loc) =>
       // Adding source line number for debugging

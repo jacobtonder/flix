@@ -129,6 +129,16 @@ object JvmName {
   val Runnable: JvmName = JvmName(List("java", "lang"), "Runnable")
 
   /**
+    * The `java.lang.Thread` name.
+    */
+  val Thread: JvmName = JvmName(List("java", "lang"), "Thread")
+
+  /**
+    * The `ca.uwaterloo.flix.RunnableSpawn` name.
+    */
+  val RunnableSpawn: JvmName = JvmName(List("ca", "uwaterloo", "flix"), "RunnableSpawn")
+
+  /**
     * The `ca.uwaterloo.flix.api.Tuple` name
     */
   // TODO: Magnus: Get rid of tuple interface.
