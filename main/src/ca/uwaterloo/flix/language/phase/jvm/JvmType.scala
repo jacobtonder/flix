@@ -133,6 +133,11 @@ object JvmType {
   case object PrimBool extends JvmType
 
   /**
+    * The `java.lang.Boolean` type.
+    */
+  val Boolean: JvmType.Reference = Reference(JvmName.Boolean)
+
+  /**
     * Represents the primitive character type.
     */
   case object PrimChar extends JvmType

@@ -445,7 +445,7 @@ object GenChannelClasses {
     getChannel.visitLabel(loopStart)
     getChannel.visitVarInsn(ALOAD, 0)
     getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, "java/lang/Boolean", "booleanValue", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, JvmType.Boolean.name.toInternalName, "booleanValue", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
 
     getChannel.visitJumpInsn(IFEQ, loopEnd)
     getChannel.visitVarInsn(ALOAD, 0)
