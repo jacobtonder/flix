@@ -1254,7 +1254,48 @@ def selectChannelf10010(): Str =
   }
 
 @test
-def testSelectChannelf10010(): Bool = selectChannelf10010() `assertEq!` "a"
+def testSelectChannel10010(): Bool = selectChannelf10010() `assertEq!` "a"
+
+def f10011(): Int =
+  let ch1 = channel Int 2;
+  let ch2 = channel Int 3;
+  let ch3 = channel Int 1;
+  let ch4 = channel Int 4;
+  let _ = spawn g10011(ch1, ch2, ch3);
+  let _ = spawn h10011(ch1, ch2, ch3, ch4);
+  select {
+    case x <- ch1 => x
+    case x <- ch2 => x
+    case x <- ch4 => x
+  }
+
+def g10011(ch1: Channel[Int], ch2: Channel[Int], ch3: Channel[Int]): () =
+  let _ = ch1 <- 1;
+  let _ = ch2 <- 2;
+  let _ = ch3 <- 3;
+  ()
+
+def h10011(ch1: Channel[Int], ch2: Channel[Int], ch3: Channel[Int], ch4: Channel[Int]): Unit =
+  let y = select {
+    case x <- ch2 => x
+    case x <- ch3 => x
+    case x <- ch1 => x
+  };
+  let _ = ch4 <- y;
+  ()
+
+@test
+def testSelectChannel10011(): Bool =
+  let x = f10010();
+  (x `assertEq!` 1) || (x `assertEq!` 2) || (x `assertEq!` 3)
+
+
+
+
+
+
+
+
 
 
 
