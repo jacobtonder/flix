@@ -33,7 +33,6 @@ class Timer[T](f: => T) {
   // Compute the duration.
   private val d = e - b
 
-
   /**
     * Returns the result computed by the function `f`.
     */

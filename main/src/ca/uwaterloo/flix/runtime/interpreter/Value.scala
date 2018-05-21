@@ -19,6 +19,7 @@ package ca.uwaterloo.flix.runtime.interpreter
 import java.util
 import java.util.concurrent.locks.{Condition, Lock}
 import java.util.concurrent.atomic.{AtomicInteger}
+
 import ca.uwaterloo.flix.api
 import ca.uwaterloo.flix.language.ast.{Symbol, Type}
 import ca.uwaterloo.flix.util.InternalRuntimeException

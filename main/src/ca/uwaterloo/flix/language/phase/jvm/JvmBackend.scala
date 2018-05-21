@@ -156,7 +156,6 @@ object JvmBackend extends Phase[Root, Root] {
     //
     val cellClasses = GenCellClasses.gen()
 
-
     //
     // Generate exception classes.
     //

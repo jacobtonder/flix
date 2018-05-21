@@ -27,9 +27,6 @@ import org.objectweb.asm
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
 import ca.uwaterloo.flix.language.ast.Type
-import ca.uwaterloo.flix.language.phase.jvm
-
-import scala.collection.mutable.ListBuffer
 
 /**
   * Generate expression
