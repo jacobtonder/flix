@@ -37,12 +37,6 @@ object GenRunnableSpawn {
     // Generate the constructor
     genConstructor(visitor)
 
-    // Generate `toString` method
-    //genToString(visitor)
-
-    // Generate `equals` method
-    //genEquals(visitor)
-
     genRun(visitor)
 
     Map(JvmName.RunnableSpawn -> JvmClass(JvmName.RunnableSpawn, visitor.toByteArray))
@@ -74,10 +68,12 @@ object GenRunnableSpawn {
     initMethod.visitMethodInsn(INVOKEINTERFACE, functionType.name.toInternalName, "copy",
       AsmOps.getMethodDescriptor(List(JvmType.Context), functionType), true)
     initMethod.visitFieldInsn(PUTFIELD, JvmName.RunnableSpawn.toInternalName, "fn", functionType.toDescriptor)
+
     initMethod.visitInsn(RETURN)
     initMethod.visitMaxs(2, 2)
     initMethod.visitEnd()
   }
+
   /**
     * Generating run method for the class `RunnableSpawn`
     */
@@ -92,6 +88,7 @@ object GenRunnableSpawn {
     runMethod.visitFieldInsn(GETFIELD, JvmName.RunnableSpawn.toInternalName, "ctx", JvmType.Context.toDescriptor)
     runMethod.visitMethodInsn(INVOKEINTERFACE, functionType.name.toInternalName, "apply",
       AsmOps.getMethodDescriptor(List(JvmType.Context), JvmType.Void), true)
+
     runMethod.visitInsn(RETURN)
     runMethod.visitMaxs(1, 2)
     runMethod.visitEnd()

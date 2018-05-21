@@ -159,7 +159,6 @@ object GenClosureClasses {
     }
 
     copyMethod.visitInsn(ARETURN)
-
     copyMethod.visitMaxs(1, 1)
     copyMethod.visitEnd()
   }
