@@ -739,6 +739,21 @@ object GenExpression {
 
       visitor.visitInsn(RETURN)
 
+    case Expression.PutChannel(exp1, exp2, tpe, loc) =>
+      val classType = JvmOps.getChannelClassType(exp1.tpe)
+
+      //val valueType = JvmOps.getChannelClassType(exp2.tpe)
+      // Adding source line number for debugging
+      addSourceLine(visitor, loc)
+      // Evaluate the underlying expression
+      compileExpression(exp1, visitor, currentClass, lenv0, entryPoint)
+      // Evaluate the underlying expression
+      compileExpression(exp2, visitor, currentClass, lenv0, entryPoint)
+      // Constructor descriptor
+      val methodDescriptor = AsmOps.getMethodDescriptor(List(JvmType.PrimInt), classType)
+      // Call the constructor
+      visitor.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "putValue", methodDescriptor, false)
+
     case Expression.Ref(exp, tpe, loc) =>
       // Adding source line number for debugging
       addSourceLine(visitor, loc)
