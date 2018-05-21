@@ -155,7 +155,7 @@ object GenClosureClasses {
       copyMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, s"arg$ind", erasedType.toDescriptor)
 
       copyMethod.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, s"setArg$ind",
-        AsmOps.getMethodDescriptor(List(JvmType.Object), JvmType.Void), false)
+        AsmOps.getMethodDescriptor(List(erasedType), JvmType.Void), false)
     }
 
     copyMethod.visitInsn(ARETURN)
