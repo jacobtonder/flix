@@ -224,7 +224,7 @@ object GenChannelClasses {
     offer.visitVarInsn(iLoad, 1)
     offer.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), false)
 
-    // TODO: Use return the variable instead of just popping it
+    // TODO: Use the variable instead of just popping it
     offer.visitInsn(POP)
 
     offer.visitInsn(RETURN)
