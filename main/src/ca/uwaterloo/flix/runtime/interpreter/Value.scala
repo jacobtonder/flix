@@ -24,8 +24,6 @@ import ca.uwaterloo.flix.api
 import ca.uwaterloo.flix.language.ast.{Symbol, Type}
 import ca.uwaterloo.flix.util.InternalRuntimeException
 
-import scala.collection.mutable.ListBuffer
-
 sealed trait Value
 
 object Value {

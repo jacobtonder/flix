@@ -26,6 +26,7 @@ import ca.uwaterloo.flix.util.{InternalCompilerException, Optimization}
 import org.objectweb.asm
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
+import ca.uwaterloo.flix.language.ast.Type
 
 /**
   * Generate expression
@@ -704,6 +705,40 @@ object GenExpression {
       // Call the constructor
       visitor.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "getValue", methodDescriptor, false)
 */
+
+    case Expression.Spawn(exp, tpe, loc) =>
+      val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))
+
+      // Adding source line number for debugging
+      addSourceLine(visitor, loc)
+
+      // Instantiating a new object of Spawn
+      visitor.visitTypeInsn(NEW, JvmName.Spawn.toInternalName)
+
+      // Duplicating the class
+      visitor.visitInsn(DUP)
+
+      // Evaluate the exp
+      compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
+
+      // Invoking the constructor
+      visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Spawn.toInternalName, "<init>", AsmOps.getMethodDescriptor(List(functionType), JvmType.Void), false)
+
+      visitor.visitVarInsn(ASTORE, 1)
+
+      visitor.visitTypeInsn(NEW, JvmName.Thread.toInternalName)
+
+      visitor.visitInsn(DUP)
+
+      visitor.visitVarInsn(ALOAD, 1)
+      visitor.visitLdcInsn("Spawn Process")
+      visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Thread.toInternalName, "<init>",
+        AsmOps.getMethodDescriptor(List(JvmType.Runnable, JvmType.String), JvmType.Void), false)
+
+      visitor.visitMethodInsn(INVOKEVIRTUAL, JvmName.Thread.toInternalName, "start", "()V", false)
+
+      visitor.visitInsn(RETURN)
+
     case Expression.Ref(exp, tpe, loc) =>
       // Adding source line number for debugging
       addSourceLine(visitor, loc)
