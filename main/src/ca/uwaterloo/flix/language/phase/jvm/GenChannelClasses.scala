@@ -16,7 +16,8 @@ object GenChannelClasses {
   def gen()(implicit root: Root, flix: Flix): Map[JvmName, JvmClass] = {
 
     // Type that we need a channel class for
-    val types = List(JvmType.PrimInt)
+    val types = List(JvmType.PrimBool, JvmType.PrimChar, JvmType.PrimFloat, JvmType.PrimDouble,
+      JvmType.PrimByte, JvmType.PrimShort, JvmType.PrimInt, JvmType.PrimLong)
 
     // Generating each channel class
     types.map{ tpe =>
@@ -228,8 +229,6 @@ object GenChannelClasses {
     poll.visitVarInsn(ALOAD, 0)
     poll.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
     poll.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), false)
-    //poll.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType.getBoxedType), channelType), false)
-    //poll.visitTypeInsn(CHECKCAST, boxedValue.getBoxedTypeString)
     poll.visitInsn(iRet)
     poll.visitMaxs(1, 1)
     poll.visitEnd()
@@ -475,7 +474,6 @@ object GenChannelClasses {
     getChannel.visitLabel(loopStart)
     getChannel.visitVarInsn(ALOAD, 0)
     getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
-    //getChannel.visitMethodInsn(INVOKEVIRTUAL, JvmType.Integer.name.toInternalName, "booleanValue", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
 
     getChannel.visitJumpInsn(IFEQ, loopEnd)
     getChannel.visitVarInsn(ALOAD, 0)
@@ -486,12 +484,8 @@ object GenChannelClasses {
     //Integer = java.lang.Integer.valueOf(poll())
     getChannel.visitInsn(POP)
     getChannel.visitVarInsn(ALOAD, 0)
-    //getChannel.visitInsn(DUP)
-    //getChannel.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
     getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), false)
     getChannel.visitTypeInsn(CHECKCAST, channelType.getBoxedTypeString)
-    //getChannel.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), true)
-    //getChannel.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType), channelType.getBoxedType), false)
 
     // if (Integer != null)
     getChannel.visitInsn(DUP)
@@ -525,15 +519,12 @@ object GenChannelClasses {
     // Finally block - after exception not caught in catch block
     getChannel.visitVarInsn(ALOAD, 0)
     getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    //getChannel.visitVarInsn(ALOAD, 4)
-    //getChannel.visitInsn(ATHROW)
 
     // Return the value
     getChannel.visitLabel(labelEndHandler)
-    //getChannel.visitTypeInsn(CHECKCAST, "")
     getChannel.visitMethodInsn(INVOKEVIRTUAL, channelType.getBoxedTypeString, channelType.getBoxedConvertMethod, AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
-    getChannel.visitInsn(IRETURN)
-    //getChannel.visitInsn(iRet)
+    //getChannel.visitInsn(IRETURN)
+    getChannel.visitInsn(iRet)
     getChannel.visitMaxs(4, 4)
     getChannel.visitEnd()
   }

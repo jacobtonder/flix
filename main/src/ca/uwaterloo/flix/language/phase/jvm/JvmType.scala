@@ -38,10 +38,6 @@ sealed trait JvmType {
     case JvmType.Reference(name) => name.toDescriptor
   }
 
-  /*def getTypeString: String = this match {
-    //case JvmType.PrimInt => JvmType.PrimInt
-  }*/
-
   def getBoxedTypeString: String = this match {
     case JvmType.Void => "java/lang/Void"
     case JvmType.PrimBool => JvmType.Boolean.name.toInternalName
