@@ -39,7 +39,7 @@ object GenChannelClasses {
       JvmName.Object.toInternalName, null)
 
     // Generate the `queue` field
-    AsmOps.compileField(visitor, "queue", JvmType.Queue, isStatic = false, isPrivate = true)
+    AsmOps.compileField(visitor, "queue", JvmType.LinkedList, isStatic = false, isPrivate = true)
 
     // Generate the `lock` field
     AsmOps.compileField(visitor, "lock", JvmType.Lock, isStatic = false, isPrivate = true)
@@ -139,7 +139,7 @@ object GenChannelClasses {
     initMethod.visitTypeInsn(NEW, JvmType.LinkedList.name.toInternalName)
     initMethod.visitInsn(DUP)
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.LinkedList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "queue", JvmType.Queue.toDescriptor)
+    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
 
     // Init the `lock` field
     initMethod.visitVarInsn(ALOAD, 0)
@@ -217,17 +217,14 @@ object GenChannelClasses {
     */
   def genOffer(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val iLoad = AsmOps.getLoadInstruction(channelType)
-    val offer = visitor.visitMethod(ACC_PUBLIC, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.Void), null, null)
+    val offer = visitor.visitMethod(ACC_PUBLIC, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), null, null)
     offer.visitCode()
     offer.visitVarInsn(ALOAD, 0)
     offer.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
     offer.visitVarInsn(iLoad, 1)
     offer.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), false)
 
-    // TODO: Use the variable instead of just popping it
-    offer.visitInsn(POP)
-
-    offer.visitInsn(RETURN)
+    offer.visitInsn(IRETURN)
     offer.visitMaxs(1, 1)
     offer.visitEnd()
   }
@@ -240,7 +237,7 @@ object GenChannelClasses {
     isEmpty.visitCode()
     isEmpty.visitVarInsn(ALOAD, 0)
     isEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    isEmpty.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
+    isEmpty.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
     isEmpty.visitInsn(IRETURN)
     isEmpty.visitMaxs(1, 1)
     isEmpty.visitEnd()
@@ -284,10 +281,7 @@ object GenChannelClasses {
 
     // Get the `queue` field
     isFull.visitVarInsn(ALOAD, 0)
-    isFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-
-    // Get the size of the queue
-    isFull.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), true)
+    isFull.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
 
     // Get the `capacity` field
     isFull.visitVarInsn(ALOAD, 0)
@@ -318,7 +312,7 @@ object GenChannelClasses {
     size.visitCode()
     size.visitVarInsn(ALOAD, 0)
     size.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    size.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), true)
+    size.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
     size.visitInsn(IRETURN)
     size.visitMaxs(1, 1)
     size.visitEnd()
@@ -460,7 +454,10 @@ object GenChannelClasses {
     // Offer
     putValue.visitVarInsn(ALOAD, 0)
     putValue.visitVarInsn(iLoad, 1)
-    putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.Void), false)
+    putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), false)
+
+    // TODO: Use the variable instead of just popping it
+    putValue.visitInsn(POP)
 
     // Signal All
     putValue.visitVarInsn(ALOAD, 0)
@@ -476,13 +473,12 @@ object GenChannelClasses {
     putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
     putValue.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
 
-
     putValue.visitJumpInsn(GOTO, finalEnd)
-
 
     // Catch
     putValue.visitLabel(labelHandler)
-    putValue.visitVarInsn(ASTORE, 3)
+    //putValue.visitVarInsn(ASTORE, 3)
+    putValue.visitInsn(POP)
     // Start of Finally ?
     putValue.visitVarInsn(ALOAD, 0)
     putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
@@ -491,13 +487,6 @@ object GenChannelClasses {
     putValue.visitJumpInsn(GOTO, finalEnd)
 
 
-    // Finally ?
-    putValue.visitVarInsn(ALOAD, 0)
-    putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    putValue.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
-
-    putValue.visitVarInsn(ALOAD, 3)
-    putValue.visitInsn(ATHROW);
     putValue.visitLabel(finalEnd)
     putValue.visitVarInsn(ALOAD, 0)
     putValue.visitInsn(ARETURN)
