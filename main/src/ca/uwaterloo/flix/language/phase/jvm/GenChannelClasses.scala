@@ -16,8 +16,7 @@ object GenChannelClasses {
   def gen()(implicit root: Root, flix: Flix): Map[JvmName, JvmClass] = {
 
     // Type that we need a channel class for
-    val types = List(JvmType.PrimBool, JvmType.PrimChar, JvmType.PrimFloat, JvmType.PrimDouble,
-      JvmType.PrimByte, JvmType.PrimShort, JvmType.PrimInt, JvmType.PrimLong)
+    val types = List(JvmType.PrimInt)
 
     // Generating each channel class
     types.map{ tpe =>
@@ -102,6 +101,9 @@ object GenChannelClasses {
 
     // Generate `awaitNotEmpty` method
     genAwaitNotEmpty(classType, visitor)
+
+    // Generate `dummyPut` method
+    genDummyPut(classType, channelType, visitor)
 
     // Generate `putValue` method
     //genPutValue(classType, channelType, visitor)
@@ -197,16 +199,35 @@ object GenChannelClasses {
   }
 
   /**
+    * Geranrate a dummy method to put something into the queue
+    */
+  def genDummyPut(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val dummyPut = visitor.visitMethod(ACC_PUBLIC, "dummyPut", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    dummyPut.visitCode()
+    dummyPut.visitVarInsn(ALOAD, 0)
+    dummyPut.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    //dummyPut.visitVarInsn(BIPUSH, 17)
+    dummyPut.visitInsn(ICONST_1)
+    //dummyPut.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, channelType.getBoxedConvertMethod, AsmOps.getMethodDescriptor(List(channelType.getBoxedType), channelType), false)
+    dummyPut.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType), channelType.getBoxedType), false)
+    dummyPut.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "add", AsmOps.getMethodDescriptor(List(JvmType.Object), JvmType.PrimBool), false)
+    //dummyPut.visitInsn(POP)
+    dummyPut.visitInsn(RETURN)
+    dummyPut.visitMaxs(2, 2)
+    dummyPut.visitEnd()
+  }
+
+  /**
     * Generates the `poll()` method of the `classType`
     */
   def genPoll(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val iRet = AsmOps.getReturnInstruction(channelType.getBoxedType)
     val boxedValue = channelType.getBoxedType
-    val poll = visitor.visitMethod(ACC_PUBLIC, "poll", AsmOps.getMethodDescriptor(Nil, channelType.getBoxedType), null, null)
+    val poll = visitor.visitMethod(ACC_PUBLIC, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), null, null)
     poll.visitCode()
     poll.visitVarInsn(ALOAD, 0)
     poll.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    poll.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, channelType.getBoxedType), false)
+    poll.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), false)
     //poll.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType.getBoxedType), channelType), false)
     //poll.visitTypeInsn(CHECKCAST, boxedValue.getBoxedTypeString)
     poll.visitInsn(iRet)
@@ -433,8 +454,13 @@ object GenChannelClasses {
 
     getChannel.visitCode()
 
+
     // Integer = Null
     getChannel.visitInsn(ACONST_NULL)
+
+    // put dummy value into channel
+    getChannel.visitVarInsn(ALOAD, 0)
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "dummyPut", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
     getChannel.visitTryCatchBlock(labelStart, labelEnd, labelHandler, null)
 
@@ -504,10 +530,10 @@ object GenChannelClasses {
 
     // Return the value
     getChannel.visitLabel(labelEndHandler)
-    //getChannel.visitTypeInsn(CHECKCAST, channelType.getBoxedTypeString)
-    getChannel.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, channelType.getBoxedConvertMethod, AsmOps.getMethodDescriptor(List(channelType.getBoxedType), channelType), false)
-    //getChannel.visitInsn(ARETURN)
-    getChannel.visitInsn(iRet)
+    //getChannel.visitTypeInsn(CHECKCAST, "")
+    getChannel.visitMethodInsn(INVOKEVIRTUAL, channelType.getBoxedTypeString, channelType.getBoxedConvertMethod, AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
+    getChannel.visitInsn(IRETURN)
+    //getChannel.visitInsn(iRet)
     getChannel.visitMaxs(4, 4)
     getChannel.visitEnd()
   }
