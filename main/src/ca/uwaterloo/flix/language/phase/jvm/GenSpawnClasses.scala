@@ -8,11 +8,11 @@ import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes._
 
 /**
-  * Generates bytecode for the RunnableSpawn class
+  * Generates bytecode for the Spawn class
   */
-object GenRunnableSpawn {
+object GenSpawnClasses {
   /**
-    * Returns the bytecode for the RunnableSpawn class.
+    * Returns the bytecode for the Spawn class.
     */
   def gen()(implicit root: Root, flix: Flix): Map[JvmName, JvmClass] = {
     val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))
@@ -23,10 +23,10 @@ object GenRunnableSpawn {
     val visitor = AsmOps.mkClassWriter()
 
     // Class header.
-    visitor.visit(AsmOps.JavaVersion, ACC_PUBLIC + ACC_FINAL, JvmName.RunnableSpawn.toInternalName, null,
+    visitor.visit(AsmOps.JavaVersion, ACC_PUBLIC + ACC_FINAL, JvmName.Spawn.toInternalName, null,
       JvmName.Object.toInternalName, Array(JvmName.Runnable.toInternalName))
 
-    visitor.visitSource(JvmName.RunnableSpawn.name, null)
+    visitor.visitSource(JvmName.Spawn.name, null)
 
     // Context field
     AsmOps.compileField(visitor, "ctx", JvmType.Context, isStatic = false, isPrivate = true)
@@ -39,11 +39,11 @@ object GenRunnableSpawn {
 
     genRun(visitor)
 
-    Map(JvmName.RunnableSpawn -> JvmClass(JvmName.RunnableSpawn, visitor.toByteArray))
+    Map(JvmName.Spawn -> JvmClass(JvmName.Spawn, visitor.toByteArray))
   }
 
   /**
-    * Generating constructor for the class `RunnableSpawn`
+    * Generating constructor for the class `Spawn`
     */
   def genConstructor(visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))
@@ -59,15 +59,15 @@ object GenRunnableSpawn {
     initMethod.visitTypeInsn(NEW, JvmName.Context.toInternalName)
     initMethod.visitInsn(DUP)
     initMethod.visitMethodInsn(INVOKESPECIAL, JvmName.Context.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    initMethod.visitFieldInsn(PUTFIELD, JvmName.RunnableSpawn.toInternalName, "ctx", JvmType.Context.toDescriptor)
+    initMethod.visitFieldInsn(PUTFIELD, JvmName.Spawn.toInternalName, "ctx", JvmType.Context.toDescriptor)
 
     initMethod.visitVarInsn(ALOAD, 0)
     initMethod.visitVarInsn(ALOAD, 1)
     initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitFieldInsn(GETFIELD, JvmName.RunnableSpawn.toInternalName, "ctx", JvmType.Context.toDescriptor)
+    initMethod.visitFieldInsn(GETFIELD, JvmName.Spawn.toInternalName, "ctx", JvmType.Context.toDescriptor)
     initMethod.visitMethodInsn(INVOKEINTERFACE, functionType.name.toInternalName, "copy",
       AsmOps.getMethodDescriptor(List(JvmType.Context), functionType), true)
-    initMethod.visitFieldInsn(PUTFIELD, JvmName.RunnableSpawn.toInternalName, "fn", functionType.toDescriptor)
+    initMethod.visitFieldInsn(PUTFIELD, JvmName.Spawn.toInternalName, "fn", functionType.toDescriptor)
 
     initMethod.visitInsn(RETURN)
     initMethod.visitMaxs(2, 2)
@@ -75,17 +75,17 @@ object GenRunnableSpawn {
   }
 
   /**
-    * Generating run method for the class `RunnableSpawn`
+    * Generating run method for the class `Spawn`
     */
   def genRun(visitor: ClassWriter)(implicit  root: Root, flix: Flix): Unit = {
     val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))
     val runMethod = visitor.visitMethod(ACC_PUBLIC, "run", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
     runMethod.visitCode()
     runMethod.visitVarInsn(ALOAD, 0)
-    runMethod.visitFieldInsn(GETFIELD, JvmName.RunnableSpawn.toInternalName, "fn", functionType.toDescriptor)
+    runMethod.visitFieldInsn(GETFIELD, JvmName.Spawn.toInternalName, "fn", functionType.toDescriptor)
 
     runMethod.visitVarInsn(ALOAD, 0)
-    runMethod.visitFieldInsn(GETFIELD, JvmName.RunnableSpawn.toInternalName, "ctx", JvmType.Context.toDescriptor)
+    runMethod.visitFieldInsn(GETFIELD, JvmName.Spawn.toInternalName, "ctx", JvmType.Context.toDescriptor)
     runMethod.visitMethodInsn(INVOKEINTERFACE, functionType.name.toInternalName, "apply",
       AsmOps.getMethodDescriptor(List(JvmType.Context), JvmType.Void), true)
 

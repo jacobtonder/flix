@@ -134,9 +134,9 @@ object JvmName {
   val Thread: JvmName = JvmName(List("java", "lang"), "Thread")
 
   /**
-    * The `ca.uwaterloo.flix.RunnableSpawn` name.
+    * The `ca.uwaterloo.flix.Spawn` name.
     */
-  val RunnableSpawn: JvmName = JvmName(List("ca", "uwaterloo", "flix"), "RunnableSpawn")
+  val Spawn: JvmName = JvmName(List("ca", "uwaterloo", "flix"), "Spawn")
 
   /**
     * The `ca.uwaterloo.flix.api.Tuple` name

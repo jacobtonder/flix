@@ -88,9 +88,9 @@ object JvmType {
   val Unit: JvmType.Reference = Reference(JvmName.Unit)
 
   /**
-    * The `ca.uwaterloo.flix.api.RunnableSpawn` type
+    * The `ca.uwaterloo.flix.api.Spawn` type
     */
-  val RunnableSpawn: JvmType.Reference = Reference(JvmName.RunnableSpawn)
+  val Spawn: JvmType.Reference = Reference(JvmName.Spawn)
 
   /**
     * The `java.lang.Runnable` type

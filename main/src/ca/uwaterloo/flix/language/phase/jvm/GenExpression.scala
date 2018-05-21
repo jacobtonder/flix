@@ -712,8 +712,8 @@ object GenExpression {
       // Adding source line number for debugging
       addSourceLine(visitor, loc)
 
-      // Instantiating a new object of RunnableSpawn
-      visitor.visitTypeInsn(NEW, JvmName.RunnableSpawn.toInternalName)
+      // Instantiating a new object of Spawn
+      visitor.visitTypeInsn(NEW, JvmName.Spawn.toInternalName)
 
       // Duplicating the class
       visitor.visitInsn(DUP)
@@ -722,7 +722,7 @@ object GenExpression {
       compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
 
       // Invoking the constructor
-      visitor.visitMethodInsn(INVOKESPECIAL, JvmName.RunnableSpawn.toInternalName, "<init>", AsmOps.getMethodDescriptor(List(functionType), JvmType.Void), false)
+      visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Spawn.toInternalName, "<init>", AsmOps.getMethodDescriptor(List(functionType), JvmType.Void), false)
 
       visitor.visitVarInsn(ASTORE, 1)
 
