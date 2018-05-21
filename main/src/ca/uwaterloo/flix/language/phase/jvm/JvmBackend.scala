@@ -92,6 +92,11 @@ object JvmBackend extends Phase[Root, Root] {
     val unitClass = GenUnitClass.gen()
 
     //
+    // Generate spawn class.
+    //
+    val spawnClass = GenSpawnClasses.gen()
+
+    //
     // Generate the Context class.
     //
     val contextClass = GenContext.gen(namespaces)
@@ -167,6 +172,7 @@ object JvmBackend extends Phase[Root, Root] {
     val allClasses = List(
       mainClass,
       unitClass,
+      spawnClass,
       contextClass,
       namespaceClasses,
       continuationInterfaces,

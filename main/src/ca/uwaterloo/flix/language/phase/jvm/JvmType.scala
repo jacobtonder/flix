@@ -128,6 +128,16 @@ object JvmType {
   val Unit: JvmType.Reference = Reference(JvmName.Unit)
 
   /**
+    * The `ca.uwaterloo.flix.api.Spawn` type
+    */
+  val Spawn: JvmType.Reference = Reference(JvmName.Spawn)
+
+  /**
+    * The `java.lang.Runnable` type
+    */
+  val Runnable: JvmType.Reference = Reference(JvmName.Runnable)
+
+  /**
     * The `java.lang.BigInteger` type.
     */
   val BigInteger: JvmType.Reference = Reference(JvmName.BigInteger)
