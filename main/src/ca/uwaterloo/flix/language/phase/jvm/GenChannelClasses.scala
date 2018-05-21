@@ -17,8 +17,8 @@ object GenChannelClasses {
 
     // Type that we need a channel class for
     val types = List(JvmType.PrimBool, JvmType.PrimChar, JvmType.PrimFloat, JvmType.PrimDouble,
-      JvmType.PrimByte, JvmType.PrimShort, JvmType.PrimInt, JvmType.PrimLong, JvmType.Tuple,
-      JvmType.Unit, JvmType.Object)
+      JvmType.PrimByte, JvmType.PrimShort, JvmType.PrimInt, JvmType.PrimLong/*, JvmType.Tuple,
+      JvmType.Unit, JvmType.Object*/)
 
     // Generating each channel class
     types.map{ tpe =>
@@ -222,7 +222,8 @@ object GenChannelClasses {
     offer.visitVarInsn(ALOAD, 0)
     offer.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
     offer.visitVarInsn(iLoad, 1)
-    offer.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), false)
+    offer.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType), channelType.getBoxedType), false)
+    offer.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(JvmType.Object), JvmType.PrimBool), false)
 
     offer.visitInsn(IRETURN)
     offer.visitMaxs(1, 1)
@@ -425,10 +426,9 @@ object GenChannelClasses {
     val labelStart = new Label()
     val labelEnd = new Label()
     val labelHandler = new Label()
-    val labelEndHandler = new Label()
     val loopStart = new Label()
     val loopEnd = new Label()
-    val finalEnd = new Label()
+    val labelReturn = new Label()
     putValue.visitCode()
 
     // Lock
@@ -463,7 +463,7 @@ object GenChannelClasses {
     putValue.visitVarInsn(ALOAD, 0)
     putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
-    // Clear Selects
+    // TODO: Clear Selects
     //putValue.visitVarInsn(ALOAD, 0)
     //putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "clearSelects", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
@@ -473,21 +473,17 @@ object GenChannelClasses {
     putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
     putValue.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
 
-    putValue.visitJumpInsn(GOTO, finalEnd)
+    putValue.visitJumpInsn(GOTO, labelReturn)
 
     // Catch
     putValue.visitLabel(labelHandler)
-    //putValue.visitVarInsn(ASTORE, 3)
     putValue.visitInsn(POP)
-    // Start of Finally ?
+
     putValue.visitVarInsn(ALOAD, 0)
     putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
     putValue.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
-    // End of Finally ?
-    putValue.visitJumpInsn(GOTO, finalEnd)
 
-
-    putValue.visitLabel(finalEnd)
+    putValue.visitLabel(labelReturn)
     putValue.visitVarInsn(ALOAD, 0)
     putValue.visitInsn(ARETURN)
     putValue.visitMaxs(4, 4)
