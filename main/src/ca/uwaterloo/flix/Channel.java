@@ -4,7 +4,7 @@ import java.util.*;
 import java.util.concurrent.locks.*;
 
 public class Channel {
-    private Queue<Object> queue;
+    private LinkedList<Object> queue;
     private Integer capacity;
     private Lock lock;
     private Condition channelNotFull;
@@ -31,7 +31,7 @@ public class Channel {
                 awaitNotFull();
             }
 
-            value = poll();
+            value = this.queue.poll();
 
             if (value != null) {
                 signalNotEmpty();
