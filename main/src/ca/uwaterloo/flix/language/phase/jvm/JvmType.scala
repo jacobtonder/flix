@@ -88,11 +88,6 @@ object JvmType {
   val Context: JvmType.Reference = Reference(JvmName.Context)
 
   /**
-    *  The `java.util.Queue` type.
-    */
-  val Queue: JvmType.Reference = Reference(JvmName.Queue)
-
-  /**
     *  The `java.util.List` type.
     */
   val JavaList: JvmType.Reference = Reference(JvmName.JavaList)

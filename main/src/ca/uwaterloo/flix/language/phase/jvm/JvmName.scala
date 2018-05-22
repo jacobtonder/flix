@@ -29,11 +29,6 @@ object JvmName {
   val Context: JvmName = JvmName(Nil, "Context")
 
   /**
-    *  The `java.util.Queue` name.
-    */
-  val Queue: JvmName = JvmName(List("java", "util"), "Queue")
-
-  /**
     *  The `java.util.List` name.
     */
   val JavaList: JvmName = JvmName(List("java", "util"), "List")
