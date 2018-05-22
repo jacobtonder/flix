@@ -738,6 +738,9 @@ object GenExpression {
       // Start thread
       visitor.visitMethodInsn(INVOKEVIRTUAL, JvmName.Thread.toInternalName, "start", "()V", false)
 
+      visitor.visitMethodInsn(INVOKESTATIC, JvmName.Unit.toInternalName, "getInstance",
+        AsmOps.getMethodDescriptor(Nil, JvmType.Unit), false)
+
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
       val classType = JvmOps.getChannelClassType(exp1.tpe)
 
