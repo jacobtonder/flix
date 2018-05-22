@@ -38,6 +38,46 @@ sealed trait JvmType {
     case JvmType.Reference(name) => name.toDescriptor
   }
 
+  def getBoxedTypeString: String = this match {
+    case JvmType.Void => "java/lang/Void"
+    case JvmType.PrimBool => JvmType.Boolean.name.toInternalName
+    case JvmType.PrimChar => JvmType.Character.name.toInternalName
+    case JvmType.PrimByte => JvmType.Byte.name.toInternalName
+    case JvmType.PrimShort => JvmType.Short.name.toInternalName
+    case JvmType.PrimInt => JvmType.Integer.name.toInternalName
+    case JvmType.PrimLong => JvmType.Long.name.toInternalName
+    case JvmType.PrimFloat => JvmType.Float.name.toInternalName
+    case JvmType.PrimDouble => JvmType.Double.name.toInternalName
+    case JvmType.Object => JvmType.Object.name.toInternalName
+    case JvmType.Reference(name) => name.toDescriptor
+  }
+
+  def getBoxedType: JvmType = this match {
+    case JvmType.Void => JvmType.Void
+    case JvmType.PrimBool => JvmType.Boolean
+    case JvmType.PrimChar => JvmType.Character
+    case JvmType.PrimByte => JvmType.Byte
+    case JvmType.PrimShort => JvmType.Short
+    case JvmType.PrimInt => JvmType.Integer
+    case JvmType.PrimLong => JvmType.Long
+    case JvmType.PrimFloat => JvmType.Float
+    case JvmType.PrimDouble => JvmType.Double
+  //case JvmType.Object => JvmType.Object
+    case JvmType.Reference(name) => JvmType.Reference(name)
+  }
+
+  def getBoxedConvertMethod: String = this match {
+    case JvmType.PrimBool => "booleanValue"
+    case JvmType.PrimChar => "charValue"
+    case JvmType.PrimByte => "byteValue"
+    case JvmType.PrimShort => "shortValue"
+    case JvmType.PrimInt=> "intValue"
+    case JvmType.PrimLong => "LongValue"
+    case JvmType.PrimFloat => "FloatValue"
+    case JvmType.PrimDouble => "DoubleValue"
+    case JvmType.Reference(name) => name.toDescriptor
+  }
+
 }
 
 object JvmType {
@@ -103,9 +143,49 @@ object JvmType {
   val BigInteger: JvmType.Reference = Reference(JvmName.BigInteger)
 
   /**
+    * The `java.lang.Boolean` type.
+    */
+  val Boolean: JvmType.Reference = Reference(JvmName.Boolean)
+
+  /**
+    * The `java.lang.Byte` type.
+    */
+  val Byte: JvmType.Reference = Reference(JvmName.Byte)
+
+  /**
+    * The `java.lang.Character` type.
+    */
+  val Character: JvmType.Reference = Reference(JvmName.Character)
+
+ /**
+   * The `java.lang.Short` type.
+   */
+  val Short: JvmType.Reference = Reference(JvmName.Short)
+
+  /**
+    * The `java.lang.Integer` type.
+    */
+  val Integer: JvmType.Reference = Reference(JvmName.Integer)
+
+  /**
     * The `java.lang.Object` type.
     */
   val Object: JvmType.Reference = Reference(JvmName.Object)
+
+  /**
+    * The `java.lang.Long` type.
+    */
+  val Long: JvmType.Reference = Reference(JvmName.Long)
+
+  /**
+    * The `java.lang.Float` type.
+    */
+  val Float: JvmType.Reference = Reference(JvmName.Float)
+
+  /**
+    * The `java.lang.Double` type.
+    */
+  val Double: JvmType.Reference = Reference(JvmName.Double)
 
   /**
     * The `java.lang.String` type.
