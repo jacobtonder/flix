@@ -17,7 +17,7 @@ object GenChannelClasses {
 
     // Type that we need a channel class for
     val types = List(JvmType.PrimBool, JvmType.PrimChar, JvmType.PrimFloat, JvmType.PrimDouble,
-      JvmType.PrimByte, JvmType.PrimShort, JvmType.PrimInt, JvmType.PrimLong)
+      JvmType.PrimByte, JvmType.PrimShort, JvmType.PrimInt, JvmType.PrimLong, JvmType.Object)
 
     // Generating each channel class
     types.map{ tpe =>
@@ -104,7 +104,7 @@ object GenChannelClasses {
     genAwaitNotEmpty(classType, visitor)
 
     // Generate `dummyPut` method
-    genDummyPut(classType, channelType, visitor)
+    //genDummyPut(classType, channelType, visitor)
 
     // Generate `putValue` method
     //genPutValue(classType, channelType, visitor)
@@ -229,7 +229,7 @@ object GenChannelClasses {
     poll.visitVarInsn(ALOAD, 0)
     poll.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
     poll.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), false)
-    poll.visitInsn(iRet)
+    poll.visitInsn(ARETURN)
     poll.visitMaxs(1, 1)
     poll.visitEnd()
   }
@@ -457,10 +457,6 @@ object GenChannelClasses {
     // Integer = Null
     getChannel.visitInsn(ACONST_NULL)
 
-    // put dummy value into channel
-    getChannel.visitVarInsn(ALOAD, 0)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "dummyPut", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-
     getChannel.visitTryCatchBlock(labelStart, labelEnd, labelHandler, null)
 
     // Lock()
@@ -504,10 +500,7 @@ object GenChannelClasses {
 
     // Catch block
     getChannel.visitLabel(labelHandler)
-    //getChannel.visitInsn(ICONST_0)
-    //getChannel.visitInsn(DUP)
     getChannel.visitVarInsn(ASTORE, 4)
-    //getChannel.visitVarInsn(ASTORE, 3)
 
     // Finally block - after catch block
     getChannel.visitVarInsn(ALOAD, 0)
@@ -522,8 +515,9 @@ object GenChannelClasses {
 
     // Return the value
     getChannel.visitLabel(labelEndHandler)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, channelType.getBoxedTypeString, channelType.getBoxedConvertMethod, AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
-    //getChannel.visitInsn(IRETURN)
+    if (channelType != JvmType.Object) {
+      getChannel.visitMethodInsn(INVOKEVIRTUAL, channelType.getBoxedTypeString, channelType.getBoxedConvertMethod, AsmOps.getMethodDescriptor(Nil, channelType), false)
+    }
     getChannel.visitInsn(iRet)
     getChannel.visitMaxs(4, 4)
     getChannel.visitEnd()

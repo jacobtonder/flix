@@ -72,9 +72,9 @@ sealed trait JvmType {
     case JvmType.PrimByte => "byteValue"
     case JvmType.PrimShort => "shortValue"
     case JvmType.PrimInt=> "intValue"
-    case JvmType.PrimLong => "LongValue"
-    case JvmType.PrimFloat => "FloatValue"
-    case JvmType.PrimDouble => "DoubleValue"
+    case JvmType.PrimLong => "longValue"
+    case JvmType.PrimFloat => "floatValue"
+    case JvmType.PrimDouble => "doubleValue"
     case JvmType.Reference(name) => name.toDescriptor
   }
 
