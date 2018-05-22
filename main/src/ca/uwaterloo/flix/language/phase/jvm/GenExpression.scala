@@ -730,13 +730,13 @@ object GenExpression {
       visitor.visitInsn(DUP)
 
       visitor.visitVarInsn(ALOAD, 1)
-      visitor.visitLdcInsn("Spawn Process")
+      visitor.visitLdcInsn(s"Spawn Process location: ${loc.format}")
       visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Thread.toInternalName, "<init>",
         AsmOps.getMethodDescriptor(List(JvmType.Runnable, JvmType.String), JvmType.Void), false)
 
       visitor.visitMethodInsn(INVOKEVIRTUAL, JvmName.Thread.toInternalName, "start", "()V", false)
 
-      visitor.visitInsn(RETURN)
+      visitor.visitVarInsn(ALOAD, 1)
 
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
       val classType = JvmOps.getChannelClassType(exp1.tpe)
