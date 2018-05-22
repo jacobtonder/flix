@@ -241,7 +241,7 @@ object GenChannelClasses {
       offer.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType), channelType.getBoxedType), false)
     }
 
-
+    // Invoke the method `offer` on the `queue` field
     offer.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(JvmType.Object), JvmType.PrimBool), false)
 
     // Return
