@@ -708,35 +708,35 @@ object GenExpression {
     case Expression.Spawn(exp, tpe, loc) =>
       val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))
 
-      // Adding source line number for debugging
+      // Add source line number for debugging
       addSourceLine(visitor, loc)
 
-      // Instantiating a new object of Spawn
-      visitor.visitTypeInsn(NEW, JvmName.Spawn.toInternalName)
+      // Instantiate a new object of Thread
+      visitor.visitTypeInsn(NEW, JvmName.Thread.toInternalName)
+      // Duplicate the instance
+      visitor.visitInsn(DUP)
 
-      // Duplicating the class
+      // Instantiate a new object of Spawn
+      visitor.visitTypeInsn(NEW, JvmName.Spawn.toInternalName)
+      // Duplicate the instance
       visitor.visitInsn(DUP)
 
       // Evaluate the exp
       compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
 
-      // Invoking the constructor
+      // Invoke Spawn constructor
       visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Spawn.toInternalName, "<init>", AsmOps.getMethodDescriptor(List(functionType), JvmType.Void), false)
 
-      visitor.visitVarInsn(ASTORE, 1)
-
-      visitor.visitTypeInsn(NEW, JvmName.Thread.toInternalName)
-
-      visitor.visitInsn(DUP)
-
-      visitor.visitVarInsn(ALOAD, 1)
+      // Push thread name to the stack
       visitor.visitLdcInsn(s"Spawn Process location: ${loc.format}")
+      // Invoke Thread constructor
       visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Thread.toInternalName, "<init>",
         AsmOps.getMethodDescriptor(List(JvmType.Runnable, JvmType.String), JvmType.Void), false)
+      // Duplicate the instance
+      visitor.visitInsn(DUP)
 
+      // Start thread
       visitor.visitMethodInsn(INVOKEVIRTUAL, JvmName.Thread.toInternalName, "start", "()V", false)
-
-      visitor.visitVarInsn(ALOAD, 1)
 
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
       val classType = JvmOps.getChannelClassType(exp1.tpe)
