@@ -18,12 +18,11 @@ package ca.uwaterloo.flix.runtime.interpreter
 
 import java.util
 import java.util.concurrent.locks.{Condition, Lock}
+import java.util.concurrent.atomic.{AtomicInteger}
 
 import ca.uwaterloo.flix.api
 import ca.uwaterloo.flix.language.ast.{Symbol, Type}
 import ca.uwaterloo.flix.util.InternalRuntimeException
-
-import scala.collection.mutable.ListBuffer
 
 sealed trait Value
 
@@ -167,11 +166,17 @@ object Value {
     final override def toString: String = throw InternalRuntimeException(s"Value.Tuple does not support `toString`.")
   }
 
-  case class Channel(queue: util.Queue[AnyRef], capacity: Int, cLock: Lock, bufferNotFull: Condition, bufferNotEmpty: Condition, conditions: ListBuffer[(Lock, Condition)]) extends Value {
+  object Channel {
+    val counter = new AtomicInteger()
+  }
+
+  case class Channel(id: Int, queue: util.Queue[AnyRef], capacity: Int, lock: Lock, bufferNotFull: Condition, bufferNotEmpty: Condition, conditions: util.List[(Lock, Condition)]) extends Value with Comparable[Channel] {
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
     final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
 
     final override def toString: String = s"Channel[] "
+
+    final override def compareTo(o: Channel): Int = id.compare(o.id)
   }
 }

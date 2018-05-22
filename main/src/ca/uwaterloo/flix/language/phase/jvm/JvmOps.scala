@@ -63,7 +63,7 @@ object JvmOps {
       case Type.Int64 => JvmType.PrimLong
       case Type.BigInt => JvmType.BigInteger
       case Type.Str => JvmType.String
-      case Type.Channel => JvmType.Channel
+      case Type.Channel => JvmOps.getChannelClassType(tpe)
       case Type.Native => JvmType.Object
       case Type.Ref => getCellClassType(tpe)
       case Type.Arrow(l) => getFunctionInterfaceType(tpe)
@@ -817,6 +817,8 @@ object JvmOps {
         visitExp(exp)
       case Expression.PutChannel(exp1, exp2, tpe, loc) =>
         visitExp(exp1) ++ visitExp(exp2)
+      case Expression.Spawn(exp, tpe, loc) =>
+        visitExp(exp)
 
       case Expression.Ref(exp, tpe, loc) => visitExp(exp)
       case Expression.Deref(exp, tpe, loc) => visitExp(exp)
@@ -1034,6 +1036,7 @@ object JvmOps {
       case Expression.NewChannel(exp, ctpe, tpe, loc) => visitExp(exp) + ctpe + tpe
       case Expression.GetChannel(exp, tpe, loc) => visitExp(exp) + tpe
       case Expression.PutChannel(exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2) + tpe
+      case Expression.Spawn(exp, tpe, loc) => visitExp(exp) + tpe
 
       case Expression.Ref(exp, tpe, loc) => visitExp(exp) + tpe
       case Expression.Deref(exp, tpe, loc) => visitExp(exp) + tpe

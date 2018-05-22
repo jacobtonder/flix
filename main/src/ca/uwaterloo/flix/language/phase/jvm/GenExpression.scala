@@ -26,6 +26,7 @@ import ca.uwaterloo.flix.util.{InternalCompilerException, Optimization}
 import org.objectweb.asm
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
+import ca.uwaterloo.flix.language.ast.Type
 
 /**
   * Generate expression
@@ -694,16 +695,65 @@ object GenExpression {
       visitor.visitMethodInsn(INVOKESPECIAL, classType.name.toInternalName, "<init>", constructorDescriptor, false)
 
     case Expression.GetChannel(exp, tpe, loc) =>
-      val classType = JvmOps.getChannelClassType(tpe)
+      val classType = JvmOps.getChannelClassType(exp.tpe)
       // Adding source line number for debugging
       addSourceLine(visitor, loc)
       // Evaluate the underlying expression
       compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
       // Constructor descriptor
-      val constructorDescriptor = AsmOps.getMethodDescriptor(Nil, JvmType.Void)
+      val methodDescriptor = AsmOps.getMethodDescriptor(Nil, JvmOps.getErasedJvmType(tpe))
       // Call the constructor
-      visitor.visitMethodInsn(INVOKESPECIAL, classType.name.toInternalName, "getValue", constructorDescriptor, false)
+      visitor.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "getValue", methodDescriptor, false)
 
+    case Expression.PutChannel(exp1, exp2, tpe, loc) =>
+      val classType = JvmOps.getChannelClassType(exp1.tpe)
+
+      // Adding source line number for debugging
+      addSourceLine(visitor, loc)
+      // Evaluate the underlying expression
+      compileExpression(exp1, visitor, currentClass, lenv0, entryPoint)
+      // Evaluate the underlying expression
+      compileExpression(exp2, visitor, currentClass, lenv0, entryPoint)
+      // Constructor descriptor
+      val methodDescriptor = AsmOps.getMethodDescriptor(List(JvmOps.getErasedJvmType(exp2.tpe)), classType)
+      // Call the constructor
+      visitor.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "putValue", methodDescriptor, false)
+
+    case Expression.Spawn(exp, tpe, loc) =>
+      val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))
+
+      // Add source line number for debugging
+      addSourceLine(visitor, loc)
+
+      // Instantiate a new object of Thread
+      visitor.visitTypeInsn(NEW, JvmName.Thread.toInternalName)
+      // Duplicate the instance
+      visitor.visitInsn(DUP)
+
+      // Instantiate a new object of Spawn
+      visitor.visitTypeInsn(NEW, JvmName.Spawn.toInternalName)
+      // Duplicate the instance
+      visitor.visitInsn(DUP)
+
+      // Evaluate the exp
+      compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
+
+      // Invoke Spawn constructor
+      visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Spawn.toInternalName, "<init>", AsmOps.getMethodDescriptor(List(functionType), JvmType.Void), false)
+
+      // Push thread name to the stack
+      visitor.visitLdcInsn(s"Spawn Process location: ${loc.format}")
+      // Invoke Thread constructor
+      visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Thread.toInternalName, "<init>",
+        AsmOps.getMethodDescriptor(List(JvmType.Runnable, JvmType.String), JvmType.Void), false)
+      // Duplicate the instance
+      visitor.visitInsn(DUP)
+
+      // Start thread
+      visitor.visitMethodInsn(INVOKEVIRTUAL, JvmName.Thread.toInternalName, "start", "()V", false)
+
+      visitor.visitMethodInsn(INVOKESTATIC, JvmName.Unit.toInternalName, "getInstance",
+        AsmOps.getMethodDescriptor(Nil, JvmType.Unit), false)
 
     case Expression.Ref(exp, tpe, loc) =>
       // Adding source line number for debugging
