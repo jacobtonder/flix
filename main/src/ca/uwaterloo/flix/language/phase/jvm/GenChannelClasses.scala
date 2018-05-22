@@ -59,10 +59,7 @@ object GenChannelClasses {
     genConstructor(classType, channelType, visitor)
 
     // Generate `getValue` method
-    //genGetValue(classType, channelType, visitor)
-
-    // Generate `getValue` method
-    genGetChannel(classType, channelType, visitor)
+    genGetValue(classType, channelType, visitor)
 
     // Generate `poll` method
     genPoll(classType, channelType, visitor)
@@ -180,23 +177,6 @@ object GenChannelClasses {
     initMethod.visitInsn(RETURN)
     initMethod.visitMaxs(0, 2)
     initMethod.visitEnd()
-  }
-
-  /**
-    * Generates the `getValue()` method of the `classType`
-    */
-  def genGetValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val iLoad = AsmOps.getLoadInstruction(channelType)
-    val iRet = AsmOps.getReturnInstruction(channelType)
-    val getValue = visitor.visitMethod(ACC_PUBLIC, "getValue", AsmOps.getMethodDescriptor(Nil, channelType), null, null)
-    getValue.visitCode()
-
-    getValue.visitVarInsn(ALOAD, 0)
-    getValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    getValue.visitMethodInsn(INVOKEINTERFACE, "java/util/concurrent/BlockingQueue", "take", AsmOps.getMethodDescriptor(Nil, channelType), true)
-    getValue.visitInsn(iRet)
-    getValue.visitMaxs(1, 1)
-    getValue.visitEnd()
   }
 
   /**
@@ -441,9 +421,9 @@ object GenChannelClasses {
     awaitNotEmpty.visitEnd()
   }
 
-  def genGetChannel(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+  def genGetValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val iRet = AsmOps.getReturnInstruction(channelType)
-    val getChannel = visitor.visitMethod(ACC_PUBLIC, "getChannel", AsmOps.getMethodDescriptor(Nil, channelType), null, Array(JvmName.InterruptedException.toInternalName))
+    val getChannel = visitor.visitMethod(ACC_PUBLIC, "getValue", AsmOps.getMethodDescriptor(Nil, channelType), null, Array(JvmName.InterruptedException.toInternalName))
     val loopStart = new Label()
     val loopEnd = new Label()
     val ifNullFalse = new Label()
