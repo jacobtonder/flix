@@ -62,7 +62,7 @@ sealed trait JvmType {
     case JvmType.PrimLong => JvmType.Long
     case JvmType.PrimFloat => JvmType.Float
     case JvmType.PrimDouble => JvmType.Double
-  //case JvmType.Object => JvmType.Object
+    //case JvmType.Object => JvmType.Object
     case JvmType.Reference(name) => JvmType.Reference(name)
   }
 
@@ -72,9 +72,9 @@ sealed trait JvmType {
     case JvmType.PrimByte => "byteValue"
     case JvmType.PrimShort => "shortValue"
     case JvmType.PrimInt=> "intValue"
-    case JvmType.PrimLong => "LongValue"
-    case JvmType.PrimFloat => "FloatValue"
-    case JvmType.PrimDouble => "DoubleValue"
+    case JvmType.PrimLong => "longValue"
+    case JvmType.PrimFloat => "floatValue"
+    case JvmType.PrimDouble => "doubleValue"
     case JvmType.Reference(name) => name.toDescriptor
   }
 
@@ -157,9 +157,9 @@ object JvmType {
     */
   val Character: JvmType.Reference = Reference(JvmName.Character)
 
- /**
-   * The `java.lang.Short` type.
-   */
+  /**
+    * The `java.lang.Short` type.
+    */
   val Short: JvmType.Reference = Reference(JvmName.Short)
 
   /**

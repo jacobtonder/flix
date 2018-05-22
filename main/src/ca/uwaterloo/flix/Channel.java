@@ -36,7 +36,7 @@ public class Channel implements Comparable<Channel> {
                 awaitNotFull();
             }
 
-            value = poll();
+            value = this.queue.poll();
 
             if (value != null) {
                 signalNotEmpty();
