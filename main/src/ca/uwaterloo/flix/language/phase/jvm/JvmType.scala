@@ -168,6 +168,11 @@ object JvmType {
   val Integer: JvmType.Reference = Reference(JvmName.Integer)
 
   /**
+    * The `java.lang.Object` type.
+    */
+  val Object: JvmType.Reference = Reference(JvmName.Object)
+
+  /**
     * The `java.lang.Long` type.
     */
   val Long: JvmType.Reference = Reference(JvmName.Long)
@@ -181,11 +186,6 @@ object JvmType {
     * The `java.lang.Double` type.
     */
   val Double: JvmType.Reference = Reference(JvmName.Double)
-
-  /**
-    * The `java.lang.Object` type.
-    */
-  val Object: JvmType.Reference = Reference(JvmName.Object)
 
   /**
     * The `java.lang.String` type.

@@ -107,7 +107,7 @@ object GenChannelClasses {
     //genDummyPut(classType, channelType, visitor)
 
     // Generate `putValue` method
-    //genPutValue(classType, channelType, visitor)
+    genPutValue(classType, channelType, visitor)
 
     // Generate the `toString` method.
     AsmOps.compileExceptionThrowerMethod(visitor, ACC_PUBLIC + ACC_FINAL, "toString", AsmOps.getMethodDescriptor(Nil, JvmType.String),
@@ -244,7 +244,11 @@ object GenChannelClasses {
     offer.visitVarInsn(ALOAD, 0)
     offer.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
     offer.visitVarInsn(iLoad, 1)
-    offer.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), false)
+    if (channelType != JvmType.Object) {
+      offer.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType), channelType.getBoxedType), false)
+    }
+    offer.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(JvmType.Object), JvmType.PrimBool), false)
+
     offer.visitInsn(IRETURN)
     offer.visitMaxs(1, 1)
     offer.visitEnd()
@@ -302,10 +306,7 @@ object GenChannelClasses {
 
     // Get the `queue` field
     isFull.visitVarInsn(ALOAD, 0)
-    isFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-
-    // Get the size of the queue
-    isFull.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), true)
+    isFull.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
 
     // Get the `capacity` field
     isFull.visitVarInsn(ALOAD, 0)
@@ -336,7 +337,7 @@ object GenChannelClasses {
     size.visitCode()
     size.visitVarInsn(ALOAD, 0)
     size.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    size.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), true)
+    size.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
     size.visitInsn(IRETURN)
     size.visitMaxs(1, 1)
     size.visitEnd()
@@ -527,11 +528,72 @@ object GenChannelClasses {
     * Generates the `putValue()` method of the `classType` with value of type `channelType`
     */
   def genPutValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val putValue = visitor.visitMethod(ACC_PUBLIC, "putValue", AsmOps.getMethodDescriptor(List(channelType), classType), null, null)
+    val iLoad = AsmOps.getLoadInstruction(channelType)
+    val putValue = visitor.visitMethod(ACC_PUBLIC, "putValue", AsmOps.getMethodDescriptor(List(channelType), classType), null, Array(JvmName.InterruptedException.toInternalName))
+    val labelStart = new Label()
+    val labelEnd = new Label()
+    val labelHandler = new Label()
+    val loopStart = new Label()
+    val loopEnd = new Label()
+    val labelReturn = new Label()
     putValue.visitCode()
 
+    // Lock
+    putValue.visitVarInsn(ALOAD, 0)
+    putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    putValue.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+
+    putValue.visitTryCatchBlock(labelStart, labelEnd, labelHandler, null)
+
+    // Try
+    putValue.visitLabel(labelStart)
+
+    // Loop
+    putValue.visitLabel(loopStart)
+    putValue.visitVarInsn(ALOAD, 0)
+    putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "isFull", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
+    putValue.visitJumpInsn(IFEQ, loopEnd)
+    putValue.visitVarInsn(ALOAD, 0)
+    putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "awaitNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    putValue.visitJumpInsn(GOTO, loopStart)
+    putValue.visitLabel(loopEnd)
+
+    // Offer
+    putValue.visitVarInsn(ALOAD, 0)
+    putValue.visitVarInsn(iLoad, 1)
+    putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), false)
+
+    // TODO: Use the variable instead of just popping it
+    putValue.visitInsn(POP)
+
+    // Signal All
+    putValue.visitVarInsn(ALOAD, 0)
+    putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+
+    // TODO: Clear Selects
+    //putValue.visitVarInsn(ALOAD, 0)
+    //putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "clearSelects", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+
+    putValue.visitLabel(labelEnd)
+
+    putValue.visitVarInsn(ALOAD, 0)
+    putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    putValue.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+
+    putValue.visitJumpInsn(GOTO, labelReturn)
+
+    // Catch
+    putValue.visitLabel(labelHandler)
+    putValue.visitInsn(POP)
+
+    putValue.visitVarInsn(ALOAD, 0)
+    putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    putValue.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+
+    putValue.visitLabel(labelReturn)
     putValue.visitVarInsn(ALOAD, 0)
     putValue.visitInsn(ARETURN)
+    putValue.visitMaxs(4, 4)
     putValue.visitEnd()
   }
 }
