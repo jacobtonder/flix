@@ -10,7 +10,6 @@ enum Color {
     case Blue
 }
 
-/*
 
 @test
 def testNewChannel01(): Unit =
@@ -314,7 +313,6 @@ def testNewChannel99(): Channel[Channel[Channel[Channel[Unit]]]] = channel Chann
 @test
 def testNewChannel100(): Channel[Channel[Channel[Channel[(Unit, Unit)]]]] = channel Channel[Channel[Channel[(Unit, Unit)]]]
 
-*/
 
 /************ Channels with specified buffersize ***********/
 

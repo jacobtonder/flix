@@ -17,8 +17,8 @@ object GenChannelClasses {
 
     // Type that we need a channel class for
     val types = List(JvmType.PrimBool, JvmType.PrimChar, JvmType.PrimFloat, JvmType.PrimDouble,
-      JvmType.PrimByte, JvmType.PrimShort, JvmType.PrimInt, JvmType.PrimLong/*, JvmType.Tuple,
-      JvmType.Unit, JvmType.Object*/)
+      JvmType.PrimByte, JvmType.PrimShort, JvmType.PrimInt, JvmType.PrimLong,/* JvmType.Tuple,
+      JvmType.Unit,*/ JvmType.Object)
 
     // Generating each channel class
     types.map{ tpe =>
@@ -222,7 +222,9 @@ object GenChannelClasses {
     offer.visitVarInsn(ALOAD, 0)
     offer.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
     offer.visitVarInsn(iLoad, 1)
-    offer.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType), channelType.getBoxedType), false)
+    if (channelType != JvmType.Object) {
+      offer.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType), channelType.getBoxedType), false)
+    }
     offer.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(JvmType.Object), JvmType.PrimBool), false)
 
     offer.visitInsn(IRETURN)
