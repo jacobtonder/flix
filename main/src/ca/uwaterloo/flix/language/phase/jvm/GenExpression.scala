@@ -705,6 +705,14 @@ object GenExpression {
       // Call the constructor
       visitor.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "getValue", methodDescriptor, false)
 
+      if (tpe.typeConstructor.isChannel)
+      {
+        val channelType = "Channel" + "$" + JvmOps.stringify(JvmOps.getErasedJvmType(tpe.typeArguments.head))
+        val jvmChannelType = JvmType.Reference(JvmName(List("ca", "uwaterloo", "flix"), channelType))
+
+        visitor.visitTypeInsn(CHECKCAST, jvmChannelType.name.toInternalName)
+      }
+
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
       val classType = JvmOps.getChannelClassType(exp1.tpe)
 
