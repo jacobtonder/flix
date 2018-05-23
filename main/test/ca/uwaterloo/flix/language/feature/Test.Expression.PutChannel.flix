@@ -1015,126 +1015,126 @@ def testPutChannelStr05(): Bool = putChannelStr05() `assertEq!` "a"
 
 
 
-// // Channel Int
-// // 01
-//
-// def f1211(ch: Channel[Int]): Channel[Int] =
-//     ch <- 1
-//
-// def f1212(ch1: Channel[Channel[Int]], ch2: Channel[Int]): Channel[Channel[Int]] =
-//     ch1 <- ch2
-//
-// def putChannelChannelInt01(): Int =
-//     let ch1 = channel Channel[Int] 1;
-//     let ch2 = channel Int 1;
-//     let _ = spawn f1211(ch2);
-//     let _ = spawn f1212(ch1, ch2);
-//     <- <- ch1
-//
-// @test
-// def testputChannelChannelInt01(): Bool = putChannelChannelInt01() `assertEq!` 1
-//
-//
-// // 02
-// def f1221(ch: Channel[Int]): Channel[Int] =
-//     ch <- 1
-//
-// def f1222(ch1: Channel[Channel[Int]], ch2: Channel[Int]): Channel[Channel[Int]] =
-//     ch1 <- ch2
-//
-// def f1223(to: Channel[Channel[Int]], from: Channel[Channel[Int]]): Channel[Channel[Int]] =
-//     to <- <- from
-//
-// def putChannelChannelInt02(): Int =
-//     let ch1 = channel Channel[Int] 1;
-//     let ch2 = channel Channel[Int] 1;
-//     let ch3 = channel Int 1;
-//     let _ = spawn f1221(ch3);
-//     let _ = spawn f1222(ch2, ch3);
-//     let _ = spawn f1223(ch1, ch2);
-//     <- <- ch1
-//
-// @test
-// def testputChannelChannelInt02(): Bool = putChannelChannelInt02() `assertEq!` 1
-//
-//
-// // 03
-// def f1231(ch: Channel[Int]): Channel[Int] =
-//     ch <- 1
-//
-// def f1232(ch1: Channel[Channel[Int]], ch2: Channel[Int]): Channel[Channel[Int]] =
-//     ch1 <- ch2
-//
-// def f1233(to: Channel[Channel[Int]], from: Channel[Channel[Int]]): Channel[Channel[Int]] =
-//     to <- <- from
-//
-// def putChannelChannelInt03(): Int =
-//     let ch1 = channel Channel[Int] 1;
-//     let ch2 = channel Channel[Int] 1;
-//     let ch3 = channel Channel[Int] 1;
-//     let ch4 = channel Int 1;
-//     let ch5 = channel Int 1;
-//     let _ = spawn f1231(ch4);
-//     let _ = spawn f1231(ch5);
-//     let _ = spawn f1232(ch3, ch4);
-//     let _ = spawn f1232(ch3, ch5);
-//     let _ = spawn f1233(ch2, ch3);
-//     let _ = spawn f1233(ch2, ch3);
-//     let _ = spawn f1233(ch1, ch2);
-//     let _ = <- ch2;
-//     <- <- ch1
-//
-// @test
-// def testputChannelChannelInt03(): Bool = putChannelChannelInt03() `assertEq!` 1
-//
-//
-// // 04
-// def f1241(ch: Channel[Int]): Channel[Int] =
-//     ch <- 1
-//
-// def f1242(ch1: Channel[Channel[Int]], ch2: Channel[Int]): Channel[Channel[Int]] =
-//     ch1 <- ch2
-//
-// def f1243(to: Channel[Channel[Int]], through: Channel[Channel[Int]], from: Channel[Channel[Int]]): Channel[Channel[Int]] =
-//     to <- <- through <- <- from
-//
-// def putChannelChannelInt04(): Int =
-//     let ch1 = channel Channel[Int] 1;
-//     let ch2 = channel Channel[Int] 1;
-//     let ch3 = channel Channel[Int] 1;
-//     let ch4 = channel Int 1;
-//     let ch5 = channel Int 1;
-//     let _ = spawn f1241(ch4);
-//     let _ = spawn f1241(ch5);
-//     let _ = spawn f1242(ch3, ch4);
-//     let _ = spawn f1242(ch3, ch5);
-//     let _ = spawn f1243(ch1, ch2, ch3);
-//     let _ = spawn f1243(ch1, ch2, ch3);
-//     let _ = <- ch1;
-//     <- <- ch1
-//
-// @test
-// def testputChannelChannelInt04(): Bool = putChannelChannelInt04() `assertEq!` 1
-//
-//
-// // 05
-// def f1251(ch: Channel[Int]): Channel[Int] =
-//     ch <- 1
-//
-// def f1252(ch: Channel[Channel[Int]], v1: Channel[Int], v2: Channel[Int]): Channel[Channel[Int]] =
-//     ch <- v1 <- v2
-//
-// def putChannelChannelInt05(): Int =
-//     let ch1 = channel Channel[Int] 1;
-//     let ch2 = channel Int 1;
-//     let ch3 = channel Int 1;
-//     let _ = spawn f1251(ch2);
-//     let _ = spawn f1251(ch3);
-//     let _ = spawn f1252(ch1, ch2, ch3);
-//     <- <- ch1
-//
-// @test
-// def testputChannelChannelInt05(): Bool = putChannelChannelInt05() `assertEq!` 1
+// Channel Int
+// 01
+
+def f1211(ch: Channel[Int]): Channel[Int] =
+    ch <- 1
+
+def f1212(ch1: Channel[Channel[Int]], ch2: Channel[Int]): Channel[Channel[Int]] =
+    ch1 <- ch2
+
+def putChannelChannelInt01(): Int =
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Int 1;
+    let _ = spawn f1211(ch2);
+    let _ = spawn f1212(ch1, ch2);
+    <- <- ch1
+
+@test
+def testputChannelChannelInt01(): Bool = putChannelChannelInt01() `assertEq!` 1
+
+
+// 02
+def f1221(ch: Channel[Int]): Channel[Int] =
+    ch <- 1
+
+def f1222(ch1: Channel[Channel[Int]], ch2: Channel[Int]): Channel[Channel[Int]] =
+    ch1 <- ch2
+
+def f1223(to: Channel[Channel[Int]], from: Channel[Channel[Int]]): Channel[Channel[Int]] =
+    to <- <- from
+
+def putChannelChannelInt02(): Int =
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Channel[Int] 1;
+    let ch3 = channel Int 1;
+    let _ = spawn f1221(ch3);
+    let _ = spawn f1222(ch2, ch3);
+    let _ = spawn f1223(ch1, ch2);
+    <- <- ch1
+
+@test
+def testputChannelChannelInt02(): Bool = putChannelChannelInt02() `assertEq!` 1
+
+
+// 03
+def f1231(ch: Channel[Int]): Channel[Int] =
+    ch <- 1
+
+def f1232(ch1: Channel[Channel[Int]], ch2: Channel[Int]): Channel[Channel[Int]] =
+    ch1 <- ch2
+
+def f1233(to: Channel[Channel[Int]], from: Channel[Channel[Int]]): Channel[Channel[Int]] =
+    to <- <- from
+
+def putChannelChannelInt03(): Int =
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Channel[Int] 1;
+    let ch3 = channel Channel[Int] 1;
+    let ch4 = channel Int 1;
+    let ch5 = channel Int 1;
+    let _ = spawn f1231(ch4);
+    let _ = spawn f1231(ch5);
+    let _ = spawn f1232(ch3, ch4);
+    let _ = spawn f1232(ch3, ch5);
+    let _ = spawn f1233(ch2, ch3);
+    let _ = spawn f1233(ch2, ch3);
+    let _ = spawn f1233(ch1, ch2);
+    let _ = <- ch2;
+    <- <- ch1
+
+@test
+def testputChannelChannelInt03(): Bool = putChannelChannelInt03() `assertEq!` 1
+
+
+// 04
+def f1241(ch: Channel[Int]): Channel[Int] =
+    ch <- 1
+
+def f1242(ch1: Channel[Channel[Int]], ch2: Channel[Int]): Channel[Channel[Int]] =
+    ch1 <- ch2
+
+def f1243(to: Channel[Channel[Int]], through: Channel[Channel[Int]], from: Channel[Channel[Int]]): Channel[Channel[Int]] =
+    to <- <- through <- <- from
+
+def putChannelChannelInt04(): Int =
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Channel[Int] 1;
+    let ch3 = channel Channel[Int] 1;
+    let ch4 = channel Int 1;
+    let ch5 = channel Int 1;
+    let _ = spawn f1241(ch4);
+    let _ = spawn f1241(ch5);
+    let _ = spawn f1242(ch3, ch4);
+    let _ = spawn f1242(ch3, ch5);
+    let _ = spawn f1243(ch1, ch2, ch3);
+    let _ = spawn f1243(ch1, ch2, ch3);
+    let _ = <- ch1;
+    <- <- ch1
+
+@test
+def testputChannelChannelInt04(): Bool = putChannelChannelInt04() `assertEq!` 1
+
+
+// 05
+def f1251(ch: Channel[Int]): Channel[Int] =
+    ch <- 1
+
+def f1252(ch: Channel[Channel[Int]], v1: Channel[Int], v2: Channel[Int]): Channel[Channel[Int]] =
+    ch <- v1 <- v2
+
+def putChannelChannelInt05(): Int =
+    let ch1 = channel Channel[Int] 1;
+    let ch2 = channel Int 1;
+    let ch3 = channel Int 1;
+    let _ = spawn f1251(ch2);
+    let _ = spawn f1251(ch3);
+    let _ = spawn f1252(ch1, ch2, ch3);
+    <- <- ch1
+
+@test
+def testputChannelChannelInt05(): Bool = putChannelChannelInt05() `assertEq!` 1
 
 
 
