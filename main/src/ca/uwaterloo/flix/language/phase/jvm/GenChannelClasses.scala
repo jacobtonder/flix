@@ -46,11 +46,11 @@ object GenChannelClasses {
     // Generate the `capacity` field
     AsmOps.compileField(visitor, "capacity", JvmType.PrimInt, isStatic = false, isPrivate = true)
 
-    // Generate the `channelNotFull` field
-    AsmOps.compileField(visitor, "channelNotFull", JvmType.Condition, isStatic = false, isPrivate = true)
+    // Generate the `channelGetters` field
+    AsmOps.compileField(visitor, "channelGetters", JvmType.Condition, isStatic = false, isPrivate = true)
 
-    // Generate the `channelNotEmpty` field
-    AsmOps.compileField(visitor, "channelNotEmpty", JvmType.Condition, isStatic = false, isPrivate = true)
+    // Generate the `channelPutters` field
+    AsmOps.compileField(visitor, "channelPutters", JvmType.Condition, isStatic = false, isPrivate = true)
 
     // Generate the `selects` field
     AsmOps.compileField(visitor, "selects", JvmType.JavaList, isStatic = false, isPrivate = true)
@@ -88,20 +88,20 @@ object GenChannelClasses {
     // Generate `unlock` method
     genUnlock(classType, visitor)
 
-    // Generate `signalNotFull` method
-    genSignalNotFull(classType, visitor)
+    // Generate `signalGetters` method
+    genSignalGetters(classType, visitor)
 
-    // Generate `signalNotEmpty` method
-    genSignalNotEmpty(classType, visitor)
+    // Generate `signalPutters` method
+    genSignalPutters(classType, visitor)
 
     // Generate `clearSelects` method
     genClearSelects(classType, visitor)
 
-    // Generate `awaitNotFull` method
-    genAwaitNotFull(classType, visitor)
+    // Generate `awaitPutters` method
+    genAwaitPutters(classType, visitor)
 
-    // Generate `awaitNotEmpty` method
-    genAwaitNotEmpty(classType, visitor)
+    // Generate `awaitGetters` method
+    genAwaitGetters(classType, visitor)
 
     // Generate the `toString` method.
     AsmOps.compileExceptionThrowerMethod(visitor, ACC_PUBLIC + ACC_FINAL, "toString", AsmOps.getMethodDescriptor(Nil, JvmType.String),
@@ -158,19 +158,19 @@ object GenChannelClasses {
     mv.visitVarInsn(ILOAD, 1)
     mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
 
-    // Init the `channelNotFull` field
+    // Init the `channelGetters` field
     mv.visitVarInsn(ALOAD, 0)
     mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
     mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
-    mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
+    mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelGetters", JvmType.Condition.toDescriptor)
 
-    // Init the `channelNotEmpty` field
+    // Init the `channelPutters` field
     mv.visitVarInsn(ALOAD, 0)
     mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
     mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
     mv.visitVarInsn(ALOAD, 0)
     mv.visitInsn(SWAP)
-    mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
+    mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelPutters", JvmType.Condition.toDescriptor)
 
     // Return
     mv.visitInsn(RETURN)
@@ -179,7 +179,7 @@ object GenChannelClasses {
   }
 
   /**
-    * Generates the `putValue()` method of the `classType` with value of type `channelType`
+    * Generates the `getValue()` method of the `classType` with value of type `channelType`
     *
     * public `tpe` getValue() throws InterruptedException {
     *     `tpe` value = null;
@@ -187,12 +187,12 @@ object GenChannelClasses {
     *
     *     try {
     *         while(this.isEmpty()) {
-    *             this.awaitNotFull();
+    *             this.awaitPutters();
     *         }
     *
     *         value = this.poll();
     *         if (value != null) {
-    *             this.signalNotEmpty();
+    *             this.signalPutters();
     *         }
     *     } finally {
     *         this.unlock();
@@ -234,7 +234,7 @@ object GenChannelClasses {
 
     mv.visitJumpInsn(IFEQ, loopEnd)
     mv.visitVarInsn(ALOAD, 0)
-    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "awaitNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "awaitPutters", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
     mv.visitJumpInsn(GOTO, loopStart)
     mv.visitLabel(loopEnd)
 
@@ -248,9 +248,9 @@ object GenChannelClasses {
     mv.visitInsn(DUP)
     mv.visitJumpInsn(IFNULL, ifNullFalse)
 
-    // signalNotEmpty
+    // signalPutters
     mv.visitVarInsn(ALOAD, 0)
-    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalPutters", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
     mv.visitLabel(labelEnd)
 
     // Finally block - no exception
@@ -292,11 +292,11 @@ object GenChannelClasses {
     *
     *     try {
     *         while(this.isFull()) {
-    *             this.awaitNotEmpty();
+    *             this.awaitGetters();
     *         }
     *
     *         this.offer(value);
-    *         this.signalNotFull();
+    *         this.signalGetters();
     *     } finally {
     *         this.lock.unlock();
     *     }
@@ -331,7 +331,7 @@ object GenChannelClasses {
     mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "isFull", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
     mv.visitJumpInsn(IFEQ, loopEnd)
     mv.visitVarInsn(ALOAD, 0)
-    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "awaitNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "awaitGetters", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
     mv.visitJumpInsn(GOTO, loopStart)
     mv.visitLabel(loopEnd)
 
@@ -345,7 +345,7 @@ object GenChannelClasses {
 
     // Signal All
     mv.visitVarInsn(ALOAD, 0)
-    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalGetters", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
     // TODO: Clear Selects
     //mv.visitVarInsn(ALOAD, 0)
@@ -594,19 +594,19 @@ object GenChannelClasses {
   }
 
   /**
-    * Generates the `signalNotFull()` method of the `classType`
+    * Generates the `signalGetters()` method of the `classType`
     *
-    * public void signalNotFull() {
-    *     this.channelNotFull.signalAll();
+    * public void signalGetters() {
+    *     this.channelGetters.signalAll();
     * }
     */
-  def genSignalNotFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val mv = visitor.visitMethod(ACC_PUBLIC, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+  def genSignalGetters(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "signalGetters", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
     mv.visitCode()
 
-    // Get the `channelNotFull` field & invoke the method `signalAll`
+    // Get the `channelGetters` field & invoke the method `signalAll`
     mv.visitVarInsn(ALOAD, 0)
-    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelGetters", JvmType.Condition.toDescriptor)
     mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "signalAll", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
 
     // Return
@@ -616,19 +616,19 @@ object GenChannelClasses {
   }
 
   /**
-    * Generates the `signalNotEmpty()` method of the `classType`
+    * Generates the `signalPutters()` method of the `classType`
     *
-    * public void signalNotEmpty() {
-    *     this.channelNotEmpty.signalAll();
+    * public void signalPutters() {
+    *     this.channelPutters.signalAll();
     * }
     */
-  def genSignalNotEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val mv = visitor.visitMethod(ACC_PUBLIC, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+  def genSignalPutters(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "signalPutters", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
     mv.visitCode()
 
-    // Get the `channelNotEmpty` field & invoke the method `signalAll`
+    // Get the `channelPutters` field & invoke the method `signalAll`
     mv.visitVarInsn(ALOAD, 0)
-    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelPutters", JvmType.Condition.toDescriptor)
     mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "signalAll", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
 
     // Return
@@ -660,19 +660,19 @@ object GenChannelClasses {
   }
 
   /**
-    * Generates the `awaitNotFull()` method of the `classType`
+    * Generates the `awaitPutters()` method of the `classType`
     *
-    * public void awaitNotFull() throws InterruptedException {
-    *     this.channelNotFull.await();
+    * public void awaitPutters() throws InterruptedException {
+    *     this.channelGetters.await();
     * }
     */
-  def genAwaitNotFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val mv = visitor.visitMethod(ACC_PUBLIC, "awaitNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, Array(JvmName.InterruptedException.toInternalName))
+  def genAwaitPutters(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "awaitPutters", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, Array(JvmName.InterruptedException.toInternalName))
     mv.visitCode()
 
-    // Get the `channelNotFull` field & invoke the method `await`
+    // Get the `channelGetters` field & invoke the method `await`
     mv.visitVarInsn(ALOAD, 0)
-    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelGetters", JvmType.Condition.toDescriptor)
     mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "await", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
 
     // Return
@@ -682,19 +682,19 @@ object GenChannelClasses {
   }
 
   /**
-    * Generates the `awaitNotEmpty()` method of the `classType`
+    * Generates the `awaitGetters()` method of the `classType`
     *
-    * public void awaitNotEmpty() throws InterruptedException {
-    *     this.channelNotEmpty.await();
+    * public void awaitGetters() throws InterruptedException {
+    *     this.channelPutters.await();
     * }
     */
-  def genAwaitNotEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val mv = visitor.visitMethod(ACC_PUBLIC, "awaitNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, Array(JvmName.InterruptedException.toInternalName))
+  def genAwaitGetters(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "awaitGetters", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, Array(JvmName.InterruptedException.toInternalName))
     mv.visitCode()
     mv.visitVarInsn(ALOAD, 0)
 
-    // Get the `channelNotEmpty` field & invoke the method `await`
-    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
+    // Get the `channelPutters` field & invoke the method `await`
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelPutters", JvmType.Condition.toDescriptor)
     mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "await", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
 
     // Return
