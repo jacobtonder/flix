@@ -149,19 +149,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
   /////////////////////////////////////////////////////////////////////////////
 
   def Statement: Rule1[ParsedAst.Statement] = rule {
-    Statements.BasicStatement |
-    Statements.SingleStatement
-  }
-
-  object Statements {
-
-    def BasicStatement: Rule1[ParsedAst.Statement] = rule {
-      SP ~ Expression ~ optWS ~ atomic(";") ~ optWS ~ Statement ~ SP ~> ParsedAst.Statement.BasicStatement
-    }
-
-    def SingleStatement: Rule1[ParsedAst.Statement] = rule {
-      SP ~ Expression ~ SP ~> ParsedAst.Statement.SingleStatement
-    }
+    oneOrMore(Expression).separatedBy(optWS ~ ";" ~ optWS) ~> ParsedAst.Statement.Statement
   }
 
   /////////////////////////////////////////////////////////////////////////////
@@ -630,14 +618,6 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
         HandleWith | Existential | Universal | UnaryLambda | QName | Wild | Tag | SName | Hole | UserError
     }
 
-    def Spawn: Rule1[ParsedAst.Expression.Spawn] = rule {
-      SP ~ atomic("spawn") ~ WS ~ Names.Definition ~ optWS ~ ArgumentList ~ SP ~> ParsedAst.Expression.Spawn
-    }
-
-    def NewChannel: Rule1[ParsedAst.Expression.NewChannel] = rule {
-      SP ~ atomic("channel") ~ WS ~ Type ~ optional(WSWON ~ Expression) ~ SP ~> ParsedAst.Expression.NewChannel
-    }
-
     def Literal: Rule1[ParsedAst.Expression.Lit] = rule {
       SP ~ Parser.this.Literal ~ SP ~> ParsedAst.Expression.Lit
     }
@@ -651,7 +631,7 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
     }
 
     def LetMatch: Rule1[ParsedAst.Expression.LetMatch] = rule {
-      SP ~ atomic("let") ~ WS ~ Pattern ~ optWS ~ optional(":" ~ optWS ~ Type ~ optWS) ~ "=" ~ optWS ~ Expression ~ optWS ~ ";" ~ optWS ~ Expression ~ SP ~> ParsedAst.Expression.LetMatch
+      SP ~ atomic("let") ~ WS ~ Pattern ~ optWS ~ optional(":" ~ optWS ~ Type ~ optWS) ~ "=" ~ optWS ~ Expression ~ optWS ~ ";" ~ optWS ~ Statement ~ SP ~> ParsedAst.Expression.LetMatch
     }
 
     def Match: Rule1[ParsedAst.Expression.Match] = {
@@ -662,6 +642,18 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
       rule {
         SP ~ atomic("match") ~ WS ~ Expression ~ WS ~ atomic("with") ~ WS ~ "{" ~ optWS ~ oneOrMore(Rule).separatedBy(optWS) ~ optWS ~ "}" ~ SP ~> ParsedAst.Expression.Match
       }
+    }
+
+    def NewChannel: Rule1[ParsedAst.Expression.NewChannel] = rule {
+      SP ~ atomic("channel") ~ WS ~ Type ~ optional(WSWON ~ Expression) ~ SP ~> ParsedAst.Expression.NewChannel
+    }
+
+    def GetChannel: Rule1[ParsedAst.Expression.GetChannel] = rule {
+      SP ~ atomic("<-") ~ optWS ~ Expression ~ optWS ~ SP ~> ParsedAst.Expression.GetChannel
+    }
+
+    def Spawn: Rule1[ParsedAst.Expression.Spawn] = rule {
+      SP ~ atomic("spawn") ~ WS ~ Names.Definition ~ optWS ~ ArgumentList ~ SP ~> ParsedAst.Expression.Spawn
     }
 
     def SelectChannel: Rule1[ParsedAst.Expression.SelectChannel] = {
@@ -814,10 +806,6 @@ class Parser(val source: Source) extends org.parboiled2.Parser {
 
     def Universal: Rule1[ParsedAst.Expression.Universal] = rule {
       SP ~ atomic("∀" | "\\forall") ~ optWS ~ FormalParamList ~ optWS ~ "." ~ optWS ~ Expression ~ SP ~> ParsedAst.Expression.Universal
-    }
-
-    def GetChannel: Rule1[ParsedAst.Expression.GetChannel] = rule {
-      SP ~ atomic("<-") ~ optWS ~ Expression ~ optWS ~ SP ~> ParsedAst.Expression.GetChannel
     }
   }
 

@@ -61,6 +61,9 @@ object GenChannelClasses {
     // Generate `getValue` method
     genGetValue(classType, channelType, visitor)
 
+    // Generate `putValue` method
+    genPutValue(classType, channelType, visitor)
+
     // Generate `poll` method
     genPoll(classType, channelType, visitor)
 
@@ -70,8 +73,8 @@ object GenChannelClasses {
     // Generate `isEmpty` method
     genIsEmpty(classType, visitor)
 
-    // Generate `isNonempty` method
-    genIsNonempty(classType, visitor)
+    // Generate `isNonEmpty` method
+    genIsNonEmpty(classType, visitor)
 
     // Generate `isFull` method
     genIsFull(classType, visitor)
@@ -100,12 +103,6 @@ object GenChannelClasses {
     // Generate `awaitNotEmpty` method
     genAwaitNotEmpty(classType, visitor)
 
-    // Generate `dummyPut` method
-    //genDummyPut(classType, channelType, visitor)
-
-    // Generate `putValue` method
-    genPutValue(classType, channelType, visitor)
-
     // Generate the `toString` method.
     AsmOps.compileExceptionThrowerMethod(visitor, ACC_PUBLIC + ACC_FINAL, "toString", AsmOps.getMethodDescriptor(Nil, JvmType.String),
       "toString method shouldn't be called")
@@ -127,358 +124,87 @@ object GenChannelClasses {
     * Generates the constructor of the channel `classType`
     */
   def genConstructor(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val initMethod = visitor.visitMethod(ACC_PUBLIC, "<init>", AsmOps.getMethodDescriptor(List(JvmType.PrimInt), JvmType.Void), null, null)
-    initMethod.visitCode()
+    val mv = visitor.visitMethod(ACC_PUBLIC, "<init>", AsmOps.getMethodDescriptor(List(JvmType.PrimInt), JvmType.Void), null, null)
+    mv.visitCode()
 
     // Init the class object
-    initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitInsn(DUP)
-    initMethod.visitMethodInsn(INVOKESPECIAL, JvmName.Object.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitInsn(DUP)
+    mv.visitMethodInsn(INVOKESPECIAL, JvmName.Object.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
     // Init the `queue` field
-    initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitTypeInsn(NEW, JvmType.LinkedList.name.toInternalName)
-    initMethod.visitInsn(DUP)
-    initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.LinkedList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitTypeInsn(NEW, JvmType.LinkedList.name.toInternalName)
+    mv.visitInsn(DUP)
+    mv.visitMethodInsn(INVOKESPECIAL, JvmType.LinkedList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
 
     // Init the `lock` field
-    initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitTypeInsn(NEW, JvmType.ReentrantLock.name.toInternalName)
-    initMethod.visitInsn(DUP)
-    initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.ReentrantLock.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitTypeInsn(NEW, JvmType.ReentrantLock.name.toInternalName)
+    mv.visitInsn(DUP)
+    mv.visitMethodInsn(INVOKESPECIAL, JvmType.ReentrantLock.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
 
     // Init the `selects` field
-    initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitTypeInsn(NEW, JvmType.ArrayList.name.toInternalName)
-    initMethod.visitInsn(DUP)
-    initMethod.visitMethodInsn(INVOKESPECIAL, JvmType.ArrayList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "selects", JvmType.JavaList.toDescriptor)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitTypeInsn(NEW, JvmType.ArrayList.name.toInternalName)
+    mv.visitInsn(DUP)
+    mv.visitMethodInsn(INVOKESPECIAL, JvmType.ArrayList.name.toInternalName, "<init>", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "selects", JvmType.JavaList.toDescriptor)
 
     // Init `capacity` field
-    initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitVarInsn(ILOAD, 1)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitVarInsn(ILOAD, 1)
+    mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
 
     // Init the `channelNotFull` field
-    initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    initMethod.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
+    mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
 
     // Init the `channelNotEmpty` field
-    initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    initMethod.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
-    initMethod.visitVarInsn(ALOAD, 0)
-    initMethod.visitInsn(SWAP)
-    initMethod.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "newCondition", AsmOps.getMethodDescriptor(Nil, JvmType.Condition), true)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitInsn(SWAP)
+    mv.visitFieldInsn(PUTFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
 
     // Return
-    initMethod.visitInsn(RETURN)
-    initMethod.visitMaxs(0, 2)
-    initMethod.visitEnd()
+    mv.visitInsn(RETURN)
+    mv.visitMaxs(4, 2)
+    mv.visitEnd()
   }
 
   /**
-    * Generates a dummy method to put something into the queue
-    */
-  def genDummyPut(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val dummyPut = visitor.visitMethod(ACC_PUBLIC, "dummyPut", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
-    dummyPut.visitCode()
-    dummyPut.visitVarInsn(ALOAD, 0)
-    dummyPut.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-
-    dummyPut.visitInsn(ICONST_1)
-
-    dummyPut.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType), channelType.getBoxedType), false)
-    dummyPut.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "add", AsmOps.getMethodDescriptor(List(JvmType.Object), JvmType.PrimBool), false)
-
-    dummyPut.visitInsn(RETURN)
-    dummyPut.visitMaxs(2, 2)
-    dummyPut.visitEnd()
-  }
-
-  /**
-    * Generates the `poll()` method of the `classType`
-    */
-  def genPoll(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val poll = visitor.visitMethod(ACC_PUBLIC, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), null, null)
-    poll.visitCode()
-
-    // Get the `queue` field & invoke the method `poll`
-    poll.visitVarInsn(ALOAD, 0)
-    poll.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    poll.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), false)
-
-    // Return
-    poll.visitInsn(ARETURN)
-    poll.visitMaxs(1, 1)
-    poll.visitEnd()
-  }
-
-  /**
-    * Generates the `offer()` method of the `classType` with value of type `channelType`
-    */
-  def genOffer(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val iLoad = AsmOps.getLoadInstruction(channelType)
-    val offer = visitor.visitMethod(ACC_PUBLIC, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), null, null)
-    offer.visitCode()
-
-    // Get the `queue` field
-    offer.visitVarInsn(ALOAD, 0)
-    offer.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-
-    // Load the parameter
-    offer.visitVarInsn(iLoad, 1)
-
-    // Don't use valueOf if the channelType is JvmType.Object
-    if (channelType != JvmType.Object) {
-      offer.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType), channelType.getBoxedType), false)
-    }
-
-    // Invoke the method `offer` on the `queue` field
-    offer.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(JvmType.Object), JvmType.PrimBool), false)
-
-    // Return
-    offer.visitInsn(IRETURN)
-    offer.visitMaxs(1, 1)
-    offer.visitEnd()
-  }
-
-  /**
-    * Generates the `isEmpty()` method of the `classType`
-    */
-  def genIsEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val isEmpty = visitor.visitMethod(ACC_PUBLIC, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
-    isEmpty.visitCode()
-
-    // Get the `queue` field & invoke the method `isEmpty`
-    isEmpty.visitVarInsn(ALOAD, 0)
-    isEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    isEmpty.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
-
-    // Return
-    isEmpty.visitInsn(IRETURN)
-    isEmpty.visitMaxs(1, 1)
-    isEmpty.visitEnd()
-  }
-
-  /**
-    * Generates the `isNonempty()` method of the `classType`
-    */
-  def genIsNonempty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val isNonempty = visitor.visitMethod(ACC_PUBLIC, "isNonempty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
-    val labelElse = new Label()
-    val labelEnd = new Label()
-    isNonempty.visitCode()
-
-    // Get the `queue` field & invoke the method `isEmpty`
-    isNonempty.visitVarInsn(ALOAD, 0)
-    isNonempty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    isNonempty.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
-
-    // Check if the method `isEmpty` is true or false
-    isNonempty.visitJumpInsn(IFNE, labelElse)
-
-    // The queue is not empty
-    isNonempty.visitInsn(ICONST_1)
-    isNonempty.visitJumpInsn(GOTO, labelEnd)
-
-    // The queue is empty
-    isNonempty.visitLabel(labelElse)
-    isNonempty.visitInsn(ICONST_0)
-
-    // Return
-    isNonempty.visitLabel(labelEnd)
-    isNonempty.visitInsn(IRETURN)
-    isNonempty.visitMaxs(1, 1)
-    isNonempty.visitEnd()
-  }
-
-  /**
-    * Generates the `isFull()` method of the `classType`
-    */
-  def genIsFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val isFull = visitor.visitMethod(ACC_PUBLIC, "isFull", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
-    val labelElse = new Label()
-    val labelEnd = new Label()
-    isFull.visitCode()
-
-    // Invoke the method `size` on the channel class of `channelType`
-    isFull.visitVarInsn(ALOAD, 0)
-    isFull.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
-
-    // Get the `capacity` field
-    isFull.visitVarInsn(ALOAD, 0)
-    isFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
-
-    // Compare the size of the queue with the capacity
-    isFull.visitJumpInsn(IF_ICMPNE, labelElse)
-
-    // The size of the queue and the capacity are equal
-    isFull.visitInsn(ICONST_1)
-    isFull.visitJumpInsn(GOTO, labelEnd)
-
-    // The size of the queue and the capacity are not equal
-    isFull.visitLabel(labelElse)
-    isFull.visitInsn(ICONST_0)
-
-    // Return
-    isFull.visitLabel(labelEnd)
-    isFull.visitInsn(IRETURN)
-    isFull.visitMaxs(2, 2)
-    isFull.visitEnd()
-  }
-
-  /**
-    * Generates the `size()` method of the `classType`
-    */
-  def genSize(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val size = visitor.visitMethod(ACC_PUBLIC, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), null, null)
-    size.visitCode()
-
-    // Get the `queue` field & invoke the method `size`
-    size.visitVarInsn(ALOAD, 0)
-    size.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
-    size.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
-
-    // Return
-    size.visitInsn(IRETURN)
-    size.visitMaxs(1, 1)
-    size.visitEnd()
-  }
-
-  /**
-    * Generates the `lock()` method of the `classType`
-    */
-  def genLock(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val lock = visitor.visitMethod(ACC_PUBLIC, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
-    lock.visitCode()
-
-    // Get the `lock` field & invoke the method `lock`
-    lock.visitVarInsn(ALOAD, 0)
-    lock.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    lock.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
-
-    // Return
-    lock.visitInsn(RETURN)
-    lock.visitMaxs(1, 1)
-    lock.visitEnd()
-  }
-
-  /**
-    * Generates the `unlock()` method of the `classType`
-    */
-  def genUnlock(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val unlock = visitor.visitMethod(ACC_PUBLIC, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
-    unlock.visitCode()
-
-    // Get the `lock` field & invoke the method `lock`
-    unlock.visitVarInsn(ALOAD, 0)
-    unlock.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    unlock.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
-
-    // Return
-    unlock.visitInsn(RETURN)
-    unlock.visitMaxs(1, 1)
-    unlock.visitEnd()
-  }
-
-  /**
-    * Generates the `signalNotFull()` method of the `classType`
-    */
-  def genSignalNotFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val signalNotFull = visitor.visitMethod(ACC_PUBLIC, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
-    signalNotFull.visitCode()
-
-    // Get the `channelNotFull` field & invoke the method `signalAll`
-    signalNotFull.visitVarInsn(ALOAD, 0)
-    signalNotFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
-    signalNotFull.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "signalAll", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
-
-    // Return
-    signalNotFull.visitInsn(RETURN)
-    signalNotFull.visitMaxs(1, 1)
-    signalNotFull.visitEnd()
-  }
-
-  /**
-    * Generates the `signalNotEmpty()` method of the `classType`
-    */
-  def genSignalNotEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val signalNotEmpty = visitor.visitMethod(ACC_PUBLIC, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
-    signalNotEmpty.visitCode()
-
-    // Get the `channelNotEmpty` field & invoke the method `signalAll`
-    signalNotEmpty.visitVarInsn(ALOAD, 0)
-    signalNotEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
-    signalNotEmpty.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "signalAll", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
-
-    // Return
-    signalNotEmpty.visitInsn(RETURN)
-    signalNotEmpty.visitMaxs(1, 1)
-    signalNotEmpty.visitEnd()
-  }
-
-  /**
-    * Generates the `clearSelects()` method of the `classType`
-    */
-  def genClearSelects(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val clearSelects = visitor.visitMethod(ACC_PUBLIC, "clearSelects", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
-    clearSelects.visitCode()
-
-    // Get the `selects` field & invoke the method `clear`
-    clearSelects.visitVarInsn(ALOAD, 0)
-    clearSelects.visitFieldInsn(GETFIELD, classType.name.toInternalName, "selects", JvmType.JavaList.toDescriptor)
-    clearSelects.visitMethodInsn(INVOKEINTERFACE, JvmType.JavaList.name.toInternalName, "clear", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
-
-    // Return
-    clearSelects.visitInsn(RETURN)
-    clearSelects.visitMaxs(1, 1)
-    clearSelects.visitEnd()
-  }
-
-  /**
-    * Generates the `awaitNotFull()` method of the `classType`
-    */
-  def genAwaitNotFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val awaitNotFull = visitor.visitMethod(ACC_PUBLIC, "awaitNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, Array(JvmName.InterruptedException.toInternalName))
-    awaitNotFull.visitCode()
-
-    // Get the `channelNotFull` field & invoke the method `await`
-    awaitNotFull.visitVarInsn(ALOAD, 0)
-    awaitNotFull.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
-    awaitNotFull.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "await", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
-
-    // Return
-    awaitNotFull.visitInsn(RETURN)
-    awaitNotFull.visitMaxs(1, 1)
-    awaitNotFull.visitEnd()
-  }
-
-  /**
-    * Generates the `awaitNotEmpty()` method of the `classType`
-    */
-  def genAwaitNotEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
-    val awaitNotEmpty = visitor.visitMethod(ACC_PUBLIC, "awaitNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, Array(JvmName.InterruptedException.toInternalName))
-    awaitNotEmpty.visitCode()
-    awaitNotEmpty.visitVarInsn(ALOAD, 0)
-
-    // Get the `channelNotEmpty` field & invoke the method `await`
-    awaitNotEmpty.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
-    awaitNotEmpty.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "await", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
-
-    // Return
-    awaitNotEmpty.visitInsn(RETURN)
-    awaitNotEmpty.visitMaxs(1, 1)
-    awaitNotEmpty.visitEnd()
-  }
+    * Generates the `putValue()` method of the `classType` with value of type `channelType`
+    *
+    * public `tpe` getValue() throws InterruptedException {
+    *     `tpe` value = null;
+    *     this.lock();
+    *
+    *     try {
+    *         while(this.isEmpty()) {
+    *             this.awaitNotFull();
+    *         }
+    *
+    *         value = this.poll();
+    *         if (value != null) {
+    *             this.signalNotEmpty();
+    *         }
+    *     } finally {
+    *         this.unlock();
+    *     }
+    *
+    *     return value;
+    * }
+   */
 
   def genGetValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val iRet = AsmOps.getReturnInstruction(channelType)
-    val getChannel = visitor.visitMethod(ACC_PUBLIC, "getValue", AsmOps.getMethodDescriptor(Nil, channelType), null, Array(JvmName.InterruptedException.toInternalName))
+    val mv = visitor.visitMethod(ACC_PUBLIC, "getValue", AsmOps.getMethodDescriptor(Nil, channelType), null, Array(JvmName.InterruptedException.toInternalName))
     val loopStart = new Label()
     val loopEnd = new Label()
     val ifNullFalse = new Label()
@@ -487,148 +213,493 @@ object GenChannelClasses {
     val labelHandler = new Label()
     val labelEndHandler = new Label()
 
-    getChannel.visitCode()
+    mv.visitCode()
 
     // Integer = Null
-    getChannel.visitInsn(ACONST_NULL)
+    mv.visitInsn(ACONST_NULL)
 
-    getChannel.visitTryCatchBlock(labelStart, labelEnd, labelHandler, null)
+    mv.visitTryCatchBlock(labelStart, labelEnd, labelHandler, null)
 
     // Lock()
-    getChannel.visitVarInsn(ALOAD, 0)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
     // Try
-    getChannel.visitLabel(labelStart)
+    mv.visitLabel(labelStart)
 
     // Loop
-    getChannel.visitLabel(loopStart)
-    getChannel.visitVarInsn(ALOAD, 0)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
+    mv.visitLabel(loopStart)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
 
-    getChannel.visitJumpInsn(IFEQ, loopEnd)
-    getChannel.visitVarInsn(ALOAD, 0)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "awaitNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    getChannel.visitJumpInsn(GOTO, loopStart)
-    getChannel.visitLabel(loopEnd)
+    mv.visitJumpInsn(IFEQ, loopEnd)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "awaitNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitJumpInsn(GOTO, loopStart)
+    mv.visitLabel(loopEnd)
 
     //Integer = java.lang.Integer.valueOf(poll())
-    getChannel.visitInsn(POP)
-    getChannel.visitVarInsn(ALOAD, 0)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), false)
-    getChannel.visitTypeInsn(CHECKCAST, channelType.getBoxedTypeString)
+    mv.visitInsn(POP)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), false)
+    mv.visitTypeInsn(CHECKCAST, channelType.getBoxedTypeString)
 
     // if (Integer != null)
-    getChannel.visitInsn(DUP)
-    getChannel.visitJumpInsn(IFNULL, ifNullFalse)
+    mv.visitInsn(DUP)
+    mv.visitJumpInsn(IFNULL, ifNullFalse)
 
     // signalNotEmpty
-    getChannel.visitVarInsn(ALOAD, 0)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    getChannel.visitLabel(labelEnd)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitLabel(labelEnd)
 
     // Finally block - no exception
-    getChannel.visitLabel(ifNullFalse)
-    getChannel.visitVarInsn(ALOAD, 0)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    getChannel.visitJumpInsn(GOTO, labelEndHandler)
+    mv.visitLabel(ifNullFalse)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitJumpInsn(GOTO, labelEndHandler)
 
     // Catch block
-    getChannel.visitLabel(labelHandler)
-    getChannel.visitVarInsn(ASTORE, 4)
+    mv.visitLabel(labelHandler)
+    mv.visitVarInsn(ASTORE, 4)
 
     // Finally block - after catch block
-    getChannel.visitVarInsn(ALOAD, 0)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    getChannel.visitVarInsn(ALOAD, 4)
-    getChannel.visitInsn(ATHROW)
-    getChannel.visitJumpInsn(GOTO, labelEndHandler)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitVarInsn(ALOAD, 4)
+    mv.visitInsn(ATHROW)
+    mv.visitJumpInsn(GOTO, labelEndHandler)
 
     // Finally block - after exception not caught in catch block
-    getChannel.visitVarInsn(ALOAD, 0)
-    getChannel.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
     // Return the value
-    getChannel.visitLabel(labelEndHandler)
+    mv.visitLabel(labelEndHandler)
     if (channelType != JvmType.Object) {
-      getChannel.visitMethodInsn(INVOKEVIRTUAL, channelType.getBoxedTypeString, channelType.getBoxedConvertMethod, AsmOps.getMethodDescriptor(Nil, channelType), false)
+      mv.visitMethodInsn(INVOKEVIRTUAL, channelType.getBoxedTypeString, channelType.getUnboxingMethod, AsmOps.getMethodDescriptor(Nil, channelType), false)
     }
-    getChannel.visitInsn(iRet)
-    getChannel.visitMaxs(4, 4)
-    getChannel.visitEnd()
+    mv.visitInsn(iRet)
+    mv.visitMaxs(4, 4)
+    mv.visitEnd()
   }
 
   /**
     * Generates the `putValue()` method of the `classType` with value of type `channelType`
+    *
+    * public `classType` putValue(tpe value) throws InterruptedException {
+    *     this.lock.lock();
+    *
+    *     try {
+    *         while(this.isFull()) {
+    *             this.awaitNotEmpty();
+    *         }
+    *
+    *         this.offer(value);
+    *         this.signalNotFull();
+    *     } finally {
+    *         this.lock.unlock();
+    *     }
+    *
+    *     return this;
+    * }
     */
   def genPutValue(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val iLoad = AsmOps.getLoadInstruction(channelType)
-    val putValue = visitor.visitMethod(ACC_PUBLIC, "putValue", AsmOps.getMethodDescriptor(List(channelType), classType), null, Array(JvmName.InterruptedException.toInternalName))
+    val mv = visitor.visitMethod(ACC_PUBLIC, "putValue", AsmOps.getMethodDescriptor(List(channelType), classType), null, Array(JvmName.InterruptedException.toInternalName))
     val labelStart = new Label()
     val labelEnd = new Label()
     val labelHandler = new Label()
     val loopStart = new Label()
     val loopEnd = new Label()
     val labelReturn = new Label()
-    putValue.visitCode()
+    mv.visitCode()
 
     // Lock
-    putValue.visitVarInsn(ALOAD, 0)
-    putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    putValue.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
 
-    putValue.visitTryCatchBlock(labelStart, labelEnd, labelHandler, null)
+    mv.visitTryCatchBlock(labelStart, labelEnd, labelHandler, null)
 
     // Try
-    putValue.visitLabel(labelStart)
+    mv.visitLabel(labelStart)
 
     // Loop
-    putValue.visitLabel(loopStart)
-    putValue.visitVarInsn(ALOAD, 0)
-    putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "isFull", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
-    putValue.visitJumpInsn(IFEQ, loopEnd)
-    putValue.visitVarInsn(ALOAD, 0)
-    putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "awaitNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
-    putValue.visitJumpInsn(GOTO, loopStart)
-    putValue.visitLabel(loopEnd)
+    mv.visitLabel(loopStart)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "isFull", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
+    mv.visitJumpInsn(IFEQ, loopEnd)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "awaitNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitJumpInsn(GOTO, loopStart)
+    mv.visitLabel(loopEnd)
 
     // Offer
-    putValue.visitVarInsn(ALOAD, 0)
-    putValue.visitVarInsn(iLoad, 1)
-    putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), false)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitVarInsn(iLoad, 1)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), false)
 
     // TODO: Use the variable instead of just popping it
-    putValue.visitInsn(POP)
+    mv.visitInsn(POP)
 
     // Signal All
-    putValue.visitVarInsn(ALOAD, 0)
-    putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
     // TODO: Clear Selects
-    //putValue.visitVarInsn(ALOAD, 0)
-    //putValue.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "clearSelects", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+    //mv.visitVarInsn(ALOAD, 0)
+    //mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "clearSelects", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
-    putValue.visitLabel(labelEnd)
+    mv.visitLabel(labelEnd)
 
-    putValue.visitVarInsn(ALOAD, 0)
-    putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    putValue.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
 
-    putValue.visitJumpInsn(GOTO, labelReturn)
+    mv.visitJumpInsn(GOTO, labelReturn)
 
     // Catch
-    putValue.visitLabel(labelHandler)
-    putValue.visitInsn(POP)
+    mv.visitLabel(labelHandler)
+    mv.visitInsn(POP)
 
-    putValue.visitVarInsn(ALOAD, 0)
-    putValue.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    putValue.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
 
     // Return
-    putValue.visitLabel(labelReturn)
-    putValue.visitVarInsn(ALOAD, 0)
-    putValue.visitInsn(ARETURN)
-    putValue.visitMaxs(4, 4)
-    putValue.visitEnd()
+    mv.visitLabel(labelReturn)
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitInsn(ARETURN)
+    mv.visitMaxs(4, 4)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `poll()` method of the `classType`
+    *
+    * public Object poll() {
+    *     return this.queue.poll();
+    * }
+    */
+  def genPoll(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), null, null)
+    mv.visitCode()
+
+    // Get the `queue` field & invoke the method `poll`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    mv.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "poll", AsmOps.getMethodDescriptor(Nil, JvmType.Object), false)
+
+    // Return
+    mv.visitInsn(ARETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `offer()` method of the `classType` with value of type `channelType`
+    *
+    * public boolean offer(tpe var1) {
+    *     return this.queue.offer(var1);
+    * }
+    */
+  def genOffer(classType: JvmType.Reference, channelType: JvmType, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val iLoad = AsmOps.getLoadInstruction(channelType)
+    val mv = visitor.visitMethod(ACC_PUBLIC, "offer", AsmOps.getMethodDescriptor(List(channelType), JvmType.PrimBool), null, null)
+    mv.visitCode()
+
+    // Get the `queue` field
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+
+    // Load the parameter
+    mv.visitVarInsn(iLoad, 1)
+
+    // Don't use valueOf if the channelType is JvmType.Object
+    if (channelType != JvmType.Object) {
+      mv.visitMethodInsn(INVOKESTATIC, channelType.getBoxedTypeString, "valueOf", AsmOps.getMethodDescriptor(List(channelType), channelType.getBoxedType), false)
+    }
+
+    // Invoke the method `offer` on the `queue` field
+    mv.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "offer", AsmOps.getMethodDescriptor(List(JvmType.Object), JvmType.PrimBool), false)
+
+    // Return
+    mv.visitInsn(IRETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `isEmpty()` method of the `classType`
+    *
+    * public boolean isEmpty() {
+    *     return this.queue.isEmpty();
+    * }
+    */
+  def genIsEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
+    mv.visitCode()
+
+    // Get the `queue` field & invoke the method `isEmpty`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    mv.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), false)
+
+    // Return
+    mv.visitInsn(IRETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `isNonEmpty()` method of the `classType`
+    *
+    * public boolean isNonEmpty() {
+    *     return !this.queue.isEmpty();
+    * }
+    */
+  def genIsNonEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "isNonEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
+    val labelElse = new Label()
+    val labelEnd = new Label()
+    mv.visitCode()
+
+    // Get the `queue` field & invoke the method `isEmpty`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.LinkedList.name.toInternalName, "isEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), true)
+
+    // Check if the method `isEmpty` is true or false
+    mv.visitJumpInsn(IFNE, labelElse)
+
+    // The queue is not empty
+    mv.visitInsn(ICONST_1)
+    mv.visitJumpInsn(GOTO, labelEnd)
+
+    // The queue is empty
+    mv.visitLabel(labelElse)
+    mv.visitInsn(ICONST_0)
+
+    // Return
+    mv.visitLabel(labelEnd)
+    mv.visitInsn(IRETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `isFull()` method of the `classType`
+    *
+    * public boolean isFull() {
+    *     return this.size() == this.capacity;
+    * }
+    */
+  def genIsFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "isFull", AsmOps.getMethodDescriptor(Nil, JvmType.PrimBool), null, null)
+    val labelElse = new Label()
+    val labelEnd = new Label()
+    mv.visitCode()
+
+    // Invoke the method `size` on the channel class of `channelType`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
+
+    // Get the `capacity` field
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "capacity", JvmType.PrimInt.toDescriptor)
+
+    // Compare the size of the queue with the capacity
+    mv.visitJumpInsn(IF_ICMPNE, labelElse)
+
+    // The size of the queue and the capacity are equal
+    mv.visitInsn(ICONST_1)
+    mv.visitJumpInsn(GOTO, labelEnd)
+
+    // The size of the queue and the capacity are not equal
+    mv.visitLabel(labelElse)
+    mv.visitInsn(ICONST_0)
+
+    // Return
+    mv.visitLabel(labelEnd)
+    mv.visitInsn(IRETURN)
+    mv.visitMaxs(2, 2)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `size()` method of the `classType`
+    *
+    * public int size() {
+    *     return this.queue.size();
+    * }
+    */
+  def genSize(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), null, null)
+    mv.visitCode()
+
+    // Get the `queue` field & invoke the method `size`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "queue", JvmType.LinkedList.toDescriptor)
+    mv.visitMethodInsn(INVOKEVIRTUAL, JvmType.LinkedList.name.toInternalName, "size", AsmOps.getMethodDescriptor(Nil, JvmType.PrimInt), false)
+
+    // Return
+    mv.visitInsn(IRETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `lock()` method of the `classType`
+    *
+    * public void lock() {
+    *     this.lock.lock();
+    * }
+    */
+  def genLock(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    mv.visitCode()
+
+    // Get the `lock` field & invoke the method `lock`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+
+    // Return
+    mv.visitInsn(RETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `unlock()` method of the `classType`
+    *
+    * public void unlock() {
+    *     this.lock.unlock();
+    * }
+    */
+  def genUnlock(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    mv.visitCode()
+
+    // Get the `lock` field & invoke the method `lock`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+
+    // Return
+    mv.visitInsn(RETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `signalNotFull()` method of the `classType`
+    *
+    * public void signalNotFull() {
+    *     this.channelNotFull.signalAll();
+    * }
+    */
+  def genSignalNotFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "signalNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    mv.visitCode()
+
+    // Get the `channelNotFull` field & invoke the method `signalAll`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "signalAll", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+
+    // Return
+    mv.visitInsn(RETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `signalNotEmpty()` method of the `classType`
+    *
+    * public void signalNotEmpty() {
+    *     this.channelNotEmpty.signalAll();
+    * }
+    */
+  def genSignalNotEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "signalNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    mv.visitCode()
+
+    // Get the `channelNotEmpty` field & invoke the method `signalAll`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "signalAll", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+
+    // Return
+    mv.visitInsn(RETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `clearSelects()` method of the `classType`
+    *
+    * public void clearSelects() {
+    *     this.selects.clear();
+    * }
+    */
+  def genClearSelects(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "clearSelects", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, null)
+    mv.visitCode()
+
+    // Get the `selects` field & invoke the method `clear`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "selects", JvmType.JavaList.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.JavaList.name.toInternalName, "clear", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+
+    // Return
+    mv.visitInsn(RETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `awaitNotFull()` method of the `classType`
+    *
+    * public void awaitNotFull() throws InterruptedException {
+    *     this.channelNotFull.await();
+    * }
+    */
+  def genAwaitNotFull(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "awaitNotFull", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, Array(JvmName.InterruptedException.toInternalName))
+    mv.visitCode()
+
+    // Get the `channelNotFull` field & invoke the method `await`
+    mv.visitVarInsn(ALOAD, 0)
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotFull", JvmType.Condition.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "await", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+
+    // Return
+    mv.visitInsn(RETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
+  }
+
+  /**
+    * Generates the `awaitNotEmpty()` method of the `classType`
+    *
+    * public void awaitNotEmpty() throws InterruptedException {
+    *     this.channelNotEmpty.await();
+    * }
+    */
+  def genAwaitNotEmpty(classType: JvmType.Reference, visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
+    val mv = visitor.visitMethod(ACC_PUBLIC, "awaitNotEmpty", AsmOps.getMethodDescriptor(Nil, JvmType.Void), null, Array(JvmName.InterruptedException.toInternalName))
+    mv.visitCode()
+    mv.visitVarInsn(ALOAD, 0)
+
+    // Get the `channelNotEmpty` field & invoke the method `await`
+    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "channelNotEmpty", JvmType.Condition.toDescriptor)
+    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Condition.name.toInternalName, "await", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+
+    // Return
+    mv.visitInsn(RETURN)
+    mv.visitMaxs(1, 1)
+    mv.visitEnd()
   }
 }

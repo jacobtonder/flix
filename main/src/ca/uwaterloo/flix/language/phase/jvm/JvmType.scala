@@ -38,6 +38,9 @@ sealed trait JvmType {
     case JvmType.Reference(name) => name.toDescriptor
   }
 
+  /**
+   * Returns the boxed java name for primitive types.
+   */
   def getBoxedTypeString: String = this match {
     case JvmType.Void => "java/lang/Void"
     case JvmType.PrimBool => JvmType.Boolean.name.toInternalName
@@ -52,6 +55,9 @@ sealed trait JvmType {
     case JvmType.Reference(name) => name.toDescriptor
   }
 
+  /**
+   * Returns the boxed type of a primitive type.
+   */
   def getBoxedType: JvmType = this match {
     case JvmType.Void => JvmType.Void
     case JvmType.PrimBool => JvmType.Boolean
@@ -66,7 +72,11 @@ sealed trait JvmType {
     case JvmType.Reference(name) => JvmType.Reference(name)
   }
 
-  def getBoxedConvertMethod: String = this match {
+  /**
+   * Returns the method for unboxing a boxed value.
+   */
+  def getUnboxingMethod: String = this match {
+    case JvmType.Void => null
     case JvmType.PrimBool => "booleanValue"
     case JvmType.PrimChar => "charValue"
     case JvmType.PrimByte => "byteValue"

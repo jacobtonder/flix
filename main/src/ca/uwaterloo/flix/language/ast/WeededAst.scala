@@ -142,13 +142,13 @@ object WeededAst {
 
     case class ArrayStore(base: WeededAst.Expression, index: WeededAst.Expression, value: WeededAst.Expression, loc: SourceLocation) extends WeededAst.Expression
 
-    case class NewChannel(exp: WeededAst.Expression, ctpe: WeededAst.Type, loc: SourceLocation) extends WeededAst.Expression
+    case class NewChannel(tpe: WeededAst.Type, exp: WeededAst.Expression, loc: SourceLocation) extends WeededAst.Expression
 
     case class GetChannel(exp: WeededAst.Expression, loc: SourceLocation) extends WeededAst.Expression
 
     case class PutChannel(exp1: WeededAst.Expression, exp2: WeededAst.Expression, loc: SourceLocation) extends WeededAst.Expression
 
-    case class Spawn(lambda: WeededAst.Expression, loc: SourceLocation) extends WeededAst.Expression
+    case class Spawn(exp: WeededAst.Expression, loc: SourceLocation) extends WeededAst.Expression
 
     case class SelectChannel(rules: List[WeededAst.SelectRule], loc: SourceLocation) extends WeededAst.Expression
 

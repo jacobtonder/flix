@@ -1052,24 +1052,6 @@ class TestParser extends FunSuite with TestUtils {
     expectError[NonExhaustiveMatchError](new Flix().addStr(input).compile())
   }
 
-  test("Expression.Spawn.01") {
-    val input = "def f(): Unit = spawn 42"
-    val result = new Flix().addStr(input).compile()
-    expectError[ParseError](result)
-  }
-
-  test("Expression.Spawn.02") {
-    val input = "def f(): Unit = spawn \"str\""
-    val result = new Flix().addStr(input).compile()
-    expectError[ParseError](result)
-  }
-
-  test("Expression.Spawn.03") {
-    val input = "def f(): Unit = spawn 'a'"
-    val result = new Flix().addStr(input).compile()
-    expectError[ParseError](result)
-  }
-
   /////////////////////////////////////////////////////////////////////////////
   // Patterns                                                                //
   /////////////////////////////////////////////////////////////////////////////

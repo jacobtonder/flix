@@ -210,7 +210,7 @@ object SimplifiedAst {
 
     case class ArrayStore(base: SimplifiedAst.Expression, index: SimplifiedAst.Expression, value: SimplifiedAst.Expression, tpe: Type, loc: SourceLocation) extends SimplifiedAst.Expression
 
-    case class NewChannel(exp: SimplifiedAst.Expression, ctpe: Type, tpe: Type, loc: SourceLocation) extends SimplifiedAst.Expression
+    case class NewChannel(exp: SimplifiedAst.Expression, tpe: Type, loc: SourceLocation) extends SimplifiedAst.Expression
 
     case class GetChannel(exp: SimplifiedAst.Expression, tpe: Type, loc: SourceLocation) extends SimplifiedAst.Expression
 

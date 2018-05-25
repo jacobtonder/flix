@@ -14,35 +14,38 @@ object GenSpawnClasses {
     * Returns the bytecode for the Spawn class.
     */
   def gen()(implicit root: Root, flix: Flix): Map[JvmName, JvmClass] = {
+    // Function interface to execute on the new thread
     val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))
-
-    val cont = Nil;
 
     // Class visitor
     val visitor = AsmOps.mkClassWriter()
 
-    // Class header.
+    // Class visitor.
     visitor.visit(AsmOps.JavaVersion, ACC_PUBLIC + ACC_FINAL, JvmName.Spawn.toInternalName, null,
       JvmName.Object.toInternalName, Array(JvmName.Runnable.toInternalName))
 
-    visitor.visitSource(JvmName.Spawn.name, null)
-
-    // Context field
+    // Generate the `ctx` field
     AsmOps.compileField(visitor, "ctx", JvmType.Context, isStatic = false, isPrivate = true)
 
-    // Instance field
+    // Generate the `fn` field
     AsmOps.compileField(visitor, "fn", functionType, isStatic = false, isPrivate = true)
 
     // Generate the constructor
     genConstructor(visitor)
 
+    // Generate `run` method
     genRun(visitor)
 
+    // Generating the spawn class
     Map(JvmName.Spawn -> JvmClass(JvmName.Spawn, visitor.toByteArray))
   }
 
   /**
     * Generating constructor for the class `Spawn`
+    *
+    * public Spawn(`functionType` function) {
+    *     this.fn = function.copy(this.ctx);
+    * }
     */
   def genConstructor(visitor: ClassWriter)(implicit root: Root, flix: Flix): Unit = {
     val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))
@@ -75,6 +78,10 @@ object GenSpawnClasses {
 
   /**
     * Generating run method for the class `Spawn`
+    *
+    * public void run() {
+    *     this.fn.apply(this.ctx);
+    * }
     */
   def genRun(visitor: ClassWriter)(implicit  root: Root, flix: Flix): Unit = {
     val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))

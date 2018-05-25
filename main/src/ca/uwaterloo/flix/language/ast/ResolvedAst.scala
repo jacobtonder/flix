@@ -1,12 +1,12 @@
 /*
  *  Copyright 2017 Magnus Madsen
- *  
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *  
+ *
  *  http://www.apache.org/licenses/LICENSE-2.0
- *  
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -156,7 +156,7 @@ object ResolvedAst {
 
     case class ArrayStore(base: ResolvedAst.Expression, index: ResolvedAst.Expression, value: ResolvedAst.Expression, tvar: Type.Var, loc: SourceLocation) extends ResolvedAst.Expression
 
-    case class NewChannel(exp: ResolvedAst.Expression, ctpe: Type, tvar: Type.Var, loc: SourceLocation) extends ResolvedAst.Expression
+    case class NewChannel(tpe: Type, exp: ResolvedAst.Expression, loc: SourceLocation) extends ResolvedAst.Expression
 
     case class GetChannel(exp: ResolvedAst.Expression, tvar: Type.Var, loc: SourceLocation) extends ResolvedAst.Expression
 

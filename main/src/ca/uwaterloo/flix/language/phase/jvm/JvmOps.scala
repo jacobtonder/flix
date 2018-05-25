@@ -345,7 +345,7 @@ object JvmOps {
   }
 
   /**
-    * Returns the tuple class type `TupleX$Y$Z` for the given type `tpe`.
+    * Returns the channel class type `Channel$tpe` for the given type `tpe`.
     *
     * For example,
     *
@@ -811,7 +811,7 @@ object JvmOps {
       case Expression.ArrayStore(base, index, value, tpe, loc) =>
         visitExp(base) ++ visitExp(index) ++ visitExp(value)
 
-      case Expression.NewChannel(exp, ctpe, tpe, loc) =>
+      case Expression.NewChannel(exp, tpe, loc) =>
         visitExp(exp)
       case Expression.GetChannel(exp, tpe, loc) =>
         visitExp(exp)
@@ -819,6 +819,10 @@ object JvmOps {
         visitExp(exp1) ++ visitExp(exp2)
       case Expression.Spawn(exp, tpe, loc) =>
         visitExp(exp)
+      case Expression.SelectChannel(rules, tpe, loc) =>
+        rules.foldLeft(Set.empty[ClosureInfo]) {
+          case (sacc, r) => sacc ++ visitExp(r.chan) ++ visitExp(r.body)
+        }
 
       case Expression.Ref(exp, tpe, loc) => visitExp(exp)
       case Expression.Deref(exp, tpe, loc) => visitExp(exp)
@@ -1033,10 +1037,13 @@ object JvmOps {
       case Expression.ArrayLoad(base, index, tpe, loc) => visitExp(base) ++ visitExp(index) + tpe
       case Expression.ArrayStore(base, index, value, tpe, loc) => visitExp(base) ++ visitExp(index) ++ visitExp(value) + tpe
 
-      case Expression.NewChannel(exp, ctpe, tpe, loc) => visitExp(exp) + ctpe + tpe
+      case Expression.NewChannel(exp, tpe, loc) => visitExp(exp) + tpe
       case Expression.GetChannel(exp, tpe, loc) => visitExp(exp) + tpe
       case Expression.PutChannel(exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2) + tpe
       case Expression.Spawn(exp, tpe, loc) => visitExp(exp) + tpe
+      case Expression.SelectChannel(rules, tpe, loc) => rules.foldLeft(Set(tpe)) {
+        case (sacc, r) => sacc ++ visitExp(r.chan) ++ visitExp(r.body)
+      }
 
       case Expression.Ref(exp, tpe, loc) => visitExp(exp) + tpe
       case Expression.Deref(exp, tpe, loc) => visitExp(exp) + tpe
@@ -1124,13 +1131,6 @@ object JvmOps {
       return b1 == 0xCA && b2 == 0xFE && b3 == 0xBA && b4 == 0xBE
     }
     false
-  }
-
-  def getChannelkInnerType(tpe: Type): Type = {
-    val x = tpe match {
-      case Type.Apply(Type.Channel, t) => t
-    }
-    x
   }
 
   /**

@@ -286,25 +286,7 @@ object ParsedAst {
   sealed trait Statement
 
   object Statement {
-
-    /**
-      * Basic Sequential Statement.
-      *
-      * @param sp1  the position of the first character in the statement.
-      * @param exp  the expression.
-      * @param stmt the statement.
-      * @param sp2  the position of the last character in the statement.
-      */
-    case class BasicStatement(sp1: SourcePosition, exp: Expression, stmt: Statement, sp2: SourcePosition) extends ParsedAst.Statement
-
-    /**
-      * Single Statement.
-      *
-      * @param sp1  the position of the first character in the statement.
-      * @param exp  the expression.
-      * @param sp2  the position of the last character in the statement.
-      */
-    case class SingleStatement(sp1: SourcePosition, exp: Expression, sp2: SourcePosition) extends ParsedAst.Statement
+    case class Statement(exps: Seq[Expression]) extends ParsedAst.Statement
   }
 
   /**
@@ -574,11 +556,11 @@ object ParsedAst {
       * @param sp1  the position of the first character in the expression.
       * @param pat  the match pattern.
       * @param tpe  the optional type annotation.
-      * @param exp1 the value expression.
-      * @param exp2 the body expression.
+      * @param exp  the value expression.
+      * @param stmt the body statement.
       * @param sp2  the position of the last character in the expression.
       */
-    case class LetMatch(sp1: SourcePosition, pat: ParsedAst.Pattern, tpe: Option[ParsedAst.Type], exp1: ParsedAst.Expression, exp2: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
+    case class LetMatch(sp1: SourcePosition, pat: ParsedAst.Pattern, tpe: Option[ParsedAst.Type], exp: ParsedAst.Expression, stmt: ParsedAst.Statement, sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
       * LetRec Expression (recursive let-binding).
@@ -672,19 +654,19 @@ object ParsedAst {
       *
       * @param sp1 the position of the first character in the expression.
       * @param tpe the type of the channel
-      * @param exp the optional buffer expression of the channel (Default is 0)
+      * @param exp the optional chanel expression (Default is 0)
       * @param sp2 the position of the last character in the expressions
       */
-    case class NewChannel(sp1: SourcePosition, ctpe: ParsedAst.Type, exp: Option[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
+    case class NewChannel(sp1: SourcePosition, tpe: ParsedAst.Type, exp: Option[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
       * GetChannel Expression.
       *
       * @param sp1 the position of the first character in the expression.
-      * @param exp1 the expression to get from.
+      * @param exp the expression to get from.
       * @param sp2 the position of the last character in the expression.
       */
-    case class GetChannel(sp1: SourcePosition, exp1: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
+    case class GetChannel(sp1: SourcePosition, exp: ParsedAst.Expression, sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
       * PutChannel Expression.
@@ -699,11 +681,11 @@ object ParsedAst {
       * Spawn Expression (runs expression on new process).
       *
       * @param sp1  the position of the first character in the expression.
-      * @param fn   the function to be run concurrently
+      * @param ident   the function to be run concurrently
       * @param args the arguments to pass to the function
       * @param sp2  the position of the last character in the expression.
       */
-    case class Spawn(sp1: SourcePosition, fn: Name.Ident, args: Seq[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
+    case class Spawn(sp1: SourcePosition, ident: Name.Ident, args: Seq[ParsedAst.Expression], sp2: SourcePosition) extends ParsedAst.Expression
 
     /**
       * SelectChannel Expression (select first channel expression).
@@ -884,7 +866,6 @@ object ParsedAst {
     case class UserError(sp1: SourcePosition, sp2: SourcePosition) extends ParsedAst.Expression
 
   }
-
 
   /**
     * Patterns.

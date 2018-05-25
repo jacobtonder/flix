@@ -537,11 +537,11 @@ object Resolver extends Phase[NamedAst.Program, ResolvedAst.Program] {
             v <- visit(value)
           } yield ResolvedAst.Expression.ArrayStore(b, i, v, tvar, loc)
 
-        case NamedAst.Expression.NewChannel(exp, ctpe, tvar, loc) =>
+        case NamedAst.Expression.NewChannel(tpe, exp, loc) =>
           for {
             e <- visit(exp)
-            ct <- lookupType(ctpe, ns0, prog0)
-          } yield ResolvedAst.Expression.NewChannel(e, ct, tvar, loc)
+            t <- lookupType(tpe, ns0, prog0)
+          } yield ResolvedAst.Expression.NewChannel(t, e, loc)
 
         case NamedAst.Expression.GetChannel(exp, tvar, loc) =>
           for {

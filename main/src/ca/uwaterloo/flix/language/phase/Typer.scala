@@ -827,7 +827,7 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
         /*
          * NewChannel expression.
          */
-        case ResolvedAst.Expression.NewChannel(exp, ctpe, tvar, loc) =>
+        case ResolvedAst.Expression.NewChannel(tpe, exp, loc) =>
           //
           //  e: Int32
           //  ------------------------
@@ -835,9 +835,8 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           //
           for {
             channelSize <- visitExp(exp)
-            _ <- unifyM(channelSize, Type.Int32, loc)
-            contentType <- liftM(Type.mkChannel(ctpe))
-            resultType <- unifyM(tvar, contentType, loc)
+            ___________ <- unifyM(channelSize, Type.Int32, loc)
+            resultType  <- liftM(Type.mkChannel(tpe))
           } yield resultType
 
         /*
@@ -848,9 +847,10 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           // ----------------
           // <- exp : t
           for (
-            tpe  <- visitExp(exp);
-            ctpe <- unifyM(tpe, Type.mkChannel(tvar), loc)
-          ) yield tvar
+            tpe         <- visitExp(exp);
+            channelType <- unifyM(tpe, Type.mkChannel(tvar), loc);
+            resultType  <- liftM(tvar)
+          ) yield resultType
 
         /*
          * PutChannel expression.
@@ -860,10 +860,11 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           // ----------------------------
           // exp1 <- exp2 : Channel[t]
           for (
-            tpe1 <- visitExp(exp1);
-            tpe2 <- visitExp(exp2);
-            rtpe <- unifyM(tvar, tpe1, Type.mkChannel(tpe2), loc)
-          ) yield rtpe
+            tpe1        <- visitExp(exp1);
+            tpe2        <- visitExp(exp2);
+            channelType <- unifyM(tpe1, Type.mkChannel(tpe2), loc);
+            resultType  <- unifyM(tvar, channelType, loc)
+          ) yield resultType
 
         /**
           * Spawn expression.
@@ -873,8 +874,8 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           // ----------------
           // spawn exp : Unit
           for (
-            tpe <- visitExp(exp);
-            e <- unifyM(tpe, Type.mkArrow(Type.Unit, Type.Unit), loc);
+            tpe        <- visitExp(exp);
+            lambdaType <- unifyM(tpe, Type.mkArrow(Type.Unit, Type.Unit), loc);
             resultType <- unifyM(tvar, Type.Unit, loc)
           ) yield resultType
 
@@ -890,19 +891,18 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           //  ------------------ [t-SelectChannel]
           //  select { sr+ } : t
           assert(rules.nonEmpty)
-          // Extract the symbols, channels, and body expressions of each rule-
-          val bodies = rules.map(_.exp)
 
-          val _ = rules map {
+          val bodies = rules map {
             case r =>
               for {
                 ctpe <- visitExp(r.chan)
+                body <- visitExp(r.exp)
                 _ <- unifyM(ctpe, Type.mkChannel(r.sym.tvar), loc)
-              } yield r.sym.tvar
+              } yield body
           }
 
           for {
-            actualBodyTypes <- seqM(bodies map visitExp)
+            actualBodyTypes <- seqM(bodies)
             resultType <- unifyM(tvar :: actualBodyTypes, loc)
           } yield resultType
 
@@ -1232,9 +1232,10 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
         /*
          * NewChannel expression.
          */
-        case ResolvedAst.Expression.NewChannel(exp, ctpe, tvar, loc) =>
+        case ResolvedAst.Expression.NewChannel(tpe, exp, loc) =>
           val e = visitExp(exp, subst0)
-          TypedAst.Expression.NewChannel(e, subst0(ctpe), subst0(tvar), Eff.Bot, loc)
+          val t = Type.mkChannel(tpe)
+          TypedAst.Expression.NewChannel(e, subst0(t), Eff.Bot, loc)
 
         /*
          * GetChannel expression

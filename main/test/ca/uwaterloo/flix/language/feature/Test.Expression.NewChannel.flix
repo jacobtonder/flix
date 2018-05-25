@@ -682,3 +682,75 @@ def bs13(): Int = 2
 
 @test
 def testNewChannel213(): Channel[Unit] = channel Unit bs13()
+
+@test
+def testNewChannel214(): Channel[Unit] = channel Unit 10
+
+@test
+def testNewChannel215(): Channel[Unit] = channel Unit 2147483647
+
+@test
+def testNewChannel216(): Channel[Bool] = channel Bool 10
+
+@test
+def testNewChannel217(): Channel[Bool] = channel Bool 2147483647
+
+@test
+def testNewChannel218(): Channel[Int] = channel Int 10
+
+@test
+def testNewChannel219(): Channel[Int] = channel Int 2147483647
+
+@test
+def testNewChannel220(): Channel[Int8] = channel Int8 10
+
+@test
+def testNewChannel221(): Channel[Int8] = channel Int8 2147483647
+
+@test
+def testNewChannel222(): Channel[Int16] = channel Int16 10
+
+@test
+def testNewChannel223(): Channel[Int16] = channel Int16 2147483647
+
+@test
+def testNewChannel224(): Channel[Int32] = channel Int32 10
+
+@test
+def testNewChannel225(): Channel[Int32] = channel Int32 2147483647
+
+@test
+def testNewChannel226(): Channel[Int64] = channel Int64 10
+
+@test
+def testNewChannel227(): Channel[Int64] = channel Int64 2147483647
+
+@test
+def testNewChannel228(): Channel[BigInt] = channel BigInt 10
+
+@test
+def testNewChannel229(): Channel[BigInt] = channel BigInt 2147483647
+
+@test
+def testNewChannel230(): Channel[Str] = channel Str 10
+
+@test
+def testNewChannel231(): Channel[Str] = channel Str 2147483647
+
+@test
+def testNewChannel232(): Channel[Char] = channel Char 10
+
+@test
+def testNewChannel233(): Channel[Char] = channel Char 2147483647
+
+@test
+def testNewChannel234(): Channel[List[Int]] = channel List[Int] 10
+
+@test
+def testNewChannel235(): Channel[List[Int]] = channel List[Int] 2147483647
+
+@test
+def testNewChannel236(): Channel[Channel[Int]] = channel Channel[Int] 10
+
+@test
+def testNewChannel237(): Channel[Channel[Int]] = channel Channel[Int] 2147483647

@@ -315,16 +315,24 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
 
   object Statements {
 
-    def weed(stmt: ParsedAst.Statement)(implicit flix: Flix) = {
+    def weed(stmt: ParsedAst.Statement)(implicit flix: Flix): Validation[WeededAst.Expression, WeederError] = {
 
-      def visit(stmt: ParsedAst.Statement): Validation[WeededAst.Expression, WeederError] = stmt match {
-        case ParsedAst.Statement.BasicStatement(sp1, exp, stmt, sp2) =>
-          @@(Expressions.weed(exp), visit(stmt)) map {
-            case (e1, e2) => WeededAst.Expression.Let(Name.Ident(sp1, "_", sp2), e1, e2, mkSL(sp1, sp2))
+      def visit(stmt: ParsedAst.Statement): Validation[WeededAst.Expression, WeederError] = {
+         stmt match {
+          case ParsedAst.Statement.Statement(exps) => exps.toList match {
+            case Nil => throw InternalCompilerException(s"Unexpected amount of expressions")
+            case x :: Nil => Expressions.weed(x)
+            case x :: xs =>
+              val sp1 = leftMostSourcePosition(x)
+              val sp2 = sp1
+              xs.map(Expressions.weed).foldLeft(Expressions.weed(x)) {
+                case (acc, e) => @@(acc, e) map {
+                  case (e1, e2) =>
+                    WeededAst.Expression.Let(Name.Ident(sp1, "_$", sp2), e1, e2, mkSL(sp1, sp2))
+                }
+              }
           }
-
-        case ParsedAst.Statement.SingleStatement(sp1, exp, sp2) =>
-          Expressions.weed(exp)
+        }
       }
 
       visit(stmt)
@@ -524,11 +532,11 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
             case (e1, e2, e3) => WeededAst.Expression.IfThenElse(e1, e2, e3, mkSL(sp1, sp2))
           }
 
-        case ParsedAst.Expression.LetMatch(sp1, pat, tpe, exp1, exp2, sp2) =>
+        case ParsedAst.Expression.LetMatch(sp1, pat, tpe, exp, stmt, sp2) =>
           /*
            * Rewrites a let-match to a regular let-binding or a full-blown pattern match.
            */
-          @@(Patterns.weed(pat), visit(exp1, unsafe), visit(exp2, unsafe)) map {
+          @@(Patterns.weed(pat), visit(exp, unsafe), Statements.weed(stmt)) map {
             case (WeededAst.Pattern.Var(ident, loc), value, body) =>
               // Let-binding.
               // Check if there is a type annotation for the value expression.
@@ -636,20 +644,20 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
             case (b, i, v) => WeededAst.Expression.ArrayStore(b, i, v, mkSL(sp1, sp2))
           }
 
-        case ParsedAst.Expression.NewChannel(sp1, ctpe, expOpt, sp2) =>
+        case ParsedAst.Expression.NewChannel(sp1, tpe, expOpt, sp2) =>
           expOpt match {
             case None =>
-              // Case 1: NewChannel takes no expression that states the buffer size
-              val bufferSize = WeededAst.Expression.Int32(lit = 0, mkSL(sp2, sp2))
-              WeededAst.Expression.NewChannel(bufferSize, Types.weed(ctpe), mkSL(sp1, sp2)).toSuccess
+              // Case 1: NewChannel takes no expression that states the channel size
+              val channelSize = WeededAst.Expression.Int32(lit = 0, mkSL(sp2, sp2))
+              WeededAst.Expression.NewChannel(Types.weed(tpe), channelSize, mkSL(sp1, sp2)).toSuccess
             case Some(exp) =>
-              // Case 2: NewChannel takes an expression that states the buffer size
+              // Case 2: NewChannel takes an expression that states the channel size
               exp match {
                 case ParsedAst.Expression.Lit(_, ParsedAst.Literal.Int32(_, sign, _, _), _) if sign =>
                     IllegalChannelSize(mkSL(sp1, sp2)).toFailure
                 case _ =>
                   visit(exp, unsafe) map {
-                    case e => WeededAst.Expression.NewChannel(e, Types.weed(ctpe), mkSL(sp1, sp2))
+                    case e => WeededAst.Expression.NewChannel(Types.weed(tpe), e, mkSL(sp1, sp2))
                   }
               }
           }
@@ -670,6 +678,7 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
           val loc = mkSL(sp1, sp2)
           val func = WeededAst.Expression.VarOrDef(Name.QName(sp1, Name.RootNS, fn, sp2), loc)
 
+          // TODO simplify this
           def createExpression(params: List[ParsedAst.Expression], arguments: List[Name.Ident], paramNumber: Int): Validation[WeededAst.Expression, WeederError] =
             params match {
               case h :: t =>

@@ -170,7 +170,7 @@ object Value {
     val counter = new AtomicInteger()
   }
 
-  case class Channel(id: Int, queue: util.Queue[AnyRef], capacity: Int, lock: Lock, bufferNotFull: Condition, bufferNotEmpty: Condition, conditions: util.List[(Lock, Condition)]) extends Value with Comparable[Channel] {
+  case class Channel(id: Int, queue: util.Queue[AnyRef], capacity: Int, lock: Lock, channelNotFull: Condition, channelNotEmpty: Condition, conditions: util.List[(Lock, Condition)]) extends Value with Comparable[Channel] {
     final override def equals(obj: scala.Any): Boolean = throw InternalRuntimeException(s"Value.Channel does not support `equals`.")
 
     final override def hashCode(): Int = throw InternalRuntimeException(s"Value.Channel does not support `hashCode`.")
