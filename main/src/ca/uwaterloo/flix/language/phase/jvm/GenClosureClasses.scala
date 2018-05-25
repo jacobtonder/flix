@@ -119,7 +119,21 @@ object GenClosureClasses {
     visitor.toByteArray
   }
 
-  private def compileCopyMethod(visitor: ClassWriter, classType: JvmType.Reference, functionInterface:JvmType.Reference, defn: Def,
+  /**
+    * copy method for the given `defn` and `classType`.
+    *
+    * public final `classType` copy(Context context) {
+    *     `classType` closure = new `classType`(context, this.clo0, this.clo1, .., this.clon);
+    *
+    *     closure.setArg0(this.arg0);
+    *     closure.setArg1(this.arg1);
+    *     ...
+    *     closure.setArgn(this.argn);
+    *
+    *     return closure;
+    * }
+    */
+  private def compileCopyMethod(visitor: ClassWriter, classType: JvmType.Reference, functionInterface: JvmType.Reference, defn: Def,
                                  freeVars: List[FreeVar], resultType: JvmType)(implicit root: Root, flix: Flix): Unit = {
     // Variable types
     val varTypes = freeVars.map(_.tpe).map(JvmOps.getErasedJvmType)

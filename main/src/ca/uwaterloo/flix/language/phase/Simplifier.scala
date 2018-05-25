@@ -406,17 +406,17 @@ object Simplifier extends Phase[TypedAst.Root, SimplifiedAst.Root] {
         val v = visitExp(value)
         SimplifiedAst.Expression.ArrayStore(b, i, v, tpe, loc)
 
-      case TypedAst.Expression.NewChannel(e, ctpe, tpe, eff, loc) =>
-        SimplifiedAst.Expression.NewChannel(visitExp(e), ctpe, tpe, loc)
+      case TypedAst.Expression.NewChannel(exp, tpe, eff, loc) =>
+        SimplifiedAst.Expression.NewChannel(visitExp(exp), tpe, loc)
 
-      case TypedAst.Expression.GetChannel(e, tpe, eff, loc) =>
-        SimplifiedAst.Expression.GetChannel(visitExp(e), tpe, loc)
+      case TypedAst.Expression.GetChannel(exp, tpe, eff, loc) =>
+        SimplifiedAst.Expression.GetChannel(visitExp(exp), tpe, loc)
 
-      case TypedAst.Expression.PutChannel(e1, e2, tpe, eff, loc) =>
-        SimplifiedAst.Expression.PutChannel(visitExp(e1), visitExp(e2), tpe, loc)
+      case TypedAst.Expression.PutChannel(exp1, exp2, tpe, eff, loc) =>
+        SimplifiedAst.Expression.PutChannel(visitExp(exp1), visitExp(exp2), tpe, loc)
 
-      case TypedAst.Expression.Spawn(e, tpe, eff, loc) =>
-        SimplifiedAst.Expression.Spawn(visitExp(e), tpe, loc)
+      case TypedAst.Expression.Spawn(exp, tpe, eff, loc) =>
+        SimplifiedAst.Expression.Spawn(visitExp(exp), tpe, loc)
 
       case TypedAst.Expression.SelectChannel(rules, tpe, eff, loc) =>
         val rs = rules map {
@@ -1114,8 +1114,8 @@ object Simplifier extends Phase[TypedAst.Root, SimplifiedAst.Root] {
         SimplifiedAst.Expression.ArrayLoad(visit(base), visit(index), tpe, loc)
       case SimplifiedAst.Expression.ArrayStore(base, index, value, tpe, loc) =>
         SimplifiedAst.Expression.ArrayStore(visit(base), visit(index), visit(value), tpe, loc)
-      case SimplifiedAst.Expression.NewChannel(exp, ctpe, tpe, loc) =>
-        SimplifiedAst.Expression.NewChannel(visit(exp), ctpe, tpe, loc)
+      case SimplifiedAst.Expression.NewChannel(exp, tpe, loc) =>
+        SimplifiedAst.Expression.NewChannel(visit(exp), tpe, loc)
       case SimplifiedAst.Expression.GetChannel(exp, tpe, loc) =>
         SimplifiedAst.Expression.GetChannel(visit(exp), tpe, loc)
       case SimplifiedAst.Expression.PutChannel(exp1, exp2, tpe, loc) =>

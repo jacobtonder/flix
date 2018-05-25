@@ -19,6 +19,7 @@ package ca.uwaterloo.flix.language.phase.jvm
 import java.lang.reflect.Modifier
 
 import ca.uwaterloo.flix.api.Flix
+import ca.uwaterloo.flix.language.ast
 import ca.uwaterloo.flix.language.ast.ExecutableAst.{Expression, Root}
 import ca.uwaterloo.flix.language.ast.SemanticOperator._
 import ca.uwaterloo.flix.language.ast._
@@ -26,7 +27,6 @@ import ca.uwaterloo.flix.util.{InternalCompilerException, Optimization}
 import org.objectweb.asm
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
-import ca.uwaterloo.flix.language.ast.Type
 
 /**
   * Generate expression
@@ -679,13 +679,13 @@ object GenExpression {
 
     case Expression.ArrayStore(base, index, value, tpe, loc) => ??? // TODO: Ramin: Array
 
-    case Expression.NewChannel(exp, ctpe, tpe, loc) =>
+    case Expression.NewChannel(exp, tpe, loc) =>
       val classType = JvmOps.getChannelClassType(tpe)
       // Adding source line number for debugging
       addSourceLine(visitor, loc)
       // Instantiating a new object of channel
       visitor.visitTypeInsn(NEW, classType.name.toInternalName)
-      // Duplicating the class
+      // Duplicating the object reference
       visitor.visitInsn(DUP)
       // Evaluate the underlying expression
       compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
@@ -728,27 +728,22 @@ object GenExpression {
       visitor.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "putValue", methodDescriptor, false)
 
     case Expression.Spawn(exp, tpe, loc) =>
-      val functionType = JvmOps.getFunctionInterfaceType(Type.mkArrow(Type.Unit, Type.Unit))
+      val functionType = JvmOps.getFunctionInterfaceType(ast.Type.mkArrow(ast.Type.Unit, ast.Type.Unit))
 
       // Add source line number for debugging
       addSourceLine(visitor, loc)
-
       // Instantiate a new object of Thread
       visitor.visitTypeInsn(NEW, JvmName.Thread.toInternalName)
       // Duplicate the instance
       visitor.visitInsn(DUP)
-
       // Instantiate a new object of Spawn
       visitor.visitTypeInsn(NEW, JvmName.Spawn.toInternalName)
       // Duplicate the instance
       visitor.visitInsn(DUP)
-
       // Evaluate the exp
       compileExpression(exp, visitor, currentClass, lenv0, entryPoint)
-
       // Invoke Spawn constructor
       visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Spawn.toInternalName, "<init>", AsmOps.getMethodDescriptor(List(functionType), JvmType.Void), false)
-
       // Push thread name to the stack
       visitor.visitLdcInsn(s"Spawn Process location: ${loc.format}")
       // Invoke Thread constructor
@@ -756,10 +751,9 @@ object GenExpression {
         AsmOps.getMethodDescriptor(List(JvmType.Runnable, JvmType.String), JvmType.Void), false)
       // Duplicate the instance
       visitor.visitInsn(DUP)
-
       // Start thread
       visitor.visitMethodInsn(INVOKEVIRTUAL, JvmName.Thread.toInternalName, "start", "()V", false)
-
+      // Return unit
       visitor.visitMethodInsn(INVOKESTATIC, JvmName.Unit.toInternalName, "getInstance",
         AsmOps.getMethodDescriptor(Nil, JvmType.Unit), false)
 

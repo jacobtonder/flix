@@ -19,7 +19,6 @@ package ca.uwaterloo.flix.language.phase
 import ca.uwaterloo.flix.api.Flix
 import ca.uwaterloo.flix.language.ast.SimplifiedAst.{Expression, HandlerBinding}
 import ca.uwaterloo.flix.language.ast.{SimplifiedAst, Symbol}
-import ca.uwaterloo.flix.language.phase.Inliner.renameAndSubstitute
 import ca.uwaterloo.flix.language.{CompilationError, GenSym}
 import ca.uwaterloo.flix.util.Validation._
 import ca.uwaterloo.flix.util.{InternalCompilerException, Validation}
@@ -159,7 +158,7 @@ object Inliner extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       case Expression.ArrayLit(elms, tpe, loc) => Expression.ArrayLit(elms map visit, tpe, loc)
       case Expression.ArrayLoad(base, index, tpe, loc) => Expression.ArrayLoad(visit(base), visit(index), tpe, loc)
       case Expression.ArrayStore(base, index, value, tpe, loc) => Expression.ArrayStore(visit(base), visit(index), visit(value), tpe, loc)
-      case Expression.NewChannel(exp, ctpe, tpe, loc) => Expression.NewChannel(visit(exp), ctpe, tpe, loc)
+      case Expression.NewChannel(exp, tpe, loc) => Expression.NewChannel(visit(exp), tpe, loc)
       case Expression.GetChannel(exp, tpe, loc) => Expression.GetChannel(visit(exp), tpe, loc)
       case Expression.PutChannel(exp1, exp2, tpe, loc) => Expression.PutChannel(visit(exp1), visit(exp2), tpe, loc)
       case Expression.Spawn(exp, tpe, loc) => Expression.Spawn(visit(exp), tpe, loc)
@@ -274,8 +273,8 @@ object Inliner extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       Expression.ArrayLoad(renameAndSubstitute(base, env0), renameAndSubstitute(index, env0), tpe, loc)
     case Expression.ArrayStore(base, index, value, tpe, loc) =>
       Expression.ArrayStore(renameAndSubstitute(base, env0), renameAndSubstitute(index, env0), renameAndSubstitute(value, env0), tpe, loc)
-    case Expression.NewChannel(exp, ctpe, tpe, loc) =>
-      Expression.NewChannel(renameAndSubstitute(exp, env0), ctpe, tpe, loc)
+    case Expression.NewChannel(exp, tpe, loc) =>
+      Expression.NewChannel(renameAndSubstitute(exp, env0), tpe, loc)
     case Expression.GetChannel(exp, tpe, loc) =>
       Expression.GetChannel(renameAndSubstitute(exp, env0), tpe, loc)
     case Expression.PutChannel(exp1, exp2, tpe, loc) =>
@@ -285,7 +284,9 @@ object Inliner extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
     case Expression.SelectChannel(rules, tpe, loc) =>
       val rs = rules map {
         case SimplifiedAst.SelectRule(sym, chan, body) =>
-          SimplifiedAst.SelectRule(sym, renameAndSubstitute(chan, env0), renameAndSubstitute(body, env0))
+          val newSym = Symbol.freshVarSym(sym)
+          val sub1 = env0 + (sym -> newSym)
+          SimplifiedAst.SelectRule(newSym, renameAndSubstitute(chan, sub1), renameAndSubstitute(body, sub1))
       }
       Expression.SelectChannel(rs, tpe, loc)
     case Expression.Ref(exp1, tpe, loc) =>
@@ -465,7 +466,7 @@ object Inliner extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
     //
     // NewChannel expressions are atomic.
     //
-    case Expression.NewChannel(exp, ctpe, tpe, loc) => false
+    case Expression.NewChannel(exp, tpe, loc) => false
 
     //
     // GetChannel expressions are atomic.

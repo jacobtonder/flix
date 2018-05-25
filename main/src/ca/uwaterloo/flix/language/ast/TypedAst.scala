@@ -190,7 +190,7 @@ object TypedAst {
 
     case class ArrayStore(base: TypedAst.Expression, index: TypedAst.Expression, value: TypedAst.Expression, tpe: Type, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
 
-    case class NewChannel(exp:TypedAst.Expression, ctpe: Type, tpe: Type, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
+    case class NewChannel(exp: TypedAst.Expression, tpe: Type, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
 
     case class GetChannel(exp: TypedAst.Expression, tpe: Type, eff: ast.Eff, loc: SourceLocation) extends TypedAst.Expression
 

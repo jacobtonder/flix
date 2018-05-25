@@ -673,13 +673,13 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
           case (b, i, v) => NamedAst.Expression.ArrayStore(b, i, v, Type.freshTypeVar(), loc)
         }
 
-      case WeededAst.Expression.NewChannel(exp, ctpe, loc) =>
+      case WeededAst.Expression.NewChannel(tpe, exp, loc) =>
         namer(exp, env0, tenv0) map {
-          case e => NamedAst.Expression.NewChannel(e, Types.namer(ctpe, tenv0), Type.freshTypeVar(), loc)
+          case e => NamedAst.Expression.NewChannel(Types.namer(tpe, tenv0), e, loc)
         }
 
       case WeededAst.Expression.GetChannel(exp,loc) =>
-        namer(exp,env0,tenv0) map {
+        namer(exp, env0, tenv0) map {
           case e => NamedAst.Expression.GetChannel(e, Type.freshTypeVar(), loc)
         }
 
@@ -818,7 +818,7 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
       case WeededAst.Expression.ArrayLit(elms, loc) => elms.flatMap(freeVars)
       case WeededAst.Expression.ArrayLoad(base, index, loc) => freeVars(base) ++ freeVars(index)
       case WeededAst.Expression.ArrayStore(base, index, value, loc) => freeVars(base) ++ freeVars(index) ++ freeVars(value)
-      case WeededAst.Expression.NewChannel(exp, tpe, loc) => freeVars(exp)
+      case WeededAst.Expression.NewChannel(tpe, exp, loc) => freeVars(exp)
       case WeededAst.Expression.GetChannel(exp, loc) => freeVars(exp)
       case WeededAst.Expression.PutChannel(exp1, exp2, loc) => freeVars(exp1) ++ freeVars(exp2)
       case WeededAst.Expression.Spawn(exp, loc) => freeVars(exp)

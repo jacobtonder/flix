@@ -109,16 +109,16 @@ def f14(): List[Int] =
     1 :: Nil;
     1 :: 2 :: Nil
 
-//@test
-//def testStatement14(): Bool = f14() `assertEq!` 1 :: 2 :: Nil
+@test
+def testStatement14(): Bool = f14() `assertEq!` 1 :: 2 :: Nil
 
 def f15(): List[Int] =
     1 :: Nil;
     1 :: 2 :: Nil;
     1 :: 2 :: 3 :: Nil
 
-//@test
-//def testStatement15(): Bool = f15() `assertEq!` 1 :: 2 :: 3 :: Nil
+@test
+def testStatement15(): Bool = f15() `assertEq!` 1 :: 2 :: 3 :: Nil
 
 def f16(): List[Int] =
     1 :: Nil;
@@ -126,32 +126,35 @@ def f16(): List[Int] =
     1 :: 2 :: 3 :: Nil;
     1 :: 2 :: 3 :: 4 :: Nil
 
-//@test
-//def testStatement16(): Bool = f16() `assertEq!` 1 :: 2 :: 3 :: 4 :: Nil
+@test
+def testStatement16(): Bool = f16() `assertEq!` 1 :: 2 :: 3 :: 4 :: Nil
 
-//def f17(): Channel[Int] =
-//    channel Int;
-//    channel Int
-//
-////@test
-////def testStatement17(): Bool = f17() `assertEq!` channel Int
-//
-//def f18(): Channel[Int] =
-//    channel Int;
-//    channel Int;
-//    channel Int
-//
-////@test
-////def testStatement18(): Bool = f18() `assertEq!` channel Int
-//
-//def f19(): Channel[Int] =
-//    channel Int;
-//    channel Int;
-//    channel Int;
-//    channel Int
-//
-////@test
-////def testStatement19(): Bool = f19() `assertEq!` channel Int
+def f17(): Int =
+    channel Int;
+    channel Int;
+    2
+
+@test
+def testStatement17(): Bool = f17() `assertEq!` 2
+
+def f18(): Int =
+    channel Int;
+    channel Int;
+    channel Int;
+    10
+
+@test
+def testStatement18(): Bool = f18() `assertEq!` 10
+
+def f19(): Int =
+    channel Int;
+    channel Int;
+    channel Int;
+    channel Int;
+    42
+
+@test
+def testStatement19(): Bool = f19() `assertEq!` 42
 
 def f20(): Int =
     () -> 2;
@@ -200,6 +203,42 @@ def f25(): Int =
 
 @test
 def testStatement25(): Bool = f25() `assertEq!` 2
+
+def f26(): Int =
+    let ch = channel Int 3;
+    ch <- 2 <- 3;
+    ch <- 10;
+    <- ch
+
+@test
+def testStatement26(): Bool = f26() `assertEq!` 2
+
+def f27(): Int =
+    let ch1 = channel Int 2;
+    let ch2 = channel Int 2;
+    ch1 <- 2;
+    ch2 <- 3;
+    ch1 <- 10;
+    <- ch2
+
+@test
+def testStatement27(): Bool = f27() `assertEq!` 3
+
+def f28(): Int =
+    let ch1 = channel Int 3;
+    let ch2 = channel Int 2;
+    spawn g28(ch1);
+    ch2 <- 3;
+    ch2 <- 10;
+    <- ch1
+
+def g28(ch: Channel[Int]): Unit =
+    ch <- 2;
+    ch <- 10;
+    ()
+
+@test
+def testStatement28(): Bool = f28() `assertEq!` 2
 
 def f50(): Int =
     1.0;

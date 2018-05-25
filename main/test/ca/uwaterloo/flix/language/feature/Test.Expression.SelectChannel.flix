@@ -6,46 +6,46 @@ import Char
 
 
 // Units
-def f01(ch: Channel[Unit]): Channel[Unit] =
+def fUnit01(ch: Channel[Unit]): Channel[Unit] =
   ch <- ()
 
-def selectChannel01(): Unit =
+def selectChannelUnit01(): Unit =
   let ch = channel Unit 1;
-  let _ = spawn f01(ch);
+  let _ = spawn fUnit01(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel01(): Bool = selectChannel01() `assertEq!` ()
+def testSelectChannelUnit01(): Bool = selectChannelUnit01() `assertEq!` ()
 
-def f02(ch: Channel[Unit]): Channel[Unit] =
+def fUnit02(ch: Channel[Unit]): Channel[Unit] =
   ch <- ()
 
-def selectChannel02(): Unit =
+def selectChannelUnit02(): Unit =
   let ch = channel Unit 10;
-  let _ = spawn f02(ch);
+  let _ = spawn fUnit02(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel02(): Bool = selectChannel02() `assertEq!` ()
+def testSelectChannelUnit02(): Bool = selectChannelUnit02() `assertEq!` ()
 
-def f03(ch: Channel[Unit]): Channel[Unit] =
+def fUnit03(ch: Channel[Unit]): Channel[Unit] =
   ch <- ()
 
-def selectChannel03(): Unit =
+def selectChannelUnit03(): Unit =
   let ch = channel Unit 2147483647;
-  let _ = spawn f03(ch);
+  let _ = spawn fUnit03(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel03(): Bool = selectChannel03() `assertEq!` ()
+def testSelectChannelUnit03(): Bool = selectChannelUnit03() `assertEq!` ()
 
-def selectChannel04(): Unit =
+def selectChannelUnit04(): Unit =
   let ch = channel Unit 1;
   let _ = ch <- ();
   select {
@@ -53,9 +53,9 @@ def selectChannel04(): Unit =
   }
 
 @test
-def testSelectChannel04(): Bool = selectChannel04() `assertEq!` ()
+def testSelectChannelUnit04(): Bool = selectChannelUnit04() `assertEq!` ()
 
-def selectChannel05(): Unit =
+def selectChannelUnit05(): Unit =
   let ch = channel Unit 1;
   let _ = ch <- ();
   select {
@@ -63,117 +63,117 @@ def selectChannel05(): Unit =
   }
 
 @test
-def testSelectChannel05(): Bool = selectChannel05() `assertEq!` ()
+def testSelectChannelUnit05(): Bool = selectChannelUnit05() `assertEq!` ()
 
-def f06(ch: Channel[Unit]): Channel[Unit] =
+def fUnit06(ch: Channel[Unit]): Channel[Unit] =
   ch <- ()
 
-def selectChannel06(): Unit =
+def selectChannelUnit06(): Unit =
   let ch1 = channel Unit 1;
   let ch2 = channel Unit 1;
-  let _ = spawn f06(ch1);
+  let _ = spawn fUnit06(ch1);
   select {
     case x <- ch1 => x
   }
 
 @test
-def testSelectChannel06(): Bool = selectChannel06() `assertEq!` ()
+def testSelectChannelUnit06(): Bool = selectChannelUnit06() `assertEq!` ()
 
-def f07(ch: Channel[Unit]): Channel[Unit] =
+def fUnit07(ch: Channel[Unit]): Channel[Unit] =
   ch <- ()
 
-def selectChannel07(): Unit =
+def selectChannelUnit07(): Unit =
   let ch1 = channel Unit 1;
   let ch2 = channel Unit 1;
-  let _ = spawn f07(ch2);
+  let _ = spawn fUnit07(ch2);
   select {
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel07(): Bool = selectChannel07() `assertEq!` ()
+def testSelectChannelUnit07(): Bool = selectChannelUnit07() `assertEq!` ()
 
 
 // Bool
-def f08(ch: Channel[Bool]): Channel[Bool] =
+def fBool01(ch: Channel[Bool]): Channel[Bool] =
   ch <- true
 
-def selectChannel08(): Bool =
+def selectChannelBool01(): Bool =
   let ch = channel Bool 1;
-  let _ = spawn f08(ch);
+  let _ = spawn fBool01(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel08(): Bool = selectChannel08() `assertEq!` true
+def testSelectChannelBool01(): Bool = selectChannelBool01() `assertEq!` true
 
-def f09(ch: Channel[Bool]): Channel[Bool] =
+def fBool02(ch: Channel[Bool]): Channel[Bool] =
   ch <- false
 
-def selectChannel09(): Bool =
+def selectChannelBool02(): Bool =
   let ch = channel Bool 1;
-  let _ = spawn f09(ch);
+  let _ = spawn fBool02(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel09(): Bool = selectChannel09() `assertEq!` false
+def testSelectChannelBool02(): Bool = selectChannelBool02() `assertEq!` false
 
-def f10(ch: Channel[Bool]): Channel[Bool] =
+def fBool03(ch: Channel[Bool]): Channel[Bool] =
   ch <- true
 
-def selectChannel10(): Bool =
+def selectChannelBool03(): Bool =
   let ch = channel Bool 10;
-  let _ = spawn f10(ch);
+  let _ = spawn fBool03(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel10(): Bool = selectChannel10() `assertEq!` true
+def testSelectChannelBool03(): Bool = selectChannelBool03() `assertEq!` true
 
-def f11(ch: Channel[Bool]): Channel[Bool] =
+def fBool04(ch: Channel[Bool]): Channel[Bool] =
   ch <- false
 
-def selectChannel11(): Bool =
+def selectChannelBool04(): Bool =
   let ch = channel Bool 10;
-  let _ = spawn f11(ch);
+  let _ = spawn fBool04(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel11(): Bool = selectChannel11() `assertEq!` false
+def testSelectChannelBool04(): Bool = selectChannelBool04() `assertEq!` false
 
-def f12(ch: Channel[Bool]): Channel[Bool] =
+def fBool05(ch: Channel[Bool]): Channel[Bool] =
   ch <- true
 
-def selectChannel12(): Bool =
+def selectChannelBool05(): Bool =
   let ch = channel Bool 2147483647;
-  let _ = spawn f12(ch);
+  let _ = spawn fBool05(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel12(): Bool = selectChannel12() `assertEq!` true
+def testSelectChannelBool05(): Bool = selectChannelBool05() `assertEq!` true
 
-def f13(ch: Channel[Bool]): Channel[Bool] =
+def fBool06(ch: Channel[Bool]): Channel[Bool] =
   ch <- false
 
-def selectChannel13(): Bool =
+def selectChannelBool06(): Bool =
   let ch = channel Bool 2147483647;
-  let _ = spawn f13(ch);
+  let _ = spawn fBool06(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel13(): Bool = selectChannel13() `assertEq!` false
+def testSelectChannelBool06(): Bool = selectChannelBool06() `assertEq!` false
 
-def selectChannel14(): Bool =
+def selectChannelBool07(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -181,9 +181,9 @@ def selectChannel14(): Bool =
   }
 
 @test
-def testSelectChannel14(): Bool = selectChannel14() `assertEq!` true
+def testSelectChannelBool07(): Bool = selectChannelBool07() `assertEq!` true
 
-def selectChannel15(): Bool =
+def selectChannelBool08(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- false;
   select {
@@ -191,9 +191,9 @@ def selectChannel15(): Bool =
   }
 
 @test
-def testSelectChannel15(): Bool = selectChannel15() `assertEq!` false
+def testSelectChannelBool08(): Bool = selectChannelBool08() `assertEq!` false
 
-def selectChannel16(): Bool =
+def selectChannelBool09(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -201,9 +201,9 @@ def selectChannel16(): Bool =
   }
 
 @test
-def testSelectChannel16(): Bool = selectChannel16() `assertEq!` true
+def testSelectChannelBool09(): Bool = selectChannelBool09() `assertEq!` true
 
-def selectChannel17(): Bool =
+def selectChannelBool10(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- false;
   select {
@@ -211,9 +211,9 @@ def selectChannel17(): Bool =
   }
 
 @test
-def testSelectChannel17(): Bool = selectChannel17() `assertEq!` false
+def testSelectChannelBool10(): Bool = selectChannelBool10() `assertEq!` false
 
-def selectChannel18(): Bool =
+def selectChannelBool11(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -221,9 +221,9 @@ def selectChannel18(): Bool =
   }
 
 @test
-def testSelectChannel18(): Bool = selectChannel18() `assertEq!` true
+def testSelectChannelBool11(): Bool = selectChannelBool11() `assertEq!` true
 
-def selectChannel19(): Bool =
+def selectChannelBool12(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -231,9 +231,9 @@ def selectChannel19(): Bool =
   }
 
 @test
-def testSelectChannel19(): Bool = selectChannel19() `assertEq!` false
+def testSelectChannelBool12(): Bool = selectChannelBool12() `assertEq!` false
 
-def selectChannel20(): Bool =
+def selectChannelBool13(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -241,9 +241,9 @@ def selectChannel20(): Bool =
   }
 
 @test
-def testSelectChannel20(): Bool = selectChannel20() `assertEq!` false
+def testSelectChannelBool13(): Bool = selectChannelBool13() `assertEq!` false
 
-def selectChannel21(): Bool =
+def selectChannelBool14(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -251,9 +251,9 @@ def selectChannel21(): Bool =
   }
 
 @test
-def testSelectChannel21(): Bool = selectChannel21() `assertEq!` false
+def testSelectChannelBool14(): Bool = selectChannelBool14() `assertEq!` false
 
-def selectChannel22(): Bool =
+def selectChannelBool15(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -261,9 +261,9 @@ def selectChannel22(): Bool =
   }
 
 @test
-def testSelectChannel22(): Bool = selectChannel22() `assertEq!` true
+def testSelectChannelBool15(): Bool = selectChannelBool15() `assertEq!` true
 
-def selectChannel23(): Bool =
+def selectChannelBool16(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -271,9 +271,9 @@ def selectChannel23(): Bool =
   }
 
 @test
-def testSelectChannel23(): Bool = selectChannel23() `assertEq!` true
+def testSelectChannelBool16(): Bool = selectChannelBool16() `assertEq!` true
 
-def selectChannel24(): Bool =
+def selectChannelBool17(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -281,9 +281,9 @@ def selectChannel24(): Bool =
   }
 
 @test
-def testSelectChannel24(): Bool = selectChannel24() `assertEq!` false
+def testSelectChannelBool17(): Bool = selectChannelBool17() `assertEq!` false
 
-def selectChannel25(): Bool =
+def selectChannelBool18(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -291,9 +291,9 @@ def selectChannel25(): Bool =
   }
 
 @test
-def testSelectChannel25(): Bool = selectChannel25() `assertEq!` true
+def testSelectChannelBool18(): Bool = selectChannelBool18() `assertEq!` true
 
-def selectChannel26(): Bool =
+def selectChannelBool19(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -301,9 +301,9 @@ def selectChannel26(): Bool =
   }
 
 @test
-def testSelectChannel26(): Bool = selectChannel26() `assertEq!` true
+def testSelectChannelBool19(): Bool = selectChannelBool19() `assertEq!` true
 
-def selectChannel27(): Bool =
+def selectChannelBool20(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -311,9 +311,9 @@ def selectChannel27(): Bool =
   }
 
 @test
-def testSelectChannel27(): Bool = selectChannel27() `assertEq!` false
+def testSelectChannelBool20(): Bool = selectChannelBool20() `assertEq!` false
 
-def selectChannel28(): Bool =
+def selectChannelBool21(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- false;
   select {
@@ -321,9 +321,9 @@ def selectChannel28(): Bool =
   }
 
 @test
-def testSelectChannel28(): Bool = selectChannel28() `assertEq!` false
+def testSelectChannelBool21(): Bool = selectChannelBool21() `assertEq!` false
 
-def selectChannel29(): Bool =
+def selectChannelBool22(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- false;
   select {
@@ -331,9 +331,9 @@ def selectChannel29(): Bool =
   }
 
 @test
-def testSelectChannel29(): Bool = selectChannel29() `assertEq!` false
+def testSelectChannelBool22(): Bool = selectChannelBool22() `assertEq!` false
 
-def selectChannel30(): Bool =
+def selectChannelBool23(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -341,9 +341,9 @@ def selectChannel30(): Bool =
   }
 
 @test
-def testSelectChannel30(): Bool = selectChannel30() `assertEq!` true
+def testSelectChannelBool23(): Bool = selectChannelBool23() `assertEq!` true
 
-def selectChannel31(): Bool =
+def selectChannelBool24(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- true;
   select {
@@ -351,9 +351,9 @@ def selectChannel31(): Bool =
   }
 
 @test
-def testSelectChannel31(): Bool = selectChannel31() `assertEq!` true
+def testSelectChannelBool24(): Bool = selectChannelBool24() `assertEq!` true
 
-def selectChannel32(): Bool =
+def selectChannelBool25(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- false;
   select {
@@ -361,9 +361,9 @@ def selectChannel32(): Bool =
   }
 
 @test
-def testSelectChannel32(): Bool = selectChannel32() `assertEq!` false
+def testSelectChannelBool25(): Bool = selectChannelBool25() `assertEq!` false
 
-def selectChannel33(): Bool =
+def selectChannelBool26(): Bool =
   let ch = channel Bool 1;
   let _ = ch <- false;
   select {
@@ -371,339 +371,339 @@ def selectChannel33(): Bool =
   }
 
 @test
-def testSelectChannel33(): Bool = selectChannel33() `assertEq!` true
+def testSelectChannelBool26(): Bool = selectChannelBool26() `assertEq!` true
 
-def f34(ch: Channel[Bool]): Channel[Bool] =
+def fBool27(ch: Channel[Bool]): Channel[Bool] =
   ch <- true
 
-def selectChannel34(): Bool =
+def selectChannelBool27(): Bool =
   let ch1 = channel Bool 1;
   let ch2 = channel Bool 1;
-  let _ = spawn f34(ch1);
+  let _ = spawn fBool27(ch1);
   select {
     case x <- ch1 => x
   }
 
 @test
-def testSelectChannel34(): Bool = selectChannel34() `assertEq!` true
+def testSelectChannelBool27(): Bool = selectChannelBool27() `assertEq!` true
 
-def f35(ch: Channel[Bool]): Channel[Bool] =
+def fBool28(ch: Channel[Bool]): Channel[Bool] =
   ch <- false
 
-def selectChannel35(): Bool =
+def selectChannelBool28(): Bool =
   let ch1 = channel Bool 1;
   let ch2 = channel Bool 1;
-  let _ = spawn f35(ch1);
+  let _ = spawn fBool28(ch1);
   select {
     case x <- ch1 => x
   }
 
 @test
-def testSelectChannel35(): Bool = selectChannel35() `assertEq!` false
+def testSelectChannelBool28(): Bool = selectChannelBool28() `assertEq!` false
 
-def f36(ch: Channel[Bool]): Channel[Bool] =
+def fBool29(ch: Channel[Bool]): Channel[Bool] =
   ch <- true
 
-def selectChannel36(): Bool =
+def selectChannelBool29(): Bool =
   let ch1 = channel Bool 1;
   let ch2 = channel Bool 1;
-  let _ = spawn f36(ch2);
+  let _ = spawn fBool29(ch2);
   select {
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel36(): Bool = selectChannel36() `assertEq!` true
+def testSelectChannelBool29(): Bool = selectChannelBool29() `assertEq!` true
 
-def f37(ch: Channel[Bool]): Channel[Bool] =
+def fBool30(ch: Channel[Bool]): Channel[Bool] =
   ch <- false
 
-def selectChannel37(): Bool =
+def selectChannelBool30(): Bool =
   let ch1 = channel Bool 1;
   let ch2 = channel Bool 1;
-  let _ = spawn f37(ch2);
+  let _ = spawn fBool30(ch2);
   select {
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel37(): Bool = selectChannel37() `assertEq!` false
+def testSelectChannelBool30(): Bool = selectChannelBool30() `assertEq!` false
 
 // Int
-def f38(ch: Channel[Int]): Channel[Int] =
+def fInt01(ch: Channel[Int]): Channel[Int] =
   ch <- 0
 
-def selectChannel38(): Int =
+def selectChannelInt01(): Int =
   let ch = channel Int 1;
-  let _ = spawn f38(ch);
+  let _ = spawn fInt01(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel38(): Bool = selectChannel38() `assertEq!` 0
+def testSelectChannelInt01(): Bool = selectChannelInt01() `assertEq!` 0
 
-def f39(ch: Channel[Int]): Channel[Int] =
+def fInt02(ch: Channel[Int]): Channel[Int] =
   ch <- 1
 
-def selectChannel39(): Int =
+def selectChannelInt02(): Int =
   let ch = channel Int 1;
-  let _ = spawn f39(ch);
+  let _ = spawn fInt02(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel39(): Bool = selectChannel39() `assertEq!` 1
+def testSelectChannelInt02(): Bool = selectChannelInt02() `assertEq!` 1
 
-def f40(ch: Channel[Int]): Channel[Int] =
+def fInt03(ch: Channel[Int]): Channel[Int] =
   ch <- 10
 
-def selectChannel40(): Int =
+def selectChannelInt03(): Int =
   let ch = channel Int 1;
-  let _ = spawn f40(ch);
+  let _ = spawn fInt03(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel40(): Bool = selectChannel40() `assertEq!` 10
+def testSelectChannelInt03(): Bool = selectChannelInt03() `assertEq!` 10
 
-def f41(ch: Channel[Int]): Channel[Int] =
+def fInt04(ch: Channel[Int]): Channel[Int] =
   ch <- 2147483647
 
-def selectChannel41(): Int =
+def selectChannelInt04(): Int =
   let ch = channel Int 1;
-  let _ = spawn f41(ch);
+  let _ = spawn fInt04(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel41(): Bool = selectChannel41() `assertEq!` 2147483647
+def testSelectChannelInt04(): Bool = selectChannelInt04() `assertEq!` 2147483647
 
-def f42(ch: Channel[Int]): Channel[Int] =
+def fInt05(ch: Channel[Int]): Channel[Int] =
   ch <- -1
 
-def selectChannel42(): Int =
+def selectChannelInt05(): Int =
   let ch = channel Int 1;
-  let _ = spawn f42(ch);
+  let _ = spawn fInt05(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel42(): Bool = selectChannel42() `assertEq!` -1
+def testSelectChannelInt05(): Bool = selectChannelInt05() `assertEq!` -1
 
-def f43(ch: Channel[Int]): Channel[Int] =
+def fInt06(ch: Channel[Int]): Channel[Int] =
   ch <- -10
 
-def selectChannel43(): Int =
+def selectChannelInt06(): Int =
   let ch = channel Int 1;
-  let _ = spawn f43(ch);
+  let _ = spawn fInt06(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel43(): Bool = selectChannel43() `assertEq!` -10
+def testSelectChannelInt06(): Bool = selectChannelInt06() `assertEq!` -10
 
-def f44(ch: Channel[Int]): Channel[Int] =
+def fInt07(ch: Channel[Int]): Channel[Int] =
   ch <- -214748
 
-def selectChannel44(): Int =
+def selectChannelInt07(): Int =
   let ch = channel Int 1;
-  let _ = spawn f44(ch);
+  let _ = spawn fInt07(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel44(): Bool = selectChannel44() `assertEq!` -214748
+def testSelectChannelInt07(): Bool = selectChannelInt07() `assertEq!` -214748
 
-def f45(ch: Channel[Int]): Channel[Int] =
+def fInt08(ch: Channel[Int]): Channel[Int] =
   ch <- 0
 
-def selectChannel45(): Int =
+def selectChannelInt08(): Int =
   let ch = channel Int 10;
-  let _ = spawn f45(ch);
+  let _ = spawn fInt08(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel45(): Bool = selectChannel45() `assertEq!` 0
+def testSelectChannelInt08(): Bool = selectChannelInt08() `assertEq!` 0
 
-def f46(ch: Channel[Int]): Channel[Int] =
+def fInt09(ch: Channel[Int]): Channel[Int] =
   ch <- 1
 
-def selectChannel46(): Int =
+def selectChannelInt09(): Int =
   let ch = channel Int 10;
-  let _ = spawn f46(ch);
+  let _ = spawn fInt09(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel46(): Bool = selectChannel46() `assertEq!` 1
+def testSelectChannelInt09(): Bool = selectChannelInt09() `assertEq!` 1
 
-def f47(ch: Channel[Int]): Channel[Int] =
+def fInt10(ch: Channel[Int]): Channel[Int] =
   ch <- 10
 
-def selectChannel47(): Int =
+def selectChannelInt10(): Int =
   let ch = channel Int 10;
-  let _ = spawn f47(ch);
+  let _ = spawn fInt10(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel47(): Bool = selectChannel47() `assertEq!` 10
+def testSelectChannelInt10(): Bool = selectChannelInt10() `assertEq!` 10
 
-def f48(ch: Channel[Int]): Channel[Int] =
+def fInt11(ch: Channel[Int]): Channel[Int] =
   ch <- 2147483647
 
-def selectChannel48(): Int =
+def selectChannelInt11(): Int =
   let ch = channel Int 10;
-  let _ = spawn f48(ch);
+  let _ = spawn fInt11(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel48(): Bool = selectChannel48() `assertEq!` 2147483647
+def testSelectChannelInt11(): Bool = selectChannelInt11() `assertEq!` 2147483647
 
-def f49(ch: Channel[Int]): Channel[Int] =
+def fInt12(ch: Channel[Int]): Channel[Int] =
   ch <- -1
 
-def selectChannel49(): Int =
+def selectChannelInt12(): Int =
   let ch = channel Int 10;
-  let _ = spawn f49(ch);
+  let _ = spawn fInt12(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel49(): Bool = selectChannel49() `assertEq!` -1
+def testSelectChannelInt12(): Bool = selectChannelInt12() `assertEq!` -1
 
-def f50(ch: Channel[Int]): Channel[Int] =
+def fInt13(ch: Channel[Int]): Channel[Int] =
   ch <- -10
 
-def selectChannel50(): Int =
+def selectChannelInt13(): Int =
   let ch = channel Int 10;
-  let _ = spawn f50(ch);
+  let _ = spawn fInt13(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel50(): Bool = selectChannel50() `assertEq!` -10
+def testSelectChannelInt13(): Bool = selectChannelInt13() `assertEq!` -10
 
-def f51(ch: Channel[Int]): Channel[Int] =
+def fInt14(ch: Channel[Int]): Channel[Int] =
   ch <- -214748
 
-def selectChannel51(): Int =
+def selectChannelInt14(): Int =
   let ch = channel Int 10;
-  let _ = spawn f51(ch);
+  let _ = spawn fInt14(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel51(): Bool = selectChannel51() `assertEq!` -214748
+def testSelectChannelInt14(): Bool = selectChannelInt14() `assertEq!` -214748
 
-def f52(ch: Channel[Int]): Channel[Int] =
+def fInt15(ch: Channel[Int]): Channel[Int] =
   ch <- 0
 
-def selectChannel52(): Int =
+def selectChannelInt15(): Int =
   let ch = channel Int 2147483647;
-  let _ = spawn f52(ch);
+  let _ = spawn fInt15(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel52(): Bool = selectChannel52() `assertEq!` 0
+def testSelectChannelInt15(): Bool = selectChannelInt15() `assertEq!` 0
 
-def f53(ch: Channel[Int]): Channel[Int] =
+def fInt16(ch: Channel[Int]): Channel[Int] =
   ch <- 1
 
-def selectChannel53(): Int =
+def selectChannelInt16(): Int =
   let ch = channel Int 2147483647;
-  let _ = spawn f53(ch);
+  let _ = spawn fInt16(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel53(): Bool = selectChannel53() `assertEq!` 1
+def testSelectChannelInt16(): Bool = selectChannelInt16() `assertEq!` 1
 
-def f54(ch: Channel[Int]): Channel[Int] =
+def fInt17(ch: Channel[Int]): Channel[Int] =
   ch <- 10
 
-def selectChannel54(): Int =
+def selectChannelInt17(): Int =
   let ch = channel Int 2147483647;
-  let _ = spawn f54(ch);
+  let _ = spawn fInt17(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel54(): Bool = selectChannel54() `assertEq!` 10
+def testSelectChannelInt17(): Bool = selectChannelInt17() `assertEq!` 10
 
-def f55(ch: Channel[Int]): Channel[Int] =
+def fInt18(ch: Channel[Int]): Channel[Int] =
   ch <- 2147483647
 
-def selectChannel55(): Int =
+def selectChannelInt18(): Int =
   let ch = channel Int 2147483647;
-  let _ = spawn f55(ch);
+  let _ = spawn fInt18(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel55(): Bool = selectChannel55() `assertEq!` 2147483647
+def testSelectChannelInt18(): Bool = selectChannelInt18() `assertEq!` 2147483647
 
-def f56(ch: Channel[Int]): Channel[Int] =
+def fInt19(ch: Channel[Int]): Channel[Int] =
   ch <- -1
 
-def selectChannel56(): Int =
+def selectChannelInt19(): Int =
   let ch = channel Int 2147483647;
-  let _ = spawn f56(ch);
+  let _ = spawn fInt19(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel56(): Bool = selectChannel56() `assertEq!` -1
+def testSelectChannelInt19(): Bool = selectChannelInt19() `assertEq!` -1
 
-def f57(ch: Channel[Int]): Channel[Int] =
+def fInt20(ch: Channel[Int]): Channel[Int] =
   ch <- -10
 
-def selectChannel57(): Int =
+def selectChannelInt20(): Int =
   let ch = channel Int 2147483647;
-  let _ = spawn f57(ch);
+  let _ = spawn fInt20(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel57(): Bool = selectChannel57() `assertEq!` -10
+def testSelectChannelInt20(): Bool = selectChannelInt20() `assertEq!` -10
 
-def f58(ch: Channel[Int]): Channel[Int] =
+def fInt21(ch: Channel[Int]): Channel[Int] =
   ch <- -214748
 
-def selectChannel58(): Int =
+def selectChannelInt21(): Int =
   let ch = channel Int 2147483647;
-  let _ = spawn f58(ch);
+  let _ = spawn fInt21(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel58(): Bool = selectChannel58() `assertEq!` -214748
+def testSelectChannelInt21(): Bool = selectChannelInt21() `assertEq!` -214748
 
-def selectChannel59(): Int =
+def selectChannelInt22(): Int =
   let ch = channel Int 1;
   let _ = ch <- 0;
   select {
@@ -711,9 +711,9 @@ def selectChannel59(): Int =
   }
 
 @test
-def testSelectChannel59(): Bool = selectChannel59() `assertEq!` 0
+def testSelectChannelInt22(): Bool = selectChannelInt22() `assertEq!` 0
 
-def selectChannel60(): Int =
+def selectChannelInt23(): Int =
   let ch = channel Int 1;
   let _ = ch <- 1;
   select {
@@ -721,9 +721,9 @@ def selectChannel60(): Int =
   }
 
 @test
-def testSelectChannel60(): Bool = selectChannel60() `assertEq!` 1
+def testSelectChannelInt23(): Bool = selectChannelInt23() `assertEq!` 1
 
-def selectChannel61(): Int =
+def selectChannelInt24(): Int =
   let ch = channel Int 1;
   let _ = ch <- 10;
   select {
@@ -731,9 +731,9 @@ def selectChannel61(): Int =
   }
 
 @test
-def testSelectChannel61(): Bool = selectChannel61() `assertEq!` 10
+def testSelectChannelInt24(): Bool = selectChannelInt24() `assertEq!` 10
 
-def selectChannel62(): Int =
+def selectChannelInt25(): Int =
   let ch = channel Int 1;
   let _ = ch <- 2147483647;
   select {
@@ -741,9 +741,9 @@ def selectChannel62(): Int =
   }
 
 @test
-def testSelectChannel62(): Bool = selectChannel62() `assertEq!` 2147483647
+def testSelectChannelInt25(): Bool = selectChannelInt25() `assertEq!` 2147483647
 
-def selectChannel63(): Int =
+def selectChannelInt26(): Int =
   let ch = channel Int 1;
   let _ = ch <- -1;
   select {
@@ -751,9 +751,9 @@ def selectChannel63(): Int =
   }
 
 @test
-def testSelectChannel63(): Bool = selectChannel63() `assertEq!` -1
+def testSelectChannelInt26(): Bool = selectChannelInt26() `assertEq!` -1
 
-def selectChannel64(): Int =
+def selectChannelInt27(): Int =
   let ch = channel Int 1;
   let _ = ch <- -10;
   select {
@@ -761,9 +761,9 @@ def selectChannel64(): Int =
   }
 
 @test
-def testSelectChannel64(): Bool = selectChannel64() `assertEq!` -10
+def testSelectChannelInt27(): Bool = selectChannelInt27() `assertEq!` -10
 
-def selectChannel65(): Int =
+def selectChannelInt28(): Int =
   let ch = channel Int 1;
   let _ = ch <- -214748;
   select {
@@ -771,9 +771,9 @@ def selectChannel65(): Int =
   }
 
 @test
-def testSelectChannel65(): Bool = selectChannel65() `assertEq!` -214748
+def testSelectChannelInt28(): Bool = selectChannelInt28() `assertEq!` -214748
 
-def selectChannel66(): Int =
+def selectChannelInt29(): Int =
   let ch = channel Int 1;
   let _ = ch <- 0;
   select {
@@ -781,9 +781,9 @@ def selectChannel66(): Int =
   }
 
 @test
-def testSelectChannel66(): Bool = selectChannel66() `assertEq!` 0
+def testSelectChannelInt29(): Bool = selectChannelInt29() `assertEq!` 0
 
-def selectChannel67(): Int =
+def selectChannelInt30(): Int =
   let ch = channel Int 1;
   let _ = ch <- 0;
   select {
@@ -791,9 +791,9 @@ def selectChannel67(): Int =
   }
 
 @test
-def testSelectChannel67(): Bool = selectChannel67() `assertEq!` 1
+def testSelectChannelInt30(): Bool = selectChannelInt30() `assertEq!` 1
 
-def selectChannel68(): Int =
+def selectChannelInt31(): Int =
   let ch = channel Int 1;
   let _ = ch <- 0;
   select {
@@ -801,9 +801,9 @@ def selectChannel68(): Int =
   }
 
 @test
-def testSelectChannel68(): Bool = selectChannel68() `assertEq!` 10
+def testSelectChannelInt31(): Bool = selectChannelInt31() `assertEq!` 10
 
-def selectChannel69(): Int =
+def selectChannelInt32(): Int =
   let ch = channel Int 1;
   let _ = ch <- 0;
   select {
@@ -811,9 +811,9 @@ def selectChannel69(): Int =
   }
 
 @test
-def testSelectChannel69(): Bool = selectChannel69() `assertEq!` 2147483647
+def testSelectChannelInt32(): Bool = selectChannelInt32() `assertEq!` 2147483647
 
-def selectChannel70(): Int =
+def selectChannelInt33(): Int =
   let ch = channel Int 1;
   let _ = ch <- 0;
   select {
@@ -821,9 +821,9 @@ def selectChannel70(): Int =
   }
 
 @test
-def testSelectChannel70(): Bool = selectChannel70() `assertEq!` -1
+def testSelectChannelInt33(): Bool = selectChannelInt33() `assertEq!` -1
 
-def selectChannel71(): Int =
+def selectChannelInt34(): Int =
   let ch = channel Int 1;
   let _ = ch <- 0;
   select {
@@ -831,9 +831,9 @@ def selectChannel71(): Int =
   }
 
 @test
-def testSelectChannel71(): Bool = selectChannel71() `assertEq!` -10
+def testSelectChannelInt34(): Bool = selectChannelInt34() `assertEq!` -10
 
-def selectChannel72(): Int =
+def selectChannelInt35(): Int =
   let ch = channel Int 1;
   let _ = ch <- 0;
   select {
@@ -841,243 +841,611 @@ def selectChannel72(): Int =
   }
 
 @test
-def testSelectChannel72(): Bool = selectChannel72() `assertEq!` -214748
+def testSelectChannelInt35(): Bool = selectChannelInt35() `assertEq!` -214748
 
-def f73(ch: Channel[Int]): Channel[Int] =
+def fInt36(ch: Channel[Int]): Channel[Int] =
   ch <- 0
 
-def selectChannel73(): Int =
+def selectChannelInt36(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f73(ch1);
+  let _ = spawn fInt36(ch1);
   select {
     case x <- ch1 => x
   }
 
 @test
-def testSelectChannel73(): Bool = selectChannel73() `assertEq!` 0
+def testSelectChannelInt36(): Bool = selectChannelInt36() `assertEq!` 0
 
-def f74(ch: Channel[Int]): Channel[Int] =
+def fInt37(ch: Channel[Int]): Channel[Int] =
   ch <- 1
 
-def selectChannel74(): Int =
+def selectChannelInt37(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f74(ch1);
+  let _ = spawn fInt37(ch1);
   select {
     case x <- ch1 => x
   }
 
 @test
-def testSelectChannel74(): Bool = selectChannel74() `assertEq!` 1
+def testSelectChannelInt37(): Bool = selectChannelInt37() `assertEq!` 1
 
-def f75(ch: Channel[Int]): Channel[Int] =
+def fInt38(ch: Channel[Int]): Channel[Int] =
   ch <- 10
 
-def selectChannel75(): Int =
+def selectChannelInt38(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f75(ch1);
+  let _ = spawn fInt38(ch1);
   select {
     case x <- ch1 => x
   }
 
 @test
-def testSelectChannel75(): Bool = selectChannel75() `assertEq!` 10
+def testSelectChannelInt38(): Bool = selectChannelInt38() `assertEq!` 10
 
-def f76(ch: Channel[Int]): Channel[Int] =
+def fInt39(ch: Channel[Int]): Channel[Int] =
   ch <- 2147483647
 
-def selectChannel76(): Int =
+def selectChannelInt39(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f76(ch1);
+  let _ = spawn fInt39(ch1);
   select {
     case x <- ch1 => x
   }
 
 @test
-def testSelectChannel76(): Bool = selectChannel76() `assertEq!` 2147483647
+def testSelectChannelInt39(): Bool = selectChannelInt39() `assertEq!` 2147483647
 
-def f77(ch: Channel[Int]): Channel[Int] =
+def fInt40(ch: Channel[Int]): Channel[Int] =
   ch <- -1
 
-def selectChannel77(): Int =
+def selectChannelInt40(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f77(ch1);
+  let _ = spawn fInt40(ch1);
   select {
     case x <- ch1 => x
   }
 
 @test
-def testSelectChannel77(): Bool = selectChannel77() `assertEq!` -1
+def testSelectChannelInt40(): Bool = selectChannelInt40() `assertEq!` -1
 
-def f78(ch: Channel[Int]): Channel[Int] =
+def fInt41(ch: Channel[Int]): Channel[Int] =
   ch <- -10
 
-def selectChannel78(): Int =
+def selectChannelInt41(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f78(ch1);
+  let _ = spawn fInt41(ch1);
   select {
     case x <- ch1 => x
   }
 
 @test
-def testSelectChannel78(): Bool = selectChannel78() `assertEq!` -10
+def testSelectChannelInt41(): Bool = selectChannelInt41() `assertEq!` -10
 
-def f79(ch: Channel[Int]): Channel[Int] =
+def fInt42(ch: Channel[Int]): Channel[Int] =
   ch <- -214748
 
-def selectChannel79(): Int =
+def selectChannelInt42(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f79(ch1);
+  let _ = spawn fInt42(ch1);
   select {
     case x <- ch1 => x
   }
 
 @test
-def testSelectChannel79(): Bool = selectChannel79() `assertEq!` -214748
+def testSelectChannelInt42(): Bool = selectChannelInt42() `assertEq!` -214748
 
-def f80(ch: Channel[Int]): Channel[Int] =
+def fInt43(ch: Channel[Int]): Channel[Int] =
   ch <- 0
 
-def selectChannel80(): Int =
+def selectChannelInt43(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f80(ch2);
+  let _ = spawn fInt43(ch2);
   select {
     case x <- ch1 => x
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel80(): Bool = selectChannel80() `assertEq!` 0
+def testSelectChannelInt43(): Bool = selectChannelInt43() `assertEq!` 0
 
-def f81(ch: Channel[Int]): Channel[Int] =
+def fInt44(ch: Channel[Int]): Channel[Int] =
   ch <- 1
 
-def selectChannel81(): Int =
+def selectChannelInt44(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f81(ch2);
+  let _ = spawn fInt44(ch2);
   select {
     case x <- ch1 => x
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel81(): Bool = selectChannel81() `assertEq!` 1
+def testSelectChannelInt44(): Bool = selectChannelInt44() `assertEq!` 1
 
-def f82(ch: Channel[Int]): Channel[Int] =
+def fInt45(ch: Channel[Int]): Channel[Int] =
   ch <- 10
 
-def selectChannel82(): Int =
+def selectChannelInt45(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f82(ch2);
+  let _ = spawn fInt45(ch2);
   select {
     case x <- ch1 => x
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel82(): Bool = selectChannel82() `assertEq!` 10
+def testSelectChannelInt45(): Bool = selectChannelInt45() `assertEq!` 10
 
-def f83(ch: Channel[Int]): Channel[Int] =
+def fInt46(ch: Channel[Int]): Channel[Int] =
   ch <- 2147483647
 
-def selectChannel83(): Int =
+def selectChannelInt46(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f83(ch2);
+  let _ = spawn fInt46(ch2);
   select {
     case x <- ch1 => x
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel83(): Bool = selectChannel83() `assertEq!` 2147483647
+def testSelectChannelInt46(): Bool = selectChannelInt46() `assertEq!` 2147483647
 
-def f84(ch: Channel[Int]): Channel[Int] =
+def fInt47(ch: Channel[Int]): Channel[Int] =
   ch <- -1
 
-def selectChannel84(): Int =
+def selectChannelInt47(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f84(ch2);
+  let _ = spawn fInt47(ch2);
   select {
     case x <- ch1 => x
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel84(): Bool = selectChannel84() `assertEq!` -1
+def testSelectChannelInt47(): Bool = selectChannelInt47() `assertEq!` -1
 
-def f85(ch: Channel[Int]): Channel[Int] =
+def fInt48(ch: Channel[Int]): Channel[Int] =
   ch <- -10
 
-def selectChannel85(): Int =
+def selectChannelInt48(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f85(ch2);
+  let _ = spawn fInt48(ch2);
   select {
     case x <- ch1 => x
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel85(): Bool = selectChannel85() `assertEq!` -10
+def testSelectChannelInt48(): Bool = selectChannelInt48() `assertEq!` -10
 
-def f86(ch: Channel[Int]): Channel[Int] =
+def fInt49(ch: Channel[Int]): Channel[Int] =
   ch <- -214748
 
-def selectChannel86(): Int =
+def selectChannelInt49(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Int 1;
-  let _ = spawn f86(ch2);
+  let _ = spawn fInt49(ch2);
   select {
     case x <- ch1 => x
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel86(): Bool = selectChannel86() `assertEq!` -214748
+def testSelectChannelInt49(): Bool = selectChannelInt49() `assertEq!` -214748
 
-def f87(ch: Channel[Option[Int]]): Channel[Option[Int]] =
-  ch <- None
+// Str
+def fStr01(ch: Channel[Str]): Channel[Str] =
+  ch <- ""
 
-def selectChannel87(): Option[Int] =
-  let ch = channel Option[Int] 1;
-  let _ = spawn f87(ch);
+def selectChannelStr01(): Str =
+  let ch = channel Str 1;
+  let _ = spawn fStr01(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel87(): Bool = selectChannel87() `assertEq!` None
+def testSelectChannelStr01(): Bool = selectChannelStr01() `assertEq!` ""
 
-def f88(ch: Channel[Option[Int]]): Channel[Option[Int]] =
+def fStr02(ch: Channel[Str]): Channel[Str] =
+  ch <- "a"
+
+def selectChannelStr02(): Str =
+  let ch = channel Str 1;
+  let _ = spawn fStr02(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelStr02(): Bool = selectChannelStr02() `assertEq!` "a"
+
+def fStr03(ch: Channel[Str]): Channel[Str] =
+  ch <- "str"
+
+def selectChannelStr03(): Str =
+  let ch = channel Str 1;
+  let _ = spawn fStr03(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelStr03(): Bool = selectChannelStr03() `assertEq!` "str"
+
+def fStr04(ch: Channel[Str]): Channel[Str] =
+  ch <- ""
+
+def selectChannelStr04(): Str =
+  let ch = channel Str 10;
+  let _ = spawn fStr04(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelStr04(): Bool = selectChannelStr04() `assertEq!` ""
+
+def fStr05(ch: Channel[Str]): Channel[Str] =
+  ch <- "str"
+
+def selectChannelStr05(): Str =
+  let ch = channel Str 10;
+  let _ = spawn fStr05(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelStr05(): Bool = selectChannelStr05() `assertEq!` "str"
+
+def fStr06(ch: Channel[Str]): Channel[Str] =
+  ch <- ""
+
+def selectChannelStr06(): Str =
+  let ch = channel Str 2147483647;
+  let _ = spawn fStr06(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelStr06(): Bool = selectChannelStr06() `assertEq!` ""
+
+def fStr07(ch: Channel[Str]): Channel[Str] =
+  ch <- "str"
+
+def selectChannelStr07(): Str =
+  let ch = channel Str 2147483647;
+  let _ = spawn fStr07(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelStr07(): Bool = selectChannelStr07() `assertEq!` "str"
+
+def selectChannelStr08(): Str =
+  let ch = channel Str 1;
+  let _ = ch <- "";
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelStr08(): Bool = selectChannelStr08() `assertEq!` ""
+
+def selectChannelStr09(): Str =
+  let ch = channel Str 1;
+  let _ = ch <- "str";
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelStr09(): Bool = selectChannelStr09() `assertEq!` "str"
+
+def selectChannelStr10(): Str =
+  let ch = channel Str 1;
+  let _ = ch <- "";
+  select {
+    case x <- ch => ""
+  }
+
+@test
+def testSelectChannelStr10(): Bool = selectChannelStr10() `assertEq!` ""
+
+def selectChannelStr11(): Str =
+  let ch = channel Str 1;
+  let _ = ch <- "";
+  select {
+    case x <- ch => "str"
+  }
+
+@test
+def testSelectChannelStr11(): Bool = selectChannelStr11() `assertEq!` "str"
+
+def fStr12(ch: Channel[Str]): Channel[Str] =
+  ch <- ""
+
+def selectChannelStr12(): Str =
+  let ch1 = channel Str 1;
+  let ch2 = channel Str 1;
+  let _ = spawn fStr12(ch1);
+  select {
+    case x <- ch1 => x
+  }
+
+@test
+def testSelectChannelStr12(): Bool = selectChannelStr12() `assertEq!` ""
+
+def fStr13(ch: Channel[Str]): Channel[Str] =
+  ch <- "str"
+
+def selectChannelStr13(): Str =
+  let ch1 = channel Str 1;
+  let ch2 = channel Str 1;
+  let _ = spawn fStr13(ch1);
+  select {
+    case x <- ch1 => x
+  }
+
+@test
+def testSelectChannelStr13(): Bool = selectChannelStr13() `assertEq!` "str"
+
+def fStr14(ch: Channel[Str]): Channel[Str] =
+  ch <- ""
+
+def selectChannelStr14(): Str =
+  let ch1 = channel Str 1;
+  let ch2 = channel Str 1;
+  let _ = spawn fStr14(ch2);
+  select {
+    case x <- ch1 => x
+    case x <- ch2 => x
+  }
+
+@test
+def testSelectChannelStr14(): Bool = selectChannelStr14() `assertEq!` ""
+
+def fStr15(ch: Channel[Str]): Channel[Str] =
+  ch <- "str"
+
+def selectChannelStr15(): Str =
+  let ch1 = channel Str 1;
+  let ch2 = channel Str 1;
+  let _ = spawn fStr15(ch2);
+  select {
+    case x <- ch1 => x
+    case x <- ch2 => x
+  }
+
+@test
+def testSelectChannelStr15(): Bool = selectChannelStr15() `assertEq!` "str"
+
+// Char
+def fChar01(ch: Channel[Char]): Channel[Char] =
+  ch <- 'a'
+
+def selectChannelChar01(): Char =
+  let ch = channel Char 1;
+  let _ = spawn fChar01(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelChar01(): Bool = selectChannelChar01() `assertEq!` 'a'
+
+def fChar02(ch: Channel[Char]): Channel[Char] =
+  ch <- 'c'
+
+def selectChannelChar02(): Char =
+  let ch = channel Char 1;
+  let _ = spawn fChar02(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelChar02(): Bool = selectChannelChar02() `assertEq!` 'c'
+
+def fChar03(ch: Channel[Char]): Channel[Char] =
+  ch <- 'a'
+
+def selectChannelChar03(): Char =
+  let ch = channel Char 10;
+  let _ = spawn fChar03(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelChar03(): Bool = selectChannelChar03() `assertEq!` 'a'
+
+def fChar04(ch: Channel[Char]): Channel[Char] =
+  ch <- 'c'
+
+def selectChannelChar04(): Char =
+  let ch = channel Char 10;
+  let _ = spawn fChar04(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelChar04(): Bool = selectChannelChar04() `assertEq!` 'c'
+
+def fChar05(ch: Channel[Char]): Channel[Char] =
+  ch <- 'a'
+
+def selectChannelChar05(): Char =
+  let ch = channel Char 2147483647;
+  let _ = spawn fChar05(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelChar05(): Bool = selectChannelChar05() `assertEq!` 'a'
+
+def fChar06(ch: Channel[Char]): Channel[Char] =
+  ch <- 'c'
+
+def selectChannelChar06(): Char =
+  let ch = channel Char 2147483647;
+  let _ = spawn fChar06(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelChar06(): Bool = selectChannelChar06() `assertEq!` 'c'
+
+def selectChannelChar07(): Char =
+  let ch = channel Char 1;
+  let _ = ch <- 'a';
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelChar07(): Bool = selectChannelChar07() `assertEq!` 'a'
+
+def selectChannelChar08(): Char =
+  let ch = channel Char 1;
+  let _ = ch <- 'c';
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelChar08(): Bool = selectChannelChar08() `assertEq!` 'c'
+
+def selectChannelChar09(): Char =
+  let ch = channel Char 1;
+  let _ = ch <- 'z';
+  select {
+    case x <- ch => 'a'
+  }
+
+@test
+def testSelectChannelChar09(): Bool = selectChannelChar09() `assertEq!` 'a'
+
+def selectChannelChar10(): Char =
+  let ch = channel Char 1;
+  let _ = ch <- 'a';
+  select {
+    case x <- ch => 'c'
+  }
+
+@test
+def testSelectChannelChar10(): Bool = selectChannelChar10() `assertEq!` 'c'
+
+def fChar11(ch: Channel[Char]): Channel[Char] =
+  ch <- 'a'
+
+def selectChannelChar11(): Char =
+  let ch1 = channel Char 1;
+  let ch2 = channel Char 1;
+  let _ = spawn fChar11(ch1);
+  select {
+    case x <- ch1 => x
+  }
+
+@test
+def testSelectChannelChar11(): Bool = selectChannelChar11() `assertEq!` 'a'
+
+def fChar12(ch: Channel[Char]): Channel[Char] =
+  ch <- 'c'
+
+def selectChannelChar12(): Char =
+  let ch1 = channel Char 1;
+  let ch2 = channel Char 1;
+  let _ = spawn fChar12(ch1);
+  select {
+    case x <- ch1 => x
+  }
+
+@test
+def testSelectChannelChar12(): Bool = selectChannelChar12() `assertEq!` 'c'
+
+def fChar13(ch: Channel[Char]): Channel[Char] =
+  ch <- 'a'
+
+def selectChannelChar13(): Char =
+  let ch1 = channel Char 1;
+  let ch2 = channel Char 1;
+  let _ = spawn fChar13(ch2);
+  select {
+    case x <- ch1 => x
+    case x <- ch2 => x
+  }
+
+@test
+def testSelectChannelChar13(): Bool = selectChannelChar13() `assertEq!` 'a'
+
+def fChar14(ch: Channel[Char]): Channel[Char] =
+  ch <- 'c'
+
+def selectChannelChar14(): Char =
+  let ch1 = channel Char 1;
+  let ch2 = channel Char 1;
+  let _ = spawn fChar14(ch2);
+  select {
+    case x <- ch1 => x
+    case x <- ch2 => x
+  }
+
+@test
+def testSelectChannelChar14(): Bool = selectChannelChar14() `assertEq!` 'c'
+
+// Option
+def fOption01(ch: Channel[Option[Int]]): Channel[Option[Int]] =
+  ch <- None
+
+def selectChannelOption01(): Option[Int] =
+  let ch = channel Option[Int] 1;
+  let _ = spawn fOption01(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelOption01(): Bool = selectChannelOption01() `assertEq!` None
+
+def fOption02(ch: Channel[Option[Int]]): Channel[Option[Int]] =
   ch <- Some(42)
 
-def selectChannel88(): Option[Int] =
+def selectChannelOption02(): Option[Int] =
   let ch = channel Option[Int] 1;
-  let _ = spawn f88(ch);
+  let _ = spawn fOption02(ch);
   select {
     case x <- ch => x
   }
 
 @test
-def testSelectChannel88(): Bool = selectChannel88() `assertEq!` Some(42)
+def testSelectChannelOption02(): Bool = selectChannelOption02() `assertEq!` Some(42)
 
-def f89(ch: Channel[Option[Int]]): Channel[Option[Int]] =
+def fOption03(ch: Channel[Option[Int]]): Channel[Option[Int]] =
   ch <- None
 
-def selectChannel89(): Int =
+def selectChannelOption03(): Int =
   let ch = channel Option[Int] 1;
-  let _ = spawn f89(ch);
+  let _ = spawn fOption03(ch);
   select {
     case x <- ch => match x with {
       case Some(e) => e
@@ -1086,14 +1454,14 @@ def selectChannel89(): Int =
   }
 
 @test
-def testSelectChannel89(): Bool = selectChannel89() `assertEq!` -1
+def testSelectChannelOption03(): Bool = selectChannelOption03() `assertEq!` -1
 
-def f90(ch: Channel[Option[Int]]): Channel[Option[Int]] =
+def fOption04(ch: Channel[Option[Int]]): Channel[Option[Int]] =
   ch <- Some(42)
 
-def selectChannel90(): Int =
+def selectChannelOption04(): Int =
   let ch = channel Option[Int] 1;
-  let _ = spawn f90(ch);
+  let _ = spawn fOption04(ch);
   select {
     case x <- ch => match x with {
       case Some(e) => e
@@ -1102,7 +1470,65 @@ def selectChannel90(): Int =
   }
 
 @test
-def testSelectChannel90(): Bool = selectChannel90() `assertEq!` 42
+def testSelectChannelOption04(): Bool = selectChannelOption04() `assertEq!` 42
+
+def fOption05(ch: Channel[Option[Str]]): Channel[Option[Str]] =
+  ch <- None
+
+def selectChannelOption05(): Option[Str] =
+  let ch = channel Option[Str] 1;
+  let _ = spawn fOption05(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelOption05(): Bool = selectChannelOption05() `assertEq!` None
+
+def fOption06(ch: Channel[Option[Str]]): Channel[Option[Str]] =
+  ch <- Some("Str")
+
+def selectChannelOption06(): Option[Str] =
+  let ch = channel Option[Str] 1;
+  let _ = spawn fOption06(ch);
+  select {
+    case x <- ch => x
+  }
+
+@test
+def testSelectChannelOption06(): Bool = selectChannelOption06() `assertEq!` Some("Str")
+
+def foption07(ch: Channel[Option[Str]]): Channel[Option[Str]] =
+  ch <- None
+
+def selectChanneloption07(): Str =
+  let ch = channel Option[Str] 1;
+  let _ = spawn foption07(ch);
+  select {
+    case x <- ch => match x with {
+      case Some(e) => e
+      case None => ""
+    }
+  }
+
+@test
+def testSelectChanneloption07(): Bool = selectChanneloption07() `assertEq!` ""
+
+def fOption08(ch: Channel[Option[Str]]): Channel[Option[Str]] =
+  ch <- Some("str")
+
+def selectChannelOption08(): Str =
+  let ch = channel Option[Str] 1;
+  let _ = spawn fOption08(ch);
+  select {
+    case x <- ch => match x with {
+      case Some(e) => e
+      case None => ""
+    }
+  }
+
+@test
+def testSelectChannelOption08(): Bool = selectChannelOption08() `assertEq!` "str"
 
 
 
@@ -1113,169 +1539,164 @@ def testSelectChannel90(): Bool = selectChannel90() `assertEq!` 42
 
 
 
-
-
-
-
-
-def f10001(ch: Channel[Bool]): Channel[Bool] =
+def fIf01(ch: Channel[Bool]): Channel[Bool] =
   ch <- true
 
-def selectChannel10001(): Int =
+def selectChannelIf01(): Int =
   let ch = channel Bool 1;
-  let _ = spawn f10001(ch);
+  let _ = spawn fIf01(ch);
   select {
     case x <- ch => if (x) 3 else 7
   }
 
 @test
-def testSelectChannel10001(): Bool = selectChannel10001() `assertEq!` 3
+def testSelectChannelIf01(): Bool = selectChannelIf01() `assertEq!` 3
 
-def f10002(ch: Channel[Bool]): Channel[Bool] =
+def fIf02(ch: Channel[Bool]): Channel[Bool] =
   ch <- false
 
-def selectChannel10002(): Int =
+def selectChannelIf02(): Int =
   let ch = channel Bool 1;
-  let _ = spawn f10002(ch);
+  let _ = spawn fIf02(ch);
   select {
     case x <- ch => if (x) 3 else 7
   }
 
 @test
-def testSelectChannel10002(): Bool = selectChannel10002() `assertEq!` 7
+def testSelectChannelIf02(): Bool = selectChannelIf02() `assertEq!` 7
 
-def f10003(ch: Channel[Bool]): Channel[Bool] =
+def fIf03(ch: Channel[Bool]): Channel[Bool] =
   ch <- true
 
-def selectChannel10003(): Str =
+def selectChannelIf03(): Str =
   let ch = channel Bool 1;
-  let _ = spawn f10003(ch);
+  let _ = spawn fIf03(ch);
   select {
     case x <- ch => if (x) "a" else "b"
   }
 
 @test
-def testSelectChannel10003(): Bool = selectChannel10003() `assertEq!` "a"
+def testSelectChannelIf03(): Bool = selectChannelIf03() `assertEq!` "a"
 
-def f10004(ch: Channel[Bool]): Channel[Bool] =
+def fIf04(ch: Channel[Bool]): Channel[Bool] =
   ch <- false
 
-def selectChannel10004(): Str =
+def selectChannelIf04(): Str =
   let ch = channel Bool 1;
-  let _ = spawn f10004(ch);
+  let _ = spawn fIf04(ch);
   select {
     case x <- ch => if (x) "a" else "b"
   }
 
 @test
-def testSelectChannel10004(): Bool = selectChannel10004() `assertEq!` "b"
+def testSelectChannelIf04(): Bool = selectChannelIf04() `assertEq!` "b"
 
-def f10005(ch: Channel[Bool]): Channel[Bool] =
+def fIf05(ch: Channel[Bool]): Channel[Bool] =
   ch <- true
 
-def selectChannel10005(): Char =
+def selectChannelIf05(): Char =
   let ch = channel Bool 1;
-  let _ = spawn f10005(ch);
+  let _ = spawn fIf05(ch);
   select {
     case x <- ch => if (x) 'a' else 'b'
   }
 
 @test
-def testSelectChannel10005(): Bool = selectChannel10005() `assertEq!` 'a'
+def testSelectChannelIf05(): Bool = selectChannelIf05() `assertEq!` 'a'
 
-def f10006(ch: Channel[Bool]): Channel[Bool] =
+def fIf06(ch: Channel[Bool]): Channel[Bool] =
   ch <- false
 
-def selectChannel10006(): Char =
+def selectChannelIf06(): Char =
   let ch = channel Bool 1;
-  let _ = spawn f10006(ch);
+  let _ = spawn fIf06(ch);
   select {
     case x <- ch => if (x) 'a' else 'b'
   }
 
 @test
-def testSelectChannel10006(): Bool = selectChannel10006() `assertEq!` 'b'
+def testSelectChannelIf06(): Bool = selectChannelIf06() `assertEq!` 'b'
 
-def f10007(ch: Channel[Int]): Channel[Int] =
+def fMultipleChannels01(ch: Channel[Int]): Channel[Int] =
   ch <- 1
 
-def selectChannel10007(): Int =
+def selectChannelMultipleChannels01(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Str 1;
-  let _ = spawn f10007(ch1);
+  let _ = spawn fMultipleChannels01(ch1);
   select {
     case x <- ch1 => x
     case x <- ch2 => -1
   }
 
 @test
-def testSelectChannel10007(): Bool = selectChannel10007() `assertEq!` 1
+def testSelectChannelMultipleChannels01(): Bool = selectChannelMultipleChannels01() `assertEq!` 1
 
-def f10008(ch: Channel[Str]): Channel[Str] =
+def fMultipleChannels02(ch: Channel[Str]): Channel[Str] =
   ch <- "a"
 
-def selectChannelf10008(): Int =
+def selectChannelMultipleChannels02(): Int =
   let ch1 = channel Int 1;
   let ch2 = channel Str 1;
-  let _ = spawn f10008(ch2);
+  let _ = spawn fMultipleChannels02(ch2);
   select {
     case x <- ch1 => x
     case x <- ch2 => -1
   }
 
 @test
-def testSelectChannelf10008(): Bool = selectChannelf10008() `assertEq!` -1
+def testSelectChannelMultipleChannels02(): Bool = selectChannelMultipleChannels02() `assertEq!` -1
 
-def f10009(ch: Channel[Int]): Channel[Int] =
+def fMultipleChannels03(ch: Channel[Int]): Channel[Int] =
   ch <- 1
 
-def selectChannel10009(): Str =
+def selectChannelMultipleChannels03(): Str =
   let ch1 = channel Int 1;
   let ch2 = channel Str 1;
-  let _ = spawn f10009(ch1);
+  let _ = spawn fMultipleChannels03(ch1);
   select {
     case x <- ch1 => "z"
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel10009(): Bool = selectChannel10009() `assertEq!` "z"
+def testSelectChannelMultipleChannels03(): Bool = selectChannelMultipleChannels03() `assertEq!` "z"
 
-def f10010(ch: Channel[Str]): Channel[Str] =
+def fMultipleChannels04(ch: Channel[Str]): Channel[Str] =
   ch <- "a"
 
-def selectChannelf10010(): Str =
+def selectChannelMultipleChannels04(): Str =
   let ch1 = channel Int 1;
   let ch2 = channel Str 1;
-  let _ = spawn f10010(ch2);
+  let _ = spawn fMultipleChannels04(ch2);
   select {
     case x <- ch1 => "z"
     case x <- ch2 => x
   }
 
 @test
-def testSelectChannel10010(): Bool = selectChannelf10010() `assertEq!` "a"
+def testSelectChannelMultipleChannels04(): Bool = selectChannelMultipleChannels04() `assertEq!` "a"
 
-def f10011(): Int =
+def fMultipleSelects01(): Int =
   let ch1 = channel Int 2;
   let ch2 = channel Int 3;
   let ch3 = channel Int 1;
   let ch4 = channel Int 4;
-  let _ = spawn g10011(ch1, ch2, ch3);
-  let _ = spawn h10011(ch1, ch2, ch3, ch4);
+  let _ = spawn gMultipleSelects01(ch1, ch2, ch3);
+  let _ = spawn hMultipleSelects01(ch1, ch2, ch3, ch4);
   select {
     case x <- ch1 => x
     case x <- ch2 => x
     case x <- ch4 => x
   }
 
-def g10011(ch1: Channel[Int], ch2: Channel[Int], ch3: Channel[Int]): () =
+def gMultipleSelects01(ch1: Channel[Int], ch2: Channel[Int], ch3: Channel[Int]): () =
   let _ = ch1 <- 1;
   let _ = ch2 <- 2;
   let _ = ch3 <- 3;
   ()
 
-def h10011(ch1: Channel[Int], ch2: Channel[Int], ch3: Channel[Int], ch4: Channel[Int]): Unit =
+def hMultipleSelects01(ch1: Channel[Int], ch2: Channel[Int], ch3: Channel[Int], ch4: Channel[Int]): Unit =
   let y = select {
     case x <- ch2 => x
     case x <- ch3 => x
@@ -1285,286 +1706,6 @@ def h10011(ch1: Channel[Int], ch2: Channel[Int], ch3: Channel[Int], ch4: Channel
   ()
 
 @test
-def testSelectChannel10011(): Bool =
-  let x = f10010();
+def testSelectChannelMultipleSelects01(): Bool =
+  let x = fMultipleSelects01();
   (x `assertEq!` 1) || (x `assertEq!` 2) || (x `assertEq!` 3)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-// Test units
-def testSelectChannelUnit(): Unit =
-  let ch: Channel[Unit] = channel Unit 1;
-  let _ = ch <- ();
-  select {
-      case x <- ch => x
-  }
-
-@test
-def testSelectChannel01(): Bool = testSelectChannelUnit() `assertEq!` ()
-
-// Test bools
-def testSelectChannelBool(var: Bool): Bool =
-  let ch: Channel[Bool] = channel Bool 1;
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-@test
-def testSelectChannel02(): Bool = testSelectChannelBool(true) `assertEq!` true
-
-@test
-def testSelectChannel03(): Bool = testSelectChannelBool(false) `assertEq!` false
-
-// Test integers
-def testSelectChannelInt(var: Int): Int =
-  let ch: Channel[Int] = channel Int 1;
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-@test
-def testSelectChannel04(): Bool = testSelectChannelInt(0) `assertEq!` 0
-
-@test
-def testSelectChannel6(): Bool = testSelectChannelInt(-1) `assertEq!` -1
-
-@test
-def testSelectChannel06(): Bool = testSelectChannelInt(1) `assertEq!` 1
-
-@test
-def testSelectChannel07(): Bool = testSelectChannelInt(-100) `assertEq!` -100
-
-@test
-def testSelectChannel08(): Bool = testSelectChannelInt(100) `assertEq!` 100
-
-// Test floats
-def testSelectChannelFloat(var: Float64): Float64 =
-  let ch: Channel[Float64] = channel Float64 1;
-  let _ = ch <- var;
-  select {
-     case x <- ch => x
-  }
-
-// @test
-// def testSelectChannel09(): Bool = testSelectChannelFloat32(0f32) `assertEq!` 0f32
-//
-// @test
-// def testSelectChannel10(): Bool = testSelectChannelFloat32(-1.1f32) `assertEq!` -1.1f32
-//
-// @test
-// def testSelectChannel11(): Bool = testSelectChannelFloat32(1.1f32) `assertEq!` 1.1f32
-
-// Test strings
-def testSelectChannelStr(var: Str): Str =
-  let ch: Channel[Str] = channel Str 1;
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-@test
-def testSelectChannel12(): Bool = testSelectChannelStr("") `assertEq!` ""
-
-@test
-def testSelectChannel13(): Bool = testSelectChannelStr("str") `assertEq!` "str"
-
-// Test chars
-def testSelectChannelChar(var: Char): Char =
-  let ch: Channel[Char] = channel Char 1;
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-@test
-def testSelectChannel14(): Bool = testSelectChannelChar('a') `assertEq!` 'a'
-
-@test
-def testSelectChannel15(): Bool = testSelectChannelChar('b') `assertEq!` 'b'
-
-// Test tuples
-def testSelectChannelIntStrTuple(var: (Int, Str)): (Int, Str) =
-  let ch: Channel[(Int, Str)] = channel (Int, Str);
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-def testSelectChannelIntIntTuple(var: (Int, Int)): (Int, Int) =
-  let ch: Channel[(Int, Int)] = channel (Int, Int);
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-def testSelectChannelIntIntIntIntTuple(var: (Int, Int, Int, Int)): (Int, Int, Int, Int) =
-  let ch: Channel[(Int, Int, Int, Int)] = channel (Int, Int, Int, Int);
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-@test
-def testSelectChannel16(): Bool = testSelectChannelIntStrTuple((2, "Str")) `assertEq!` (2, "Str")
-
-@test
-def testSelectChannel17(): Bool = testSelectChannelIntIntTuple((2, 10)) `assertEq!` (2, 10)
-
-@test
-def testSelectChannel18(): Bool = testSelectChannelIntIntIntIntTuple((2, 10, 12, 0)) `assertEq!` (2, 10, 12, 0)
-
-// Test lists
-def testSelectChannelIntList(var: List[Int]): List[Int] =
-  let ch: Channel[List[Int]] = channel List[Int] 1;
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-def testSelectChannelStrList(var: List[Str]): List[Str] =
-  let ch: Channel[List[Str]] = channel List[Str] 1;
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-@test
-def testSelectChannel19(): Bool = testSelectChannelIntList(Nil) `assertEq!` Nil
-
-@test
-def testSelectChannel20(): Bool = testSelectChannelIntList(1 :: Nil) `assertEq!` 1 :: Nil
-
-@test
-def testSelectChannel21(): Bool = testSelectChannelStrList("str" :: Nil) `assertEq!` "str" :: Nil
-
-@test
-def testSelectChannel22(): Bool = testSelectChannelStrList("str" :: "trs" :: Nil) `assertEq!` "str" :: "trs" :: Nil
-
-// Test functions
-def testSelectChannelIntIntFunction(var: Int -> Int): Int -> Int =
-  let ch: Channel[Int -> Int] = channel Int -> Int 1;
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-def testSelectChannelIntStrFunction(var: Int -> Str): Int -> Str =
-  let ch: Channel[Int -> Str] = channel Int -> Str 1;
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-def testSelectChannelIntIntIntFunction(var: Int -> Int -> Int): Int -> Int -> Int =
-  let ch: Channel[Int -> Int -> Int] = channel Int -> Int -> Int 1;
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-def testSelectChannelTupleIntIntIntFunction(var: (Int, Int) -> Int): (Int, Int) -> Int =
-  let ch: Channel[(Int, Int) -> Int] = channel (Int, Int) -> Int 1;
-  let _ = ch <- var;
-  select {
-      case x <- ch => x
-  }
-
-@test
-def testSelectChannel23(): Bool = testSelectChannelIntIntFunction(x -> x)(2) `assertEq!` 2
-
-@test
-def testSelectChannel24(): Bool = testSelectChannelIntStrFunction(x -> "2")(2) `assertEq!` "2"
-
-//@test
-//def testSelectChannel25(): Bool = testSelectChannelIntIntIntFunction((x -> y) -> x + y)(2, 3) `assertEq!` 5
-
-//@test
-//def testSelectChannel26(): Bool = testSelectChannelTupleIntIntIntFunction((x -> y) -> x + y)((2, 3)) `assertEq!` 5
-
-// Default
-//def testSelectChannelDefault(): Int =
-//  let ch: Channel[Unit] = channel Unit;
-//  ch <- ();;
-//  select {
-//    case _ <- ch => 2
-//  }
-
-//@test
-//def testSelectChannel29(): Bool = testSelectChannelDefault() `assertEq!` 2
-
-// Multiple channel types
-
-def testSelectChannelMultipleTypes(): Str =
-  let ch1: Channel[Char] = channel Char;
-  let ch2: Channel[Str] = channel Str;
-  let _ = spawn putStr(ch2, "a");
-  select {
-    case x <- ch1 => Char.toString(x)
-    case x <- ch2 => x
-  }
-
-@test
-def testSelectChannel30(): Bool = testSelectChannelMultipleTypes() `assertEq!` "a"
-
-@test
-def select_int_channel_first(): Bool =
-  let ch1 = channel Int;
-  let ch2 = channel Int;
-  let _ = spawn putInt(ch1, 2);
-  let r = select {
-    case x <- ch1 => x
-    case x <- ch2 => x
-  };
-  r `assertEq!` 2
-
-@test
-def select_int_channel_last(): Bool =
-  let ch1 = channel Int;
-  let ch2 = channel Int;
-  let _ = spawn putInt(ch1, 2);
-  let r = select {
-    case x <- ch1 => x + 1
-    case x <- ch2 => x + 2
-  };
-  r `assertEq!` 3
-
-
-@test
-def select_string_channel_first(): Bool =
-  let ch1 = channel Str;
-  let ch2 = channel Str;
-  let _ = spawn put;
-  let r = select {
-    case x <- ch1 => x + "1"
-    case x <- ch2 => x + "2"
-  };
-  let _ = ch1 <- "str";
-  r `assertEq!` "str1"
-
-
-@test
-def select_string_channel_last(): Bool =
-  let ch1 = channel Str;
-  let ch2 = channel Str;
-  let r = select {
-    case x <- ch1 => x + "1"
-    case x <- ch2 => x + "2"
-  };
-  let _ = ch2 <- "str";
-  r `assertEq!` "str2"
-*/
