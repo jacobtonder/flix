@@ -427,6 +427,6 @@ object ExecutableAst {
 
   case class HandlerBinding(sym: Symbol.EffSym, exp: ExecutableAst.Expression) extends ExecutableAst
 
-  case class SelectRule(sym: Symbol.VarSym, chan: ExecutableAst.Expression, body: ExecutableAst.Expression) extends ExecutableAst
+  case class SelectRule(chan: ExecutableAst.Expression, lam: ExecutableAst.Expression) extends ExecutableAst
 
 }

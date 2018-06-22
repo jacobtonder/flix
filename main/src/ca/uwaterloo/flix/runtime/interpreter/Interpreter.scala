@@ -246,15 +246,15 @@ object Interpreter {
     //
     case Expression.SelectChannel(rules, tpe, loc) =>
       val rs = rules map {
-        case SelectRule(sym, cexp, body) =>
-          val chan = cast2channel(eval(cexp, env0, henv0, lenv0, root))
-          ((sym, chan, body))
+        case SelectRule(channel, closure) =>
+          val chan = cast2channel(eval(channel, env0, henv0, lenv0, root))
+          val clo = cast2closure(eval(closure, env0, henv0, lenv0, root))
+          ((chan, clo))
       }
 
       selectChannel(rs) match {
-        case (sym, res, body) =>
-          val newEnv = env0 + (sym.toString -> res)
-          eval(body, newEnv, henv0, lenv0, root)
+        case (res, clo) =>
+          invokeSelectClo(clo, res, env0, henv0, lenv0, root)
       }
 
     //
@@ -414,12 +414,12 @@ object Interpreter {
   /**
    * Select channel
    */
-  private def selectChannel(rules: List[(Symbol.VarSym, Value.Channel, Expression)]): (Symbol.VarSym, AnyRef, Expression) = {
+  private def selectChannel(rules: List[(Value.Channel, Value.Closure)]): (AnyRef, Value.Closure) = {
     val sLock = new ReentrantLock
     val sCondition = sLock.newCondition
-    val channels = rules.map(_._2).sorted
+    val channels = rules.map(_._1).sorted
 
-    var result: (Symbol.VarSym, AnyRef, Expression) = null
+    var result: (AnyRef, Value.Closure) = null
 
     // Lock select & all channels.
     lockAllChannels(channels)
@@ -478,15 +478,15 @@ object Interpreter {
   /**
    * Returns the first value of all channels parsed to the function if value is available else null.
    */
-  private def pollChannels(rules: List[(Symbol.VarSym, Value.Channel, Expression)]): (Symbol.VarSym, AnyRef, Expression) = {
-    var result: (Symbol.VarSym, AnyRef, Expression) = null
+  private def pollChannels(rules: List[(Value.Channel, Value.Closure)]): (AnyRef, Value.Closure) = {
+    var result: (AnyRef, Value.Closure) = null
 
-    for ((sym, chan, body) <- rules) {
+    for ((chan, lam) <- rules) {
       // Get value if available and result isn't specified.
       if (!chan.queue.isEmpty && result == null) {
         // Get value from queue.
         val value = chan.queue.poll()
-        result = (sym, value, body)
+        result = (value, lam)
 
         // Signal all putter of the channel.
         chan.channelGetters.signalAll()
@@ -808,6 +808,16 @@ object Interpreter {
       case (macc, (formal, actual)) => macc + (formal.sym.toString -> actual)
     }
     eval(constant.exp, env2, henv0, Map.empty, root)
+  }
+
+  /**
+    * Invokes the given closure value `clo` within a select channel expression with the given arguments `args` under the given environment `env0`.
+    */
+  private def invokeSelectClo(clo: Value.Closure, arg: AnyRef, env0: Map[String, AnyRef], henv0: Map[Symbol.EffSym, AnyRef], lenv0: Map[Symbol.LabelSym, Expression], root: Root)(implicit flix: Flix): AnyRef = {
+    val constant = root.defs(clo.sym)
+    // Pass the actual argument supplied by the caller.
+    val env1 = env0 + (constant.formals(0).sym.toString -> arg)
+    eval(constant.exp, env1, henv0, Map.empty, root)
   }
 
   /**

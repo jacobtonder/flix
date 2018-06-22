@@ -311,10 +311,10 @@ object Optimizer extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       //
       case Expression.SelectChannel(rules, tpe, loc) =>
         val rs = rules map {
-          case SimplifiedAst.SelectRule(sym, chan, body) =>
+          case SimplifiedAst.SelectRule(chan, lam) =>
             val c = visitExp(chan, env0)
-            val b = visitExp(body, env0)
-            SimplifiedAst.SelectRule(sym, c, b)
+            val l = visitExp(lam, env0)
+            SimplifiedAst.SelectRule(c, l)
         }
         Expression.SelectChannel(rs, tpe, loc)
 

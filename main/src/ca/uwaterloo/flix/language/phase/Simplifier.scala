@@ -419,8 +419,8 @@ object Simplifier extends Phase[TypedAst.Root, SimplifiedAst.Root] {
 
       case TypedAst.Expression.SelectChannel(rules, tpe, eff, loc) =>
         val rs = rules map {
-          case TypedAst.SelectRule(sym, chan, body) =>
-            SimplifiedAst.SelectRule(sym, visitExp(chan), visitExp(body))
+          case TypedAst.SelectRule(chan, lam) =>
+            SimplifiedAst.SelectRule(visitExp(chan), visitExp(lam))
         }
         SimplifiedAst.Expression.SelectChannel(rs, tpe, loc)
 
@@ -1123,8 +1123,8 @@ object Simplifier extends Phase[TypedAst.Root, SimplifiedAst.Root] {
         SimplifiedAst.Expression.Spawn(visit(exp), tpe, loc)
       case SimplifiedAst.Expression.SelectChannel(rules, tpe, loc) =>
         val rs = rules map {
-          case SimplifiedAst.SelectRule(sym, chan, body) =>
-            SimplifiedAst.SelectRule(sym, visit(chan), visit(body))
+          case SimplifiedAst.SelectRule(chan, lam) =>
+            SimplifiedAst.SelectRule(visit(chan), visit(lam))
         }
         SimplifiedAst.Expression.SelectChannel(rs, tpe, loc)
       case SimplifiedAst.Expression.Ref(exp, tpe, loc) =>

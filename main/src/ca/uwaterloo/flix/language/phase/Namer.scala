@@ -695,11 +695,9 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
 
       case WeededAst.Expression.SelectChannel(rules, loc) =>
         val rulesVal = rules map {
-          case WeededAst.SelectRule(ident, chan, body) =>
-            val sym = Symbol.freshVarSym(ident)
-            val env1 = env0 + (ident.name -> sym)
-            @@(namer(chan, env0, tenv0), namer(body, env1, tenv0)) map {
-              case (c, b) => NamedAst.SelectRule(sym, c, b)
+          case WeededAst.SelectRule(chan, lam) =>
+            @@(namer(chan, env0, tenv0), namer(lam, env0, tenv0)) map {
+              case (c, l) => NamedAst.SelectRule(c, l)
             }
         }
         @@(rulesVal) map {
@@ -822,7 +820,7 @@ object Namer extends Phase[WeededAst.Program, NamedAst.Program] {
       case WeededAst.Expression.GetChannel(exp, loc) => freeVars(exp)
       case WeededAst.Expression.PutChannel(exp1, exp2, loc) => freeVars(exp1) ++ freeVars(exp2)
       case WeededAst.Expression.Spawn(exp, loc) => freeVars(exp)
-      case WeededAst.Expression.SelectChannel(rules, loc) => rules.map(_.chan).flatMap(freeVars) ++ rules.map(_.exp).flatMap(freeVars)
+      case WeededAst.Expression.SelectChannel(rules, loc) => rules.map(_.chan).flatMap(freeVars) ++ rules.map(_.lam).flatMap(freeVars)
       case WeededAst.Expression.Ref(exp, loc) => freeVars(exp)
       case WeededAst.Expression.Deref(exp, loc) => freeVars(exp)
       case WeededAst.Expression.Assign(exp1, exp2, loc) => freeVars(exp1) ++ freeVars(exp2)

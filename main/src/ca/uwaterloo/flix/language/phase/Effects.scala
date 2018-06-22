@@ -403,11 +403,11 @@ object Effects extends Phase[Root, Root] {
           */
         case Expression.SelectChannel(rules, tpe, eff, loc) =>
           val rulesVal = rules.map {
-            case TypedAst.SelectRule(sym, chan, body) =>
+            case TypedAst.SelectRule(chan, lam) =>
               for {
                 c <- visitExp(chan, env0)
-                b <- visitExp(body, env0)
-              } yield TypedAst.SelectRule(sym, c, b)
+                l <- visitExp(lam, env0)
+              } yield TypedAst.SelectRule(c, l)
           }
 
           for {

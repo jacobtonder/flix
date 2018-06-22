@@ -709,7 +709,11 @@ object Weeder extends Phase[ParsedAst.Program, WeededAst.Program] {
         case ParsedAst.Expression.SelectChannel(sp1, rules, sp2) =>
           val rulesVal = rules map {
             case ParsedAst.SelectRule(ident, chan, body) => @@(visit(chan, unsafe), visit(body, unsafe)) map {
-              case (c, b) => WeededAst.SelectRule(ident, c, b)
+              case (c, b) =>
+                val loc = mkSL(sp1, sp2)
+                val formalParam = WeededAst.FormalParam(ident, Ast.Modifiers.Empty, None, loc)
+                val lam = WeededAst.Expression.Lambda(List(formalParam), b, loc)
+                WeededAst.SelectRule(c, lam)
             }
           }
           @@(rulesVal) map {

@@ -344,9 +344,9 @@ object SimplifiedAstOps {
       // SelectChannel Expressions.
       //
       case Expression.SelectChannel(rules, tpe, loc) =>
-        for (SelectRule(sym, chan, body) <- rules) {
+        for (SelectRule(chan, lam) <- rules) {
           checkExp(chan, env0, ienv0)
-          checkExp(body, env0, ienv0)
+          checkExp(lam, env0, ienv0)
         }
         checkType(tpe)
 

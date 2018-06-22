@@ -252,10 +252,10 @@ object CreateExecutableAst extends Phase[SimplifiedAst.Root, ExecutableAst.Root]
         ExecutableAst.Expression.Spawn(toExecutable(exp), tpe, loc)
       case SimplifiedAst.Expression.SelectChannel(rules, tpe, loc) =>
         val rs = rules map {
-          case SimplifiedAst.SelectRule(sym, chan, body) =>
+          case SimplifiedAst.SelectRule(chan, lam) =>
             val c = toExecutable(chan)
-            val b = toExecutable(body)
-            ExecutableAst.SelectRule(sym, c, b)
+            val l = toExecutable(lam)
+            ExecutableAst.SelectRule(c, l)
         }
         ExecutableAst.Expression.SelectChannel(rs, tpe, loc)
       case SimplifiedAst.Expression.Ref(exp, tpe, loc) =>

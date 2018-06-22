@@ -129,8 +129,8 @@ object TypedAstOps {
 
       case Expression.SelectChannel(rules, tpe, eff, loc) =>
         rules.foldLeft(Map.empty[Symbol.HoleSym, HoleContext]) {
-          case (macc, SelectRule(sym, chan, body)) =>
-            macc ++ visitExp(chan, env0) ++ visitExp(body, env0)
+          case (macc, SelectRule(chan, lam)) =>
+            macc ++ visitExp(chan, env0) ++ visitExp(lam, env0)
         }
 
       case Expression.Ref(exp, tpe, eff, loc) =>

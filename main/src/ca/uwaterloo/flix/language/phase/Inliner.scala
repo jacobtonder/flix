@@ -164,8 +164,8 @@ object Inliner extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       case Expression.Spawn(exp, tpe, loc) => Expression.Spawn(visit(exp), tpe, loc)
       case Expression.SelectChannel(rules, tpe, loc) =>
         val rs = rules map {
-          case SimplifiedAst.SelectRule(sym, chan, body) =>
-            SimplifiedAst.SelectRule(sym, visit(chan), visit(body))
+          case SimplifiedAst.SelectRule(chan, lam) =>
+            SimplifiedAst.SelectRule(visit(chan), visit(lam))
         }
         Expression.SelectChannel(rs, tpe, loc)
       case Expression.Ref(exp1, tpe, loc) =>
@@ -283,10 +283,8 @@ object Inliner extends Phase[SimplifiedAst.Root, SimplifiedAst.Root] {
       Expression.Spawn(renameAndSubstitute(exp, env0), tpe, loc)
     case Expression.SelectChannel(rules, tpe, loc) =>
       val rs = rules map {
-        case SimplifiedAst.SelectRule(sym, chan, body) =>
-          val newSym = Symbol.freshVarSym(sym)
-          val sub1 = env0 + (sym -> newSym)
-          SimplifiedAst.SelectRule(newSym, renameAndSubstitute(chan, sub1), renameAndSubstitute(body, sub1))
+        case SimplifiedAst.SelectRule(chan, lam) =>
+          SimplifiedAst.SelectRule(renameAndSubstitute(chan, env0), renameAndSubstitute(lam, env0))
       }
       Expression.SelectChannel(rs, tpe, loc)
     case Expression.Ref(exp1, tpe, loc) =>

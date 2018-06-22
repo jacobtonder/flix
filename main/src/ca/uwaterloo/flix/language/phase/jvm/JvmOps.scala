@@ -821,7 +821,7 @@ object JvmOps {
         visitExp(exp)
       case Expression.SelectChannel(rules, tpe, loc) =>
         rules.foldLeft(Set.empty[ClosureInfo]) {
-          case (sacc, r) => sacc ++ visitExp(r.chan) ++ visitExp(r.body)
+          case (sacc, SelectRule(chan, lam)) => sacc ++ visitExp(chan) ++ visitExp(lam)
         }
 
       case Expression.Ref(exp, tpe, loc) => visitExp(exp)
@@ -1042,7 +1042,7 @@ object JvmOps {
       case Expression.PutChannel(exp1, exp2, tpe, loc) => visitExp(exp1) ++ visitExp(exp2) + tpe
       case Expression.Spawn(exp, tpe, loc) => visitExp(exp) + tpe
       case Expression.SelectChannel(rules, tpe, loc) => rules.foldLeft(Set(tpe)) {
-        case (sacc, r) => sacc ++ visitExp(r.chan) ++ visitExp(r.body)
+        case (sacc, SelectRule(chan, lam)) => sacc ++ visitExp(chan) ++ visitExp(lam)
       }
 
       case Expression.Ref(exp, tpe, loc) => visitExp(exp) + tpe

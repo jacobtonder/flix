@@ -890,15 +890,15 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           //  sr : t
           //  ------------------ [t-SelectChannel]
           //  select { sr+ } : t
-          assert(rules.nonEmpty)
-
           val bodies = rules map {
-            case r =>
+            case ResolvedAst.SelectRule(chan, lam) =>
               for {
-                ctpe <- visitExp(r.chan)
-                body <- visitExp(r.exp)
-                _ <- unifyM(ctpe, Type.mkChannel(r.sym.tvar), loc)
-              } yield body
+                channelType <- visitExp(chan)
+                lambdaType <- visitExp(lam)
+                symbolType <- liftM(lambdaType.asInstanceOf[Type.Apply].tpe1.asInstanceOf[Type.Apply].tpe2)
+                bodyType <- liftM(lambdaType.asInstanceOf[Type.Apply].tpe2)
+                _ <- unifyM(channelType, Type.mkChannel(symbolType), loc)
+              } yield bodyType
           }
 
           for {
@@ -1264,10 +1264,10 @@ object Typer extends Phase[ResolvedAst.Program, TypedAst.Root] {
           */
         case ResolvedAst.Expression.SelectChannel(rules, tvar, loc) =>
           val rs = rules map {
-            case ResolvedAst.SelectRule(sym, chan, body) =>
+            case ResolvedAst.SelectRule(chan, lam) =>
               val c = visitExp(chan, subst0)
-              val b = visitExp(body, subst0)
-              TypedAst.SelectRule(sym, c, b)
+              val l = visitExp(lam, subst0)
+              TypedAst.SelectRule(c, l)
           }
           TypedAst.Expression.SelectChannel(rs, subst0(tvar), Eff.Bot, loc)
 

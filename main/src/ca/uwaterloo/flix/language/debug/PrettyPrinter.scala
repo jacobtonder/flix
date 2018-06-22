@@ -310,7 +310,7 @@ object PrettyPrinter {
         case Expression.SelectChannel(rules, tpe, loc) =>
           vt.text("select {")
           vt << Indent << NewLine
-          for (SimplifiedAst.SelectRule(sym, chan, body) <- rules) {
+          for (SelectRule(chan, Expression.Lambda(FormalParam(sym, _, _, _) :: Nil, body, _, _)) <- rules) {
             vt.text("case ")
             fmtSym(sym, vt)
             vt.text(" <- ")

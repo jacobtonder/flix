@@ -210,7 +210,7 @@ object Synthesize extends Phase[Root, Root] {
 
       case Expression.SelectChannel(rules, tpe, eff, loc) =>
         val rs = rules map {
-          case SelectRule(sym, chan, body) => SelectRule(sym, chan, visitExp(body))
+          case SelectRule(chan, lam) => SelectRule(visitExp(chan), visitExp(lam))
         }
         Expression.SelectChannel(rs, tpe, eff, loc)
 

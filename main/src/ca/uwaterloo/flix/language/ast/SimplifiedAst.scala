@@ -372,6 +372,6 @@ object SimplifiedAst {
 
   case class HandlerBinding(sym: Symbol.EffSym, exp: SimplifiedAst.Expression) extends SimplifiedAst
 
-  case class SelectRule(sym: Symbol.VarSym, chan: SimplifiedAst.Expression, body: SimplifiedAst.Expression) extends SimplifiedAst
+  case class SelectRule(chan: SimplifiedAst.Expression, lam: SimplifiedAst.Expression) extends SimplifiedAst
 
 }
