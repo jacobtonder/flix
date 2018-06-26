@@ -59,6 +59,11 @@ object JvmName {
   val Condition: JvmName = JvmName(List("java", "util", "concurrent", "locks"), "Condition")
 
   /**
+   *  The `javafx.util.Pair` name.
+   */
+  val Pair: JvmName = JvmName(List("javafx", "util"), "Pair")
+
+  /**
     * The `ca.uwaterloo.flix.api.Unit` name
     */
   val Unit: JvmName = JvmName(List("ca", "uwaterloo", "flix"), "Unit")

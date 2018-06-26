@@ -252,6 +252,40 @@ object Interpreter {
           ((chan, clo))
       }
 
+      //val p = javafx.util.Pair[String, Integer]("str", 3)
+
+
+      // Object result = null;
+      // List<Channel> channels = new ArrayList();
+      // channels.add(ch1);
+      // channels.add(ch2);
+      // channels.add(ch3);
+      //
+      // Collections.sort(channels);
+      //
+      // (id, value) = selectChannel(channels);
+      // switch (id) {
+      //   case 2:
+      //     goto L1;
+      //   case 3:
+      //     goto L2;
+      //   case 2:
+      //     goto L1;
+      //   default:
+      //     throw new NotFoundException();
+      // }
+      // L1:
+      //   result = value + 2;
+      //   goto L0;
+      // L2:
+      //   result = value;
+      //   goto L0;
+      // L3:
+      //   result = value * 2;
+      //   goto L0;
+      // L0:
+      // return result;
+
       selectChannel(rs) match {
         case (res, clo) =>
           invokeSelectClo(clo, res, env0, henv0, lenv0, root)
@@ -342,10 +376,10 @@ object Interpreter {
   //
   private def newChannel(capacity: Int): Value.Channel = {
     val id = Channel.counter.incrementAndGet()
+    val queue = new util.LinkedList[AnyRef]()
     val channelLock = new ReentrantLock
     val channelGetters = channelLock.newCondition()
     val channelPutters = channelLock.newCondition()
-    val queue = new util.LinkedList[AnyRef]()
     val conditions = new util.ArrayList[(Lock, Condition)]()
     Value.Channel(id, queue, capacity, channelLock, channelGetters, channelPutters, conditions)
   }

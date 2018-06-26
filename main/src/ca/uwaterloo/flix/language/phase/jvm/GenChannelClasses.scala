@@ -288,7 +288,7 @@ object GenChannelClasses {
     * Generates the `putValue()` method of the `classType` with value of type `channelType`
     *
     * public `classType` putValue(tpe value) throws InterruptedException {
-    *     this.lock.lock();
+    *     this.lock();
     *
     *     try {
     *         while(this.isFull()) {
@@ -298,7 +298,7 @@ object GenChannelClasses {
     *         this.offer(value);
     *         this.signalGetters();
     *     } finally {
-    *         this.lock.unlock();
+    *         this.unlock();
     *     }
     *
     *     return this;
@@ -315,10 +315,9 @@ object GenChannelClasses {
     val labelReturn = new Label()
     mv.visitCode()
 
-    // Lock
+    // Lock()
     mv.visitVarInsn(ALOAD, 0)
-    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "lock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
     mv.visitTryCatchBlock(labelStart, labelEnd, labelHandler, null)
 
@@ -354,8 +353,7 @@ object GenChannelClasses {
     mv.visitLabel(labelEnd)
 
     mv.visitVarInsn(ALOAD, 0)
-    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
     mv.visitJumpInsn(GOTO, labelReturn)
 
@@ -364,8 +362,7 @@ object GenChannelClasses {
     mv.visitInsn(POP)
 
     mv.visitVarInsn(ALOAD, 0)
-    mv.visitFieldInsn(GETFIELD, classType.name.toInternalName, "lock", JvmType.Lock.toDescriptor)
-    mv.visitMethodInsn(INVOKEINTERFACE, JvmType.Lock.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), true)
+    mv.visitMethodInsn(INVOKEVIRTUAL, classType.name.toInternalName, "unlock", AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
 
     // Return
     mv.visitLabel(labelReturn)

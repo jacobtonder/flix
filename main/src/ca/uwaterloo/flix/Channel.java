@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.concurrent.locks.*;
 import java.util.concurrent.atomic.*;
 
+import javafx.util.Pair;
+
 
 public class Channel implements Comparable<Channel> {
     private static AtomicInteger counter;
@@ -11,117 +13,115 @@ public class Channel implements Comparable<Channel> {
     private Queue<Object> queue;
     private Integer capacity;
     private Lock lock;
-    private Condition channelNotFull;
-    private Condition channelNotEmpty;
-    private List<SelectChannel> selects;
+    private Condition channelGetters;
+    private Condition channelPutters;
+    private List<Pair<Lock, Condition>> conditions;
 
     // New Channel
     public Channel(Integer capacity) {
         this.id = counter.incrementAndGet();
-        this.capacity = capacity;
         this.queue = new LinkedList<>();
+        this.capacity = capacity;
         this.lock = new ReentrantLock();
-        this.channelNotFull = lock.newCondition();
-        this.channelNotEmpty = lock.newCondition();
-        this.selects = new ArrayList<>();
+        this.channelGetters = lock.newCondition();
+        this.channelPutters = lock.newCondition();
+        this.conditions = new ArrayList<>();
     }
 
     // Get Channel
-    public Object get() {
+    public Object getValue() throws InterruptedException {
         Object value = null;
 
-        lock();
+        this.lock();
         try {
-            while (isEmpty()) {
-                awaitNotFull();
+            while (this.isEmpty()) {
+                this.awaitPutters();
             }
 
             value = this.queue.poll();
 
             if (value != null) {
-                signalNotEmpty();
+                this.signalPutters();
             }
         }
-        catch (InterruptedException ex) {
-        }
         finally {
-            unlock();
+            this.unlock();
         }
 
         return value;
     }
 
     // Put Channel
-    public Channel put(Object value) throws InterruptedException {
-        lock();
+    public Channel putValue(Object value) throws InterruptedException {
+        this.lock();
         try {
             while (isFull()) {
-                awaitNotEmpty();
+                this.awaitGetters();
             }
 
-            offer(value);
-            signalNotFull();
+            this.offer(value);
+            this.signalGetters();
 
-            signalAllSelects();
-            clearSelects();
+            this.signalAllConditions();
+            this.conditions.clear();
         }
         finally {
-            unlock();
+            this.unlock();
         }
 
         return this;
     }
 
     public Object poll() {
-        return queue.poll();
+        return this.queue.poll();
     }
 
     public Object offer(Object value) {
-        return queue.offer(value);
+        return this.queue.offer(value);
     }
 
     public Boolean isEmpty() {
-        return queue.isEmpty();
+        return this.queue.isEmpty();
     }
 
-    public Boolean nonEmpty() {
-        return !isEmpty();
+    public Boolean isNonEmpty() {
+        return !this.isEmpty();
     }
 
     public Boolean isFull() {
-        return size().equals(capacity);
+        return this.size().equals(capacity);
     }
 
     public Integer size() {
-        return queue.size();
+        return this.queue.size();
     }
 
     public void lock() {
-        lock.lock();
+        this.lock.lock();
     }
 
     public void unlock() {
-        lock.unlock();
+        this.lock.unlock();
     }
 
-    public void awaitNotFull() throws InterruptedException {
-        channelNotFull.await();
+    public void awaitPutters() throws InterruptedException {
+        this.channelGetters.await();
     }
 
-    public void awaitNotEmpty() throws InterruptedException {
-        channelNotEmpty.await();
+    public void awaitGetters() throws InterruptedException {
+        this.channelPutters.await();
     }
 
-    public void signalNotFull() {
-        channelNotFull.signalAll();
+    public void signalGetters() {
+        this.channelGetters.signalAll();
     }
 
-    public void signalNotEmpty() {
-        channelNotEmpty.signalAll();
+    public void signalPutters() {
+        this.channelPutters.signalAll();
     }
 
-    public void addSelect(SelectChannel select) {
-        selects.add(select);
+    public void addCondition(Lock lock, Condition cond) {
+        this.conditions.add(new Pair<>(lock, cond));
     }
 
     @Override
@@ -129,19 +129,18 @@ public class Channel implements Comparable<Channel> {
         return this.id.compareTo(o.id);
     }
 
-    private void signalAllSelects() {
-        for (SelectChannel select : selects) {
-            select.lock();
+    private void signalAllConditions() {
+        for (Pair<Lock, Condition> condition : conditions) {
+            Lock sLock = condition.getKey();
+            Condition sCond = condition.getValue();
+
+            sLock.lock();
             try {
-                select.signal();
+                sCond.signalAll();
             }
             finally {
-                select.unlock();
+                sLock.unlock();
             }
         }
-    }
-
-    private void clearSelects() {
-        selects.clear();
     }
 }

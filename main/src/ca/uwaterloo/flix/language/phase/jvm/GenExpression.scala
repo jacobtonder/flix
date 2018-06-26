@@ -28,6 +28,7 @@ import org.objectweb.asm
 import org.objectweb.asm.Opcodes._
 import org.objectweb.asm._
 import ca.uwaterloo.flix.language.ast.Type
+import ca.uwaterloo.flix.language.phase.CreateExecutableAst
 
 /**
   * Generate expression
@@ -753,7 +754,8 @@ object GenExpression {
       // Duplicate the instance
       visitor.visitInsn(DUP)
       // Start thread
-      visitor.visitMethodInsn(INVOKEVIRTUAL, JvmName.Thread.toInternalName, "start", "()V", false)
+      visitor.visitMethodInsn(INVOKEVIRTUAL, JvmName.Thread.toInternalName, "start",
+        AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
       // Return unit
       visitor.visitMethodInsn(INVOKESTATIC, JvmName.Unit.toInternalName, "getInstance",
         AsmOps.getMethodDescriptor(Nil, JvmType.Unit), false)
@@ -761,6 +763,32 @@ object GenExpression {
     case Expression.SelectChannel(rules, tpe, loc) =>
       // Adding source line number for debugging
       addSourceLine(visitor, loc)
+
+      visitor.visitTypeInsn(NEW, JvmName.ArrayList.toInternalName)
+
+      visitor.visitInsn(DUP)
+
+      visitor.visitMethodInsn(INVOKESPECIAL, JvmName.ArrayList.toInternalName, "<init>",
+        AsmOps.getMethodDescriptor(Nil, JvmType.Void), false)
+
+      val indexed = rules.zipWithIndex
+      for ((ExecutableAst.SelectRule(chan, lambda), i) <- indexed) {
+        val channelType = JvmOps.getChannelClassType(chan.tpe)
+        val functionType = JvmOps.getFunctionInterfaceType(lambda.tpe)
+
+        visitor.visitTypeInsn(NEW, JvmName.Pair.toInternalName)
+
+        visitor.visitInsn(DUP)
+
+        compileExpression(chan, visitor, currentClass, lenv0, entryPoint)
+        compileExpression(lambda, visitor, currentClass, lenv0, entryPoint)
+
+        visitor.visitMethodInsn(INVOKESPECIAL, JvmName.Pair.toInternalName, "<init>",
+          AsmOps.getMethodDescriptor(List(channelType, JvmType.Object), JvmType.Void), false)
+        // compileExpression(chan, visitor, currentClass, lenv0, entryPoint)
+        // compileExpression()
+      }
+
 
 
 
